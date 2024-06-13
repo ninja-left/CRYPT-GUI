@@ -2,14 +2,14 @@
 ![head](./assets/head.png)
 
 <div align=center>
-  <a href="https://github.com/ninja-left/CRYPT/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/ninja-left/CRYPT">
+  <a href="https://github.com/ninja-left/CRYPT-GUI/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/ninja-left/CRYPT-GUI">
   </a>
-  <a href="https://github.com/ninja-left/CRYPT">
-    <img src="https://img.shields.io/github/commit-activity/m/ninja-left/CRYPT">
+  <a href="https://github.com/ninja-left/CRYPT-GUI">
+    <img src="https://img.shields.io/github/commit-activity/m/ninja-left/CRYPT-GUI">
   </a>
 
-![Latest version](https://img.shields.io/github/v/tag/ninja-left/CRYPT?label=Version&color=black) ![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)
+![Latest version](https://img.shields.io/github/v/tag/ninja-left/CRYPT-GUI?label=Version&color=black) ![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)
 
 </div>
 
