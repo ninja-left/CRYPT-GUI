@@ -65,7 +65,7 @@ Because I wanted to learn creating GUI programs. Also, the GUI menu is more neat
     pip install -r requirements.txt
     ```
 
-Note: This app uses `pyperclip` in order to copy/paste.
+Note: This app uses `pyperclip3` for copy/paste functions.
 1. On Windows, no additional modules are needed.
 2. On Mac, this module makes use of the pbcopy and pbpaste commands, which should come with the os.
 3. On Linux, this module makes use of the xclip or xsel commands, which should come with the os. Otherwise run “sudo apt-get install xclip” or “sudo apt-get install xsel” (Note: xsel does not always seem to work.)
