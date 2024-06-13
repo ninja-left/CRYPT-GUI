@@ -94,7 +94,7 @@ Thanks in advance for considering to help me on this project.
 You can read [CONTRIBUTING.md] for details on contributing to the project.
 
 ## Roadmap
-- [ ] Add the functions
+- [ ] Add the encode/decode functions
 
 
 [LICENSE]: ./LICENSE
