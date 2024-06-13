@@ -15,13 +15,10 @@
 
 
 ## What?
-CRYPT is a tool that allows you to encrypt or decrypt texts.
+CRYPT is a tool that allows you to encrypt or decrypt texts; Now with a GUI.
 
 ## Why?
-The main reason I wrote this program was having access to common encodings and hash
-functions in one place. Later I added more functions and ciphers. All releases have
-a script named `CryptB.py` which takes 2 files as input and output and encodes or
-decodes the input file line by line while writing to output file.
+Because I wanted to learn creating GUI programs. Also, the GUI menu is more neat.
 
 ## What encodings, ciphers, and hashes are supported?
 1. Encodings:
