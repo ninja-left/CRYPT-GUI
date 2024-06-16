@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from PySide6.QtWidgets import QApplication, QDialog, QMainWindow, QMessageBox
+from PySide6 import QtGui
 import pyperclip3
 import sys
 
@@ -14,6 +15,8 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
         self.OpMode = ""
         self.defaultTextEncode = "Encode/Encrypt"
         self.defaultTextDecode = "Decode/Decrypt"
+        self.defaultIconDecode = QtGui.QIcon()
+        self.defaultIconDecode.addPixmap(":/assets/Unlocked.png")
 
     def connectSignalSlots(self):
         self.actionCopy.triggered.connect(self.doCopy)
@@ -54,17 +57,20 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
                 self.btnEncode.setText(self.defaultTextEncode)
                 self.btnEncode.setEnabled(False)
                 self.btnDecode.setText(self.defaultTextDecode)
+                self.btnDecode.setIcon(self.defaultIconDecode)
                 self.btnDecode.setEnabled(False)
                 self.btnBruteForce.setEnabled(False)
             case "Base16" | "Base32" | "Base85" | "Base64":
                 self.btnEncode.setText("Encode")
                 self.btnEncode.setEnabled(True)
+                self.btnDecode.setIcon(self.defaultIconDecode)
                 self.btnDecode.setText("Decode")
                 self.btnDecode.setEnabled(True)
                 self.btnBruteForce.setEnabled(False)
             case "Caesar Cipher" | "Morse Code" | "Baconian Cipher" | "Vigenere Cipher":
                 self.btnEncode.setText("Encrypt")
                 self.btnEncode.setEnabled(True)
+                self.btnDecode.setIcon(self.defaultIconDecode)
                 self.btnDecode.setText("Decrypt")
                 self.btnDecode.setEnabled(True)
                 self.btnBruteForce.setEnabled(True)
@@ -72,9 +78,13 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
                 # Enable all buttons
                 self.btnEncode.setText("Hash")
                 self.btnEncode.setEnabled(True)
-                self.btnDecode.setText(self.defaultTextDecode)
-                self.btnDecode.setEnabled(False)
+                self.btnDecode.setText("Verify")
+                decode_icon = QtGui.QIcon()
+                decode_icon.addPixmap(":/assets/Verify.png")
+                self.btnDecode.setIcon(decode_icon)
+                self.btnDecode.setEnabled(True)
                 self.btnBruteForce.setEnabled(True)
+        # TODO: self.OpMode = chosenMode
 
     def doDecode(self):
         # Code
