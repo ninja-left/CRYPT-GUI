@@ -2,10 +2,10 @@
 
 from PySide6.QtWidgets import QApplication, QDialog, QMainWindow, QMessageBox
 from PySide6 import QtGui
-import pyclip
+import pyperclip
 import sys
 
-from modules import main_ui, resources
+from modules import main_ui, resources_rc
 
 class Window(QMainWindow, main_ui.Ui_MainWindow):
     def __init__(self):
@@ -34,12 +34,12 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
             msg.setDetailedText("If you entered the input data, head to the \"Setup\" tab to decide what to do with it.")
             msg.exec()
         else:
-            pyclip.copy(text)
+            pyperclip.copy(text)
             QMessageBox.information(self, "Copied!", "The output data has been copied.", QMessageBox.Ok)
 
     def doPaste(self):
         try:
-            text = str(pyclip.paste().decode('utf-8'))
+            text = str(pyperclip.paste())
             self.inputText.setPlainText(text)
             QMessageBox.information(self, "Pasted!", "Pasted data into the input area.")
         except:
