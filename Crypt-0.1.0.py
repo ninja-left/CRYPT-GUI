@@ -2,7 +2,7 @@
 
 from PySide6.QtWidgets import QApplication, QDialog, QMainWindow, QMessageBox
 from PySide6 import QtGui
-import pyperclip3
+import pyclip
 import sys
 
 from modules import main_ui, resources
@@ -34,12 +34,12 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
             msg.setDetailedText("If you entered the input data, head to the \"Setup\" tab to decide what to do with it.")
             msg.exec()
         else:
-            pyperclip3.copy(text)
+            pyclip.copy(text)
             QMessageBox.information(self, "Copied!", "The output data has been copied.", QMessageBox.Ok)
 
     def doPaste(self):
         try:
-            text = str(pyperclip3.paste().decode('utf-8'))
+            text = str(pyclip.paste().decode('utf-8'))
             self.inputText.setPlainText(text)
             QMessageBox.information(self, "Pasted!", "Pasted data into the input area.")
         except:
@@ -84,19 +84,16 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
                 self.btnDecode.setIcon(decode_icon)
                 self.btnDecode.setEnabled(True)
                 self.btnBruteForce.setEnabled(True)
-        # TODO: self.OpMode = chosenMode
+        self.OpMode = chosenMode
 
     def doDecode(self):
-        # Code
-        pass
+        print("Decode pressed")
 
     def doEncode(self):
-        # Code
-        pass
+        print("Encode pressed")
 
     def doBrute(self):
-        # Code
-        pass
+        print("brute pressed")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
