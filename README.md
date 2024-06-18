@@ -65,7 +65,7 @@ Because I wanted to learn creating GUI programs. Also, the GUI menu is more neat
     pip install -r requirements.txt
     ```
 
-Note: This app uses `pyperclip3` for copy/paste functions.
+Note: This app uses `pyclip3` for copy/paste functions.
 1. On Windows, no additional modules are needed.
 2. On Mac, this module makes use of the pbcopy and pbpaste commands, which should come with the os.
 3. On Linux, this module makes use of the xclip or xsel commands, which should come with the os. Otherwise run “sudo apt-get install xclip” or “sudo apt-get install xsel” (Note: xsel does not always seem to work.)
@@ -84,15 +84,16 @@ Where `?.?.?` is the version.
 If you encounter any issues or bugs, feel free to open an issue about it on this repo and I'll try to help.
 
 ## License
-This project is licensed under GPL v3.0. See [LICENSE] for details.
+This project is licensed under GPL v3.0. See [LICENSE] file for details.
 
 ## Contributing
 Thanks in advance for considering to help me on this project.
 You can read [CONTRIBUTING.md] for details on contributing to the project.
 
 ## Roadmap
-- [ ] Add the encode/decode functions
+See [ROADMAP.md] for details.
 
 
 [LICENSE]: ./LICENSE
 [CONTRIBUTING.md]: ./CONTRIBUTING.md
+[ROADMAP.md]: ./ROADMAP.md
