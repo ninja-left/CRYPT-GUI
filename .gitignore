@@ -2,3 +2,4 @@ venv
 modules/design.ui
 modules/__pycache__
 modules/resources.qrc
+*.sh
