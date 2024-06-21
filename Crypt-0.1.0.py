@@ -39,9 +39,15 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
 
     def doPaste(self):
         try:
-            text = str(pyperclip.paste())
+            text = str(pyperclip.waitForPaste(timeout=2))
             self.inputText.setPlainText(text)
             QMessageBox.information(self, "Pasted!", "Pasted data into the input area.")
+        except pyperclip.PyperclipTimeoutException:
+            msg = QMessageBox(QMessageBox.Warning, "Paste failed!", "Have you copied anything?", QMessageBox.Cancel)
+            msg.setInformativeText("Pasting took too long to finish.")
+            msg.setDetailedText("This could happen if there's no data in Clipboard. Make sure to copy something first.")
+            msg.exec()
+            raise
         except:
             msg = QMessageBox(QMessageBox.Warning, "Paste failed!", "Are you sure you copied text?", QMessageBox.Cancel)
             msg.setInformativeText("Only text can be pasted.")
