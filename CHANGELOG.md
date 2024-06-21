@@ -1,4 +1,9 @@
 # Changelog
+## [0.1.1] - 2024-06-21
+### Added
+- Timeout for paste function (It won't freeze in case of an error)
+- Paste now appends data
+- Renamed Crypt-VERSION.py to Crypt.py
 
 ## [0.1.0] - 2024-06-13
 
