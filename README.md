@@ -69,13 +69,12 @@ For more information visit [pyperclip repository].
 ## Usage
 Run
 ```shell
-python3 Crypt-?.?.?.py
+python3 Crypt.py
 ```
 or
 ```shell
-./Crypt-?.?.?.py
+./Crypt.py
 ```
-Where `?.?.?` is the version.
 
 ## Support
 If you encounter any issues or bugs, feel free to open an issue about it on this repo and I'll try to help.
