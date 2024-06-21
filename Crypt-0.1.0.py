@@ -4,6 +4,7 @@ from PySide6.QtWidgets import QApplication, QDialog, QMainWindow, QMessageBox
 from PySide6 import QtGui
 import pyperclip
 import sys
+from multiprocessing import Pool, TimeoutError as mpTimeoutError
 
 from modules import main_ui, resources_rc
 
@@ -17,6 +18,7 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
         self.defaultTextDecode = "Decode/Decrypt"
         self.defaultIconDecode = QtGui.QIcon()
         self.defaultIconDecode.addPixmap(":/assets/Unlocked.png")
+        self.pool = Pool()
 
     def connectSignalSlots(self):
         self.actionCopy.triggered.connect(self.doCopy)
@@ -39,10 +41,13 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
 
     def doPaste(self):
         try:
-            text = str(pyperclip.waitForPaste(timeout=2))
-            self.inputText.setPlainText(text)
+            pool_result = self.pool.apply_async(pyperclip.paste)
+            pool_result.wait(1)
+            text = pool_result.get(timeout=1)
+            self.inputText.toPlainText()
+            self.inputText.setPlainText(self.inputText.toPlainText() + text)
             QMessageBox.information(self, "Pasted!", "Pasted data into the input area.")
-        except pyperclip.PyperclipTimeoutException:
+        except mpTimeoutError:
             msg = QMessageBox(QMessageBox.Warning, "Paste failed!", "Have you copied anything?", QMessageBox.Cancel)
             msg.setInformativeText("Pasting took too long to finish.")
             msg.setDetailedText("This could happen if there's no data in Clipboard. Make sure to copy something first.")
