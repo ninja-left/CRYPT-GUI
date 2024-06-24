@@ -49,7 +49,7 @@
     <normaloff>:/assets/icon.png</normaloff>:/assets/icon.png</iconset>
   </property>
   <property name="toolTip">
-   <string>A Collection of Tools</string>
+   <string/>
   </property>
   <property name="toolButtonStyle">
    <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
@@ -213,7 +213,7 @@
       </property>
       <property name="icon">
        <iconset theme="QIcon::ThemeIcon::EditPaste">
-        <normaloff>../../../.designer/backup</normaloff>../../../.designer/backup</iconset>
+        <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
       </property>
      </widget>
     </widget>
@@ -497,16 +497,188 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QWidget" name="formLayoutWidget">
+     <widget class="QWidget" name="gridLayoutWidget">
       <property name="geometry">
        <rect>
         <x>20</x>
         <y>90</y>
-        <width>771</width>
-        <height>391</height>
+        <width>751</width>
+        <height>401</height>
        </rect>
       </property>
-      <layout class="QFormLayout" name="formLayout"/>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="inputSalt">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="placeholderText">
+          <string>A salt for the hash; Could be left empty.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="toolTip">
+          <string>Alphabet to be used.</string>
+         </property>
+         <property name="whatsThis">
+          <string>Alphabet to be used.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Alphabet</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>Alphabet to be used.</string>
+         </property>
+         <property name="text">
+          <string>Alphabet</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::TextFormat::PlainText</enum>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="inputKey">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>Usually a number, word(s), or a set of chatacters</string>
+         </property>
+         <property name="whatsThis">
+          <string>Key to be used for Encryption/Decryption.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Key</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>Key to be used for Encryption/Decryption.</string>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LayoutDirection::LeftToRight</enum>
+         </property>
+         <property name="placeholderText">
+          <string>Key to be used for Encryption/Decryption.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Salt</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="inputAlphabet">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>ABC...</string>
+         </property>
+         <property name="whatsThis">
+          <string>Alphabet to be used.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Alphabet</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>Alphabet to be used.</string>
+         </property>
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="frame">
+          <bool>true</bool>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+         </property>
+         <property name="placeholderText">
+          <string>Alphabet to be used.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="toolTip">
+          <string>Key to be used for Encryption/Decryption.</string>
+         </property>
+         <property name="whatsThis">
+          <string>Key to be used for Encryption/Decryption.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Key</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>Key to be used for Encryption/Decryption.</string>
+         </property>
+         <property name="text">
+          <string>Key</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Salt Pattern</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="inputSaltPattern">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>Keywords: SALT, INPUT | &quot;SALT+INPUT&quot; means there would be a plus sign between salt and input before hashing.</string>
+         </property>
+         <property name="whatsThis">
+          <string>How to use the salt before hashing.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Salt Pattern</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>How to use the salt before hashing.</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>How to use the salt before hashing. Default is SALT+INPUT</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
     <widget class="QWidget" name="outputTab">
@@ -604,7 +776,7 @@
       </property>
       <property name="icon">
        <iconset theme="QIcon::ThemeIcon::EditCopy">
-        <normaloff>../../../.designer/backup</normaloff>../../../.designer/backup</iconset>
+        <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
       </property>
       <property name="shortcut">
        <string>Ctrl+Shift+C</string>
@@ -628,9 +800,9 @@
      <widget class="QWidget" name="verticalLayoutWidget_3">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>20</x>
         <y>10</y>
-        <width>771</width>
+        <width>751</width>
         <height>521</height>
        </rect>
       </property>
@@ -700,7 +872,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <action name="actionCopy">
    <property name="icon">
     <iconset theme="QIcon::ThemeIcon::EditCopy">
-     <normaloff>../../../.designer/backup</normaloff>../../../.designer/backup</iconset>
+     <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Copy</string>
@@ -715,7 +887,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <action name="actionPaste">
    <property name="icon">
     <iconset theme="QIcon::ThemeIcon::EditPaste">
-     <normaloff>../../../.designer/backup</normaloff>../../../.designer/backup</iconset>
+     <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Paste</string>
