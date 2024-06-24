@@ -1,6 +1,10 @@
 #!/bin/bash
 
-./modules/compile_rrc.sh
-./modules/compile_uic.sh
+source ./venv/bin/activate 
+cd ./modules
+./compile_rrc.sh
+./compile_uic.sh
+deactivate
+cd ..
 exit 0
 
