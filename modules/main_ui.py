@@ -16,9 +16,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QFormLayout, QLabel,
-    QMainWindow, QPlainTextEdit, QPushButton, QSizePolicy,
-    QTabWidget, QTextBrowser, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QGridLayout, QLabel,
+    QLineEdit, QMainWindow, QPlainTextEdit, QPushButton,
+    QSizePolicy, QSpacerItem, QTabWidget, QTextBrowser,
+    QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -49,7 +50,7 @@ class Ui_MainWindow(object):
         if QIcon.hasThemeIcon(QIcon.ThemeIcon.EditCopy):
             icon1 = QIcon.fromTheme(QIcon.ThemeIcon.EditCopy)
         else:
-            icon1.addFile(u"../../../.designer/backup", QSize(), QIcon.Normal, QIcon.Off)
+            icon1.addFile(u"../../../../../.designer/backup", QSize(), QIcon.Normal, QIcon.Off)
 
         self.actionCopy.setIcon(icon1)
         self.actionCopy.setMenuRole(QAction.MenuRole.NoRole)
@@ -59,7 +60,7 @@ class Ui_MainWindow(object):
         if QIcon.hasThemeIcon(QIcon.ThemeIcon.EditPaste):
             icon2 = QIcon.fromTheme(QIcon.ThemeIcon.EditPaste)
         else:
-            icon2.addFile(u"../../../.designer/backup", QSize(), QIcon.Normal, QIcon.Off)
+            icon2.addFile(u"../../../../../.designer/backup", QSize(), QIcon.Normal, QIcon.Off)
 
         self.actionPaste.setIcon(icon2)
         self.actionPaste.setMenuRole(QAction.MenuRole.NoRole)
@@ -186,12 +187,67 @@ class Ui_MainWindow(object):
         self.btnBruteForce.setIcon(icon6)
         self.btnBruteForce.setAutoDefault(False)
         self.btnBruteForce.setFlat(False)
-        self.formLayoutWidget = QWidget(self.setupTab)
-        self.formLayoutWidget.setObjectName(u"formLayoutWidget")
-        self.formLayoutWidget.setGeometry(QRect(20, 90, 771, 391))
-        self.formLayout = QFormLayout(self.formLayoutWidget)
-        self.formLayout.setObjectName(u"formLayout")
-        self.formLayout.setContentsMargins(0, 0, 0, 0)
+        self.gridLayoutWidget = QWidget(self.setupTab)
+        self.gridLayoutWidget.setObjectName(u"gridLayoutWidget")
+        self.gridLayoutWidget.setGeometry(QRect(20, 90, 751, 401))
+        self.gridLayout = QGridLayout(self.gridLayoutWidget)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.inputSalt = QLineEdit(self.gridLayoutWidget)
+        self.inputSalt.setObjectName(u"inputSalt")
+        self.inputSalt.setEnabled(False)
+
+        self.gridLayout.addWidget(self.inputSalt, 3, 1, 1, 1)
+
+        self.label_4 = QLabel(self.gridLayoutWidget)
+        self.label_4.setObjectName(u"label_4")
+        self.label_4.setTextFormat(Qt.TextFormat.PlainText)
+        self.label_4.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout.addWidget(self.label_4, 0, 0, 1, 1)
+
+        self.inputKey = QLineEdit(self.gridLayoutWidget)
+        self.inputKey.setObjectName(u"inputKey")
+        self.inputKey.setEnabled(False)
+        self.inputKey.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+
+        self.gridLayout.addWidget(self.inputKey, 1, 1, 1, 1)
+
+        self.label_6 = QLabel(self.gridLayoutWidget)
+        self.label_6.setObjectName(u"label_6")
+        self.label_6.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout.addWidget(self.label_6, 3, 0, 1, 1)
+
+        self.inputAlphabet = QLineEdit(self.gridLayoutWidget)
+        self.inputAlphabet.setObjectName(u"inputAlphabet")
+        self.inputAlphabet.setEnabled(False)
+        self.inputAlphabet.setFrame(True)
+        self.inputAlphabet.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
+
+        self.gridLayout.addWidget(self.inputAlphabet, 0, 1, 1, 1)
+
+        self.label_5 = QLabel(self.gridLayoutWidget)
+        self.label_5.setObjectName(u"label_5")
+        self.label_5.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout.addWidget(self.label_5, 1, 0, 1, 1)
+
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.gridLayout.addItem(self.verticalSpacer, 2, 1, 1, 1)
+
+        self.label_7 = QLabel(self.gridLayoutWidget)
+        self.label_7.setObjectName(u"label_7")
+
+        self.gridLayout.addWidget(self.label_7, 4, 0, 1, 1)
+
+        self.inputSaltPattern = QLineEdit(self.gridLayoutWidget)
+        self.inputSaltPattern.setObjectName(u"inputSaltPattern")
+        self.inputSaltPattern.setEnabled(False)
+
+        self.gridLayout.addWidget(self.inputSaltPattern, 4, 1, 1, 1)
+
         icon7 = QIcon()
         icon7.addFile(u":/assets/Configure.png", QSize(), QIcon.Normal, QIcon.Off)
         self.tabWidget.addTab(self.setupTab, icon7, "")
@@ -231,7 +287,7 @@ class Ui_MainWindow(object):
         self.aboutTab.setObjectName(u"aboutTab")
         self.verticalLayoutWidget_3 = QWidget(self.aboutTab)
         self.verticalLayoutWidget_3.setObjectName(u"verticalLayoutWidget_3")
-        self.verticalLayoutWidget_3.setGeometry(QRect(10, 10, 771, 521))
+        self.verticalLayoutWidget_3.setGeometry(QRect(20, 10, 751, 521))
         self.verticalLayout_3 = QVBoxLayout(self.verticalLayoutWidget_3)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
@@ -285,7 +341,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"CRYPT GUI", None))
 #if QT_CONFIG(tooltip)
-        MainWindow.setToolTip(QCoreApplication.translate("MainWindow", u"A Collection of Tools", None))
+        MainWindow.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.actionCopy.setText(QCoreApplication.translate("MainWindow", u"Copy", None))
 #if QT_CONFIG(shortcut)
@@ -335,6 +391,77 @@ class Ui_MainWindow(object):
         self.operationMode.setPlaceholderText(QCoreApplication.translate("MainWindow", u"No Operation Chosen", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Operation", None))
         self.btnBruteForce.setText(QCoreApplication.translate("MainWindow", u"Brute Force", None))
+        self.inputSalt.setPlaceholderText(QCoreApplication.translate("MainWindow", u"A salt for the hash; Could be left empty.", None))
+#if QT_CONFIG(tooltip)
+        self.label_4.setToolTip(QCoreApplication.translate("MainWindow", u"Alphabet to be used.", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(whatsthis)
+        self.label_4.setWhatsThis(QCoreApplication.translate("MainWindow", u"Alphabet to be used.", None))
+#endif // QT_CONFIG(whatsthis)
+#if QT_CONFIG(accessibility)
+        self.label_4.setAccessibleName(QCoreApplication.translate("MainWindow", u"Alphabet", None))
+#endif // QT_CONFIG(accessibility)
+#if QT_CONFIG(accessibility)
+        self.label_4.setAccessibleDescription(QCoreApplication.translate("MainWindow", u"Alphabet to be used.", None))
+#endif // QT_CONFIG(accessibility)
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Alphabet", None))
+#if QT_CONFIG(tooltip)
+        self.inputKey.setToolTip(QCoreApplication.translate("MainWindow", u"Usually a number, word(s), or a set of chatacters", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(whatsthis)
+        self.inputKey.setWhatsThis(QCoreApplication.translate("MainWindow", u"Key to be used for Encryption/Decryption.", None))
+#endif // QT_CONFIG(whatsthis)
+#if QT_CONFIG(accessibility)
+        self.inputKey.setAccessibleName(QCoreApplication.translate("MainWindow", u"Key", None))
+#endif // QT_CONFIG(accessibility)
+#if QT_CONFIG(accessibility)
+        self.inputKey.setAccessibleDescription(QCoreApplication.translate("MainWindow", u"Key to be used for Encryption/Decryption.", None))
+#endif // QT_CONFIG(accessibility)
+        self.inputKey.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Key to be used for Encryption/Decryption.", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"Salt", None))
+#if QT_CONFIG(tooltip)
+        self.inputAlphabet.setToolTip(QCoreApplication.translate("MainWindow", u"ABC...", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(whatsthis)
+        self.inputAlphabet.setWhatsThis(QCoreApplication.translate("MainWindow", u"Alphabet to be used.", None))
+#endif // QT_CONFIG(whatsthis)
+#if QT_CONFIG(accessibility)
+        self.inputAlphabet.setAccessibleName(QCoreApplication.translate("MainWindow", u"Alphabet", None))
+#endif // QT_CONFIG(accessibility)
+#if QT_CONFIG(accessibility)
+        self.inputAlphabet.setAccessibleDescription(QCoreApplication.translate("MainWindow", u"Alphabet to be used.", None))
+#endif // QT_CONFIG(accessibility)
+        self.inputAlphabet.setInputMask("")
+        self.inputAlphabet.setText("")
+        self.inputAlphabet.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Alphabet to be used.", None))
+#if QT_CONFIG(tooltip)
+        self.label_5.setToolTip(QCoreApplication.translate("MainWindow", u"Key to be used for Encryption/Decryption.", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(whatsthis)
+        self.label_5.setWhatsThis(QCoreApplication.translate("MainWindow", u"Key to be used for Encryption/Decryption.", None))
+#endif // QT_CONFIG(whatsthis)
+#if QT_CONFIG(accessibility)
+        self.label_5.setAccessibleName(QCoreApplication.translate("MainWindow", u"Key", None))
+#endif // QT_CONFIG(accessibility)
+#if QT_CONFIG(accessibility)
+        self.label_5.setAccessibleDescription(QCoreApplication.translate("MainWindow", u"Key to be used for Encryption/Decryption.", None))
+#endif // QT_CONFIG(accessibility)
+        self.label_5.setText(QCoreApplication.translate("MainWindow", u"Key", None))
+        self.label_7.setText(QCoreApplication.translate("MainWindow", u"Salt Pattern", None))
+#if QT_CONFIG(tooltip)
+        self.inputSaltPattern.setToolTip(QCoreApplication.translate("MainWindow", u"Keywords: SALT, INPUT | \"SALT+INPUT\" means there would be a plus sign between salt and input before hashing.", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(whatsthis)
+        self.inputSaltPattern.setWhatsThis(QCoreApplication.translate("MainWindow", u"How to use the salt before hashing.", None))
+#endif // QT_CONFIG(whatsthis)
+#if QT_CONFIG(accessibility)
+        self.inputSaltPattern.setAccessibleName(QCoreApplication.translate("MainWindow", u"Salt Pattern", None))
+#endif // QT_CONFIG(accessibility)
+#if QT_CONFIG(accessibility)
+        self.inputSaltPattern.setAccessibleDescription(QCoreApplication.translate("MainWindow", u"How to use the salt before hashing.", None))
+#endif // QT_CONFIG(accessibility)
+        self.inputSaltPattern.setText("")
+        self.inputSaltPattern.setPlaceholderText(QCoreApplication.translate("MainWindow", u"How to use the salt before hashing. Default is SALT+INPUT", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.setupTab), QCoreApplication.translate("MainWindow", u"Setup", None))
         self.outputText.setPlainText("")
         self.outputText.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Decoded/Encoded data would be displayed here.", None))
