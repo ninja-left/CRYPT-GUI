@@ -5,6 +5,7 @@ from PySide6 import QtGui
 import pyperclip
 import sys
 from multiprocessing import Pool, TimeoutError as mpTimeoutError
+from string import ascii_letters, ascii_uppercase
 
 from modules import main_ui, resources_rc
 
@@ -13,12 +14,21 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.connectSignalSlots()
-        self.OpMode = ""
+        self.pasteTimeout = 1  # seconds
+        self.Operation = ""
         self.defaultTextEncode = "Encode/Encrypt"
         self.defaultTextDecode = "Decode/Decrypt"
         self.defaultIconDecode = QtGui.QIcon()
         self.defaultIconDecode.addPixmap(":/assets/Unlocked.png")
         self.pool = Pool()
+
+        # TODO: User should be able to change default alphabets
+        # TODO: Read default alphabets from a config file
+        self.default_alphabet = ascii_letters
+        self.vigenere_alphabet = ascii_uppercase
+        self.b64_alphabet = (
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+        )
 
     def connectSignalSlots(self):
         self.actionCopy.triggered.connect(self.doCopy)
@@ -43,7 +53,7 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
         try:
             pool_result = self.pool.apply_async(pyperclip.paste)
             pool_result.wait(1)
-            text = pool_result.get(timeout=1)
+            text = pool_result.get(timeout=self.pasteTimeout)
             self.inputText.toPlainText()
             self.inputText.setPlainText(self.inputText.toPlainText() + text)
             QMessageBox.information(self, "Pasted!", "Pasted data into the input area.")
@@ -62,15 +72,20 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
 
     def doChangeOp(self):
         chosenMode = self.operationMode.currentText()
-        match chosenMode:
+        self.Operation = chosenMode
+        match self.Operation:
             case "None":
-                # Set buttons to default
+                # Set everything to default
                 self.btnEncode.setText(self.defaultTextEncode)
                 self.btnEncode.setEnabled(False)
                 self.btnDecode.setText(self.defaultTextDecode)
                 self.btnDecode.setIcon(self.defaultIconDecode)
                 self.btnDecode.setEnabled(False)
                 self.btnBruteForce.setEnabled(False)
+                self.inputAlphabet.setEnabled(False)
+                self.inputKey.setEnabled(False)
+                self.inputSalt.setEnabled(False)
+                self.inputSaltPattern.setEnabled(False)
             case "Base16" | "Base32" | "Base85" | "Base64":
                 self.btnEncode.setText("Encode")
                 self.btnEncode.setEnabled(True)
@@ -78,6 +93,10 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
                 self.btnDecode.setText("Decode")
                 self.btnDecode.setEnabled(True)
                 self.btnBruteForce.setEnabled(False)
+                self.inputAlphabet.setEnabled(True)
+                self.inputKey.setEnabled(False)
+                self.inputSalt.setEnabled(False)
+                self.inputSaltPattern.setEnabled(False)
             case "Caesar Cipher" | "Morse Code" | "Baconian Cipher" | "Vigenere Cipher":
                 self.btnEncode.setText("Encrypt")
                 self.btnEncode.setEnabled(True)
@@ -85,8 +104,12 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
                 self.btnDecode.setText("Decrypt")
                 self.btnDecode.setEnabled(True)
                 self.btnBruteForce.setEnabled(True)
+                self.inputAlphabet.setEnabled(True)
+                self.inputKey.setEnabled(True)
+                self.inputSalt.setEnabled(False)
+                self.inputSaltPattern.setEnabled(False)
             case _:
-                # Enable all buttons
+                # Hashes
                 self.btnEncode.setText("Hash")
                 self.btnEncode.setEnabled(True)
                 self.btnDecode.setText("Verify")
@@ -95,7 +118,10 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
                 self.btnDecode.setIcon(decode_icon)
                 self.btnDecode.setEnabled(True)
                 self.btnBruteForce.setEnabled(True)
-        self.OpMode = chosenMode
+                self.inputAlphabet.setEnabled(False)
+                self.inputKey.setEnabled(False)
+                self.inputSalt.setEnabled(True)
+                self.inputSaltPattern.setEnabled(True)
 
     def doDecode(self):
         print("Decode pressed")
