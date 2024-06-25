@@ -21,7 +21,7 @@
 import base64
 import hashlib
 from re import search
-import passlib.hash as passlibHash
+import passlib.hash
 
 
 # TODO: change the baseX functions so they may use alternative functions.
@@ -340,7 +340,7 @@ def md5(text: str) -> str:
 
 
 def md5_crypt(text: str) -> str:
-    return passlibHash.md5_crypt.hash(text)
+    return passlib.hash.md5_crypt.hash(text)
 
 
 def sha256(text: str) -> str:
@@ -348,7 +348,7 @@ def sha256(text: str) -> str:
 
 
 def sha256_crypt(text: str) -> str:
-    return passlibHash.sha256_crypt.hash(text)
+    return passlib.hash.sha256_crypt.hash(text)
 
 
 def sha512(text: str) -> str:
@@ -356,24 +356,40 @@ def sha512(text: str) -> str:
 
 
 def sha512_crypt(text: str) -> str:
-    return passlibHash.sha512_crypt.hash(text)
+    return passlib.hash.sha512_crypt.hash(text)
 
 
-def bcrypt(text: str) -> str:
-    return passlibHash.bcrypt.hash(text)
+def bcrypt_hash(text: str, rounds: int) -> str:
+    return passlib.hash.bcrypt.using(rounds=rounds).hash(text)
 
 
-def argon2(text: str) -> str:
-    return passlibHash.argon2.hash(text)
+def bcrypt_verify(text: str, hashed: str) -> bool:
+    return passlib.hash.bcrypt.verify(text, hashed)
+
+
+def argon2_hash(text: str, rounds: int) -> str:
+    return passlib.hash.argon2.using(rounds=rounds).hash(text)
+
+
+def argon2_verify(text: str, hashed: str) -> bool:
+    return passlib.hash.argon2.verify(text, hashed)
 
 
 def nthash(text: str) -> str:
-    return passlibHash.nthash.hash(text)
+    return passlib.hash.nthash.hash(text)
 
 
-def pbkdf2_256(text: str) -> str:
-    return passlibHash.pbkdf2_sha256.hash(text)
+def pbkdf2_256_hash(text: str, rounds: int) -> str:
+    return passlib.hash.pbkdf2_sha256.using(rounds=rounds).hash(text)
 
 
-def pbkdf2_512(text: str) -> str:
-    return passlibHash.pbkdf2_sha512.hash(text)
+def pbkdf2_512_hash(text: str, rounds: int) -> str:
+    return passlib.hash.pbkdf2_sha512.using(rounds=rounds).hash(text)
+
+
+def pbkdf2_256_verify(text: str, hashed: str) -> bool:
+    return passlib.hash.pbkdf2_sha256.verify(text, hashed)
+
+
+def pbkdf2_512_verify(text: str, hashed: str) -> bool:
+    return passlib.hash.pbkdf2_sha512.verify(text, hashed)

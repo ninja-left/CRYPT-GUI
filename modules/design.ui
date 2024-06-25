@@ -507,75 +507,18 @@
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="inputSalt">
-         <property name="enabled">
-          <bool>false</bool>
+       <item row="2" column="1">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
-         <property name="placeholderText">
-          <string>A salt for the hash; Could be left empty.</string>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
          </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_4">
-         <property name="toolTip">
-          <string>Alphabet to be used.</string>
-         </property>
-         <property name="whatsThis">
-          <string>Alphabet to be used.</string>
-         </property>
-         <property name="accessibleName">
-          <string>Alphabet</string>
-         </property>
-         <property name="accessibleDescription">
-          <string>Alphabet to be used.</string>
-         </property>
-         <property name="text">
-          <string>Alphabet</string>
-         </property>
-         <property name="textFormat">
-          <enum>Qt::TextFormat::PlainText</enum>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="inputKey">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Usually a number, word(s), or a set of chatacters</string>
-         </property>
-         <property name="whatsThis">
-          <string>Key to be used for Encryption/Decryption.</string>
-         </property>
-         <property name="accessibleName">
-          <string>Key</string>
-         </property>
-         <property name="accessibleDescription">
-          <string>Key to be used for Encryption/Decryption.</string>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LayoutDirection::LeftToRight</enum>
-         </property>
-         <property name="placeholderText">
-          <string>Key to be used for Encryption/Decryption.</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Salt</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
+        </spacer>
        </item>
        <item row="0" column="1">
         <widget class="QLineEdit" name="inputAlphabet">
@@ -611,6 +554,116 @@
          </property>
         </widget>
        </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="toolTip">
+          <string>Keywords: SALT, INPUT | &quot;SALT+INPUT&quot; means there would be a plus sign between salt and input before hashing.</string>
+         </property>
+         <property name="whatsThis">
+          <string>How to use the salt before hashing.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Salt Pattern</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>How to use the salt before hashing.</string>
+         </property>
+         <property name="text">
+          <string>Salt Pattern</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="inputSalt">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>It is optional.</string>
+         </property>
+         <property name="whatsThis">
+          <string>Salt to be used with the input.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Salt</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>Salt to be used with the input.</string>
+         </property>
+         <property name="placeholderText">
+          <string>A salt for the hash; Could be left empty.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QLineEdit" name="inputSaltPattern">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>Keywords: SALT, INPUT | &quot;SALT+INPUT&quot; means there would be a plus sign between salt and input before hashing.</string>
+         </property>
+         <property name="whatsThis">
+          <string>How to use the salt before hashing.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Salt Pattern</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>How to use the salt before hashing.</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>How to use the salt before hashing. Default is SALT+INPUT</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="toolTip">
+          <string>It is optional.</string>
+         </property>
+         <property name="whatsThis">
+          <string>Salt to be used with the input.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Salt</string>
+         </property>
+         <property name="text">
+          <string>Salt</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="inputKey">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>Usually a number, word(s), or a set of chatacters</string>
+         </property>
+         <property name="whatsThis">
+          <string>Key to be used for Encryption/Decryption.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Key</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>Key to be used for Encryption/Decryption.</string>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LayoutDirection::LeftToRight</enum>
+         </property>
+         <property name="placeholderText">
+          <string>Key to be used for Encryption/Decryption.</string>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_5">
          <property name="toolTip">
@@ -633,48 +686,92 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Orientation::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Salt Pattern</string>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="1">
-        <widget class="QLineEdit" name="inputSaltPattern">
+        <widget class="QLineEdit" name="inputPlainText">
          <property name="enabled">
           <bool>false</bool>
          </property>
          <property name="toolTip">
-          <string>Keywords: SALT, INPUT | &quot;SALT+INPUT&quot; means there would be a plus sign between salt and input before hashing.</string>
+          <string>Plain text of hashed input for verification.</string>
          </property>
          <property name="whatsThis">
-          <string>How to use the salt before hashing.</string>
+          <string>Plain text of hashed input for verification.</string>
          </property>
          <property name="accessibleName">
-          <string>Salt Pattern</string>
+          <string>Plain Text</string>
          </property>
          <property name="accessibleDescription">
-          <string>How to use the salt before hashing.</string>
-         </property>
-         <property name="text">
-          <string/>
+          <string>Plain text of hashed input for verification.</string>
          </property>
          <property name="placeholderText">
-          <string>How to use the salt before hashing. Default is SALT+INPUT</string>
+          <string>For verification</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Plain Text</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="toolTip">
+          <string>Alphabet to be used.</string>
+         </property>
+         <property name="whatsThis">
+          <string>Alphabet to be used.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Alphabet</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>Alphabet to be used.</string>
+         </property>
+         <property name="text">
+          <string>Alphabet</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::TextFormat::PlainText</enum>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Rounds</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="inputRounds">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>A number; The default changes based on selected operation.</string>
+         </property>
+         <property name="whatsThis">
+          <string>Hash rounds</string>
+         </property>
+         <property name="accessibleName">
+          <string>Rounds</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>A number; The default changes based on selected operation.</string>
+         </property>
+         <property name="placeholderText">
+          <string>For bCrypt, Argon2, &amp; PBKDF2</string>
          </property>
         </widget>
        </item>
