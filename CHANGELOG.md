@@ -1,4 +1,20 @@
 # Changelog
+## [0.1.3]
+### Added
+- Code: 2 Custom error classes
+- Code: 2 new alphabets (Base32 & Base85)
+- GUI: a "Rounds" option for bCrypt, Argon2, PBKDF2 functions
+- GUI: Default alphabets loaded in Setting tab when choosing a function that supports it.
+- GUI: Added accessibility names, tooltips, descriptions & ...
+- Encoders, decoders, hash functions, and hash verifiers
+- requirements.txt: passlib, bCrypt, & Argon2 libraries
+- ciphers.py: Verifier functions for bCrypt, Argon2, & PBKDF2
+### Changed
+- Code: Replaced all message box codes with a function
+- Code: Copy & Paste functions
+### Fixes
+- CHANGELOG.md: Fixed typo in repository name
+
 ## [0.1.2]
 ### Added
 - ciphers.py: file containing functions for encoding, decoding input.
@@ -24,6 +40,7 @@
 - Copy and Paste functions
 - Buttons change based on chosen operation mode
 
-[0.1.2]: https://github.com/ninja-left/CRYPT/releases/tag/v0.1.2
-[0.1.1]: https://github.com/ninja-left/CRYPT/releases/tag/v0.1.1
-[0.1.0]: https://github.com/ninja-left/CRYPT/releases/tag/v0.1.0
+[0.1.3]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.3
+[0.1.2]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.2
+[0.1.1]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.1
+[0.1.0]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.0
