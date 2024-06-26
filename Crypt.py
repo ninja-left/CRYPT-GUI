@@ -55,6 +55,9 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
         self.actionDecode.triggered.connect(self.doDecode)
         self.actionBrute.triggered.connect(self.doBrute)
         self.actionOperationChanged.triggered.connect(self.doChangeOp)
+        self.actionConfig.triggered.connect(self.doConfig)
+        self.actionZoomOut.triggered.connect(self.doZoomOut)
+        self.actionZoomIn.triggered.connect(self.doZoomIn)
 
     def showMessageBox(
         self,
@@ -430,6 +433,26 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
 
     def doBrute(self):
         print("brute pressed")
+
+    def doConfig(self):
+        print("config pressed")
+
+    def doZoomIn(self):
+        outputFont = self.outputText.font()
+        inputFont = self.inputText.font()
+        outputFont.setPointSize(outputFont.pointSize() + 1)
+        inputFont.setPointSize(inputFont.pointSize() + 1)
+        self.outputText.setFont(outputFont)
+        self.inputText.setFont(inputFont)
+
+    def doZoomOut(self):
+        outputFont = self.outputText.font()
+        inputFont = self.inputText.font()
+        outputFont.setPointSize(outputFont.pointSize() - 1)
+        inputFont.setPointSize(inputFont.pointSize() - 1)
+        self.outputText.setFont(outputFont)
+        self.inputText.setFont(inputFont)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -1,4 +1,10 @@
 # Changelog
+## [0.1.4]
+### Added
+- Zoom in & Zoom out buttons
+- GUI: Added Config button
+### Changed
+- ROADMAP.md: Replaced link with list of features to add
 ## [0.1.3]
 ### Added
 - Code: 2 Custom error classes
