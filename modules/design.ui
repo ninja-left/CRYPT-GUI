@@ -106,6 +106,9 @@
       <height>581</height>
      </size>
     </property>
+    <property name="layoutDirection">
+     <enum>Qt::LayoutDirection::LeftToRight</enum>
+    </property>
     <property name="autoFillBackground">
      <bool>true</bool>
     </property>
@@ -153,17 +156,17 @@
      <attribute name="title">
       <string>Input</string>
      </attribute>
-     <widget class="QWidget" name="verticalLayoutWidget">
+     <widget class="QWidget" name="gridLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>90</y>
-        <width>751</width>
-        <height>441</height>
+        <x>0</x>
+        <y>0</y>
+        <width>791</width>
+        <height>551</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="2" column="0">
         <widget class="QPlainTextEdit" name="inputText">
          <property name="minimumSize">
           <size>
@@ -177,6 +180,20 @@
            <height>449</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Input area</string>
+         </property>
+         <property name="accessibleName">
+          <string>Input area</string>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LayoutDirection::LeftToRight</enum>
+         </property>
          <property name="backgroundVisible">
           <bool>false</bool>
          </property>
@@ -185,36 +202,79 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="0" alignment="Qt::AlignmentFlag::AlignHCenter">
+        <widget class="QPushButton" name="btnPaste">
+         <property name="minimumSize">
+          <size>
+           <width>201</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>201</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="accessibleName">
+          <string>Paste from clipboard</string>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LayoutDirection::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>&amp;Paste from Clipboard</string>
+         </property>
+         <property name="icon">
+          <iconset theme="QIcon::ThemeIcon::EditPaste">
+           <normaloff>../../../../../../../.designer/backup</normaloff>../../../../../../../.designer/backup</iconset>
+         </property>
+         <property name="shortcut">
+          <string>Ctrl+V</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QPushButton" name="btnZoomIn">
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>18</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>+</string>
+           </property>
+          </widget>
+         </item>
+         <item alignment="Qt::AlignmentFlag::AlignLeft">
+          <widget class="QPushButton" name="btnZoomOut">
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>18</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
-     </widget>
-     <widget class="QPushButton" name="btnPaste">
-      <property name="geometry">
-       <rect>
-        <x>300</x>
-        <y>50</y>
-        <width>201</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>201</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>201</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Paste from Clipboard</string>
-      </property>
-      <property name="icon">
-       <iconset theme="QIcon::ThemeIcon::EditPaste">
-        <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
-      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="setupTab">
@@ -237,293 +297,102 @@
      <attribute name="title">
       <string>Setup</string>
      </attribute>
-     <widget class="QPushButton" name="btnEncode">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>650</x>
-        <y>510</y>
-        <width>121</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>121</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>121</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Encode/Encrypt</string>
-      </property>
-      <property name="icon">
-       <iconset resource="resources.qrc">
-        <normaloff>:/assets/Locked.png</normaloff>:/assets/Locked.png</iconset>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btnDecode">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>520</x>
-        <y>510</y>
-        <width>121</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>121</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>121</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Decode/Decrypt</string>
-      </property>
-      <property name="icon">
-       <iconset resource="resources.qrc">
-        <normaloff>:/assets/Unlocked.png</normaloff>:/assets/Unlocked.png</iconset>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="operationMode">
-      <property name="geometry">
-       <rect>
-        <x>290</x>
-        <y>50</y>
-        <width>231</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>231</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>231</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="currentText">
-       <string>None</string>
-      </property>
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <property name="placeholderText">
-       <string>No Operation Chosen</string>
-      </property>
-      <item>
-       <property name="text">
-        <string>None</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Base16</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Base32</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Base85</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Base64</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Caesar Cipher</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Morse Code</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Baconian Cipher</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Vigenere Cipher</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>MD5</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>MD5 CRYPT</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>SHA256</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>SHA256 CRYPT</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>SHA512</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>SHA512 CRYPT</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>bCrypt</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Argon2</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>NT Hash</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>PBKDF2 SHA256</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>PBKDF2 SHA512</string>
-       </property>
-      </item>
-     </widget>
-     <widget class="QLabel" name="label">
-      <property name="geometry">
-       <rect>
-        <x>340</x>
-        <y>10</y>
-        <width>131</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>131</width>
-        <height>17</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>16</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Operation</string>
-      </property>
-      <property name="textInteractionFlags">
-       <set>Qt::TextInteractionFlag::NoTextInteraction</set>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btnBruteForce">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>390</x>
-        <y>510</y>
-        <width>121</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>121</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>121</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Brute Force</string>
-      </property>
-      <property name="icon">
-       <iconset resource="resources.qrc">
-        <normaloff>:/assets/Crack.png</normaloff>:/assets/Crack.png</iconset>
-      </property>
-      <property name="autoDefault">
-       <bool>false</bool>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-     </widget>
      <widget class="QWidget" name="gridLayoutWidget">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>90</y>
-        <width>751</width>
-        <height>401</height>
+        <x>0</x>
+        <y>80</y>
+        <width>781</width>
+        <height>411</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="2" column="1">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Orientation::Vertical</enum>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="toolTip">
+          <string>Keywords: SALT, INPUT | &quot;SALT+INPUT&quot; means there would be a plus sign between salt and input before hashing.</string>
          </property>
-         <property name="sizeHint" stdset="0">
+         <property name="whatsThis">
+          <string>How to use the salt before hashing.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Salt Pattern</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>How to use the salt before hashing.</string>
+         </property>
+         <property name="text">
+          <string>Salt Pattern</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Rounds</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Plain Text</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QLineEdit" name="inputSaltPattern">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="maximumSize">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>697</width>
+           <height>25</height>
           </size>
          </property>
-        </spacer>
+         <property name="toolTip">
+          <string>Keywords: SALT, INPUT | &quot;SALT+INPUT&quot; means there would be a plus sign between salt and input before hashing.</string>
+         </property>
+         <property name="whatsThis">
+          <string>How to use the salt before hashing.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Salt Pattern</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>How to use the salt before hashing.</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>How to use the salt before hashing. Default is SALT+INPUT</string>
+         </property>
+        </widget>
        </item>
        <item row="0" column="1">
         <widget class="QLineEdit" name="inputAlphabet">
          <property name="enabled">
           <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>697</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>697</width>
+           <height>25</height>
+          </size>
          </property>
          <property name="toolTip">
           <string>ABC...</string>
@@ -554,95 +423,22 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_7">
-         <property name="toolTip">
-          <string>Keywords: SALT, INPUT | &quot;SALT+INPUT&quot; means there would be a plus sign between salt and input before hashing.</string>
-         </property>
-         <property name="whatsThis">
-          <string>How to use the salt before hashing.</string>
-         </property>
-         <property name="accessibleName">
-          <string>Salt Pattern</string>
-         </property>
-         <property name="accessibleDescription">
-          <string>How to use the salt before hashing.</string>
-         </property>
-         <property name="text">
-          <string>Salt Pattern</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QLineEdit" name="inputSalt">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>It is optional.</string>
-         </property>
-         <property name="whatsThis">
-          <string>Salt to be used with the input.</string>
-         </property>
-         <property name="accessibleName">
-          <string>Salt</string>
-         </property>
-         <property name="accessibleDescription">
-          <string>Salt to be used with the input.</string>
-         </property>
-         <property name="placeholderText">
-          <string>A salt for the hash; Could be left empty.</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QLineEdit" name="inputSaltPattern">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Keywords: SALT, INPUT | &quot;SALT+INPUT&quot; means there would be a plus sign between salt and input before hashing.</string>
-         </property>
-         <property name="whatsThis">
-          <string>How to use the salt before hashing.</string>
-         </property>
-         <property name="accessibleName">
-          <string>Salt Pattern</string>
-         </property>
-         <property name="accessibleDescription">
-          <string>How to use the salt before hashing.</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="placeholderText">
-          <string>How to use the salt before hashing. Default is SALT+INPUT</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="toolTip">
-          <string>It is optional.</string>
-         </property>
-         <property name="whatsThis">
-          <string>Salt to be used with the input.</string>
-         </property>
-         <property name="accessibleName">
-          <string>Salt</string>
-         </property>
-         <property name="text">
-          <string>Salt</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="1">
         <widget class="QLineEdit" name="inputKey">
          <property name="enabled">
           <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>697</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>697</width>
+           <height>25</height>
+          </size>
          </property>
          <property name="toolTip">
           <string>Usually a number, word(s), or a set of chatacters</string>
@@ -664,54 +460,19 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_5">
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_6">
          <property name="toolTip">
-          <string>Key to be used for Encryption/Decryption.</string>
+          <string>It is optional.</string>
          </property>
          <property name="whatsThis">
-          <string>Key to be used for Encryption/Decryption.</string>
+          <string>Salt to be used with the input.</string>
          </property>
          <property name="accessibleName">
-          <string>Key</string>
-         </property>
-         <property name="accessibleDescription">
-          <string>Key to be used for Encryption/Decryption.</string>
+          <string>Salt</string>
          </property>
          <property name="text">
-          <string>Key</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QLineEdit" name="inputPlainText">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Plain text of hashed input for verification.</string>
-         </property>
-         <property name="whatsThis">
-          <string>Plain text of hashed input for verification.</string>
-         </property>
-         <property name="accessibleName">
-          <string>Plain Text</string>
-         </property>
-         <property name="accessibleDescription">
-          <string>Plain text of hashed input for verification.</string>
-         </property>
-         <property name="placeholderText">
-          <string>For verification</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>Plain Text</string>
+          <string>Salt</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -743,20 +504,16 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Rounds</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="1">
         <widget class="QLineEdit" name="inputRounds">
          <property name="enabled">
           <bool>false</bool>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>697</width>
+           <height>25</height>
+          </size>
          </property>
          <property name="toolTip">
           <string>A number; The default changes based on selected operation.</string>
@@ -770,8 +527,425 @@
          <property name="accessibleDescription">
           <string>A number; The default changes based on selected operation.</string>
          </property>
+         <property name="inputMethodHints">
+          <set>Qt::InputMethodHint::ImhDigitsOnly|Qt::InputMethodHint::ImhPreferNumbers</set>
+         </property>
          <property name="placeholderText">
           <string>For bCrypt, Argon2, &amp; PBKDF2</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="inputSalt">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>697</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>It is optional.</string>
+         </property>
+         <property name="whatsThis">
+          <string>Salt to be used with the input.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Salt</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>Salt to be used with the input.</string>
+         </property>
+         <property name="placeholderText">
+          <string>A salt for the hash; Could be left empty.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="inputPlainText">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>697</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Plain text of hashed input for verification.</string>
+         </property>
+         <property name="whatsThis">
+          <string>Plain text of hashed input for verification.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Plain Text</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>Plain text of hashed input for verification.</string>
+         </property>
+         <property name="placeholderText">
+          <string>For verification</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="toolTip">
+          <string>Key to be used for Encryption/Decryption.</string>
+         </property>
+         <property name="whatsThis">
+          <string>Key to be used for Encryption/Decryption.</string>
+         </property>
+         <property name="accessibleName">
+          <string>Key</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>Key to be used for Encryption/Decryption.</string>
+         </property>
+         <property name="text">
+          <string>Key</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_4">
+      <property name="geometry">
+       <rect>
+        <x>-1</x>
+        <y>0</y>
+        <width>781</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
+        <widget class="QLabel" name="label">
+         <property name="minimumSize">
+          <size>
+           <width>131</width>
+           <height>17</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LayoutDirection::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Operation</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::TextInteractionFlag::NoTextInteraction</set>
+         </property>
+        </widget>
+       </item>
+       <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
+        <widget class="QComboBox" name="operationMode">
+         <property name="minimumSize">
+          <size>
+           <width>231</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>231</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Operation (function) to apply on the input.</string>
+         </property>
+         <property name="whatsThis">
+          <string>Operations list</string>
+         </property>
+         <property name="accessibleName">
+          <string>Operations list</string>
+         </property>
+         <property name="accessibleDescription">
+          <string>Operation (function) to apply on the input.</string>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LayoutDirection::LeftToRight</enum>
+         </property>
+         <property name="currentText">
+          <string>None</string>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <property name="placeholderText">
+          <string>No Operation Chosen</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>None</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Base16</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Base32</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Base85</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Base64</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Caesar Cipher</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Morse Code</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Baconian Cipher</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Vigenere Cipher</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>MD5</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>MD5 CRYPT</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>SHA256</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>SHA256 CRYPT</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>SHA512</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>SHA512 CRYPT</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>bCrypt</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Argon2</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>NT Hash</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>PBKDF2 SHA256</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>PBKDF2 SHA512</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="horizontalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>490</y>
+        <width>781</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="btnConfig">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>121</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>121</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>&amp;Config</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/assets/Configure.png</normaloff>:/assets/Configure.png</iconset>
+         </property>
+         <property name="shortcut">
+          <string>Ctrl+,</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnBruteForce">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>121</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>121</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>&amp;Brute Force</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/assets/Crack.png</normaloff>:/assets/Crack.png</iconset>
+         </property>
+         <property name="autoDefault">
+          <bool>false</bool>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnDecode">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>121</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>121</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>&amp;Decode/Decrypt</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/assets/Unlocked.png</normaloff>:/assets/Unlocked.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item alignment="Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter">
+        <widget class="QPushButton" name="btnEncode">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>121</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>121</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>&amp;Encode/Encrypt</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/assets/Locked.png</normaloff>:/assets/Locked.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -798,17 +972,17 @@
      <attribute name="title">
       <string>Output</string>
      </attribute>
-     <widget class="QWidget" name="verticalLayoutWidget_2">
+     <widget class="QWidget" name="gridLayoutWidget_3">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>90</y>
-        <width>751</width>
-        <height>441</height>
+        <x>0</x>
+        <y>0</y>
+        <width>791</width>
+        <height>551</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="2" column="0">
         <widget class="QPlainTextEdit" name="outputText">
          <property name="minimumSize">
           <size>
@@ -819,71 +993,133 @@
          <property name="maximumSize">
           <size>
            <width>749</width>
-           <height>439</height>
+           <height>449</height>
           </size>
          </property>
-         <property name="focusPolicy">
-          <enum>Qt::FocusPolicy::NoFocus</enum>
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
          </property>
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
+         <property name="toolTip">
+          <string>Input area</string>
          </property>
-         <property name="undoRedoEnabled">
-          <bool>false</bool>
+         <property name="accessibleName">
+          <string>Input area</string>
          </property>
-         <property name="plainText">
-          <string/>
+         <property name="layoutDirection">
+          <enum>Qt::LayoutDirection::LeftToRight</enum>
          </property>
-         <property name="textInteractionFlags">
-          <set>Qt::TextInteractionFlag::NoTextInteraction</set>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
          <property name="backgroundVisible">
           <bool>false</bool>
          </property>
          <property name="placeholderText">
-          <string>Decoded/Encoded data would be displayed here.</string>
+          <string>Output result</string>
          </property>
         </widget>
        </item>
+       <item row="0" column="0" alignment="Qt::AlignmentFlag::AlignHCenter">
+        <widget class="QPushButton" name="btnCopy">
+         <property name="minimumSize">
+          <size>
+           <width>201</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>201</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="accessibleName">
+          <string>Paste from clipboard</string>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LayoutDirection::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>&amp;Copy to Clipboard</string>
+         </property>
+         <property name="icon">
+          <iconset theme="QIcon::ThemeIcon::EditCopy"/>
+         </property>
+         <property name="shortcut">
+          <string>Ctrl+C</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QPushButton" name="btnZoomIn_2">
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>18</pointsize>
+            </font>
+           </property>
+           <property name="toolTip">
+            <string>Zoom in the text area.</string>
+           </property>
+           <property name="whatsThis">
+            <string>Zoom In</string>
+           </property>
+           <property name="accessibleName">
+            <string>Zoom In</string>
+           </property>
+           <property name="accessibleDescription">
+            <string>Zoom in the text area.</string>
+           </property>
+           <property name="text">
+            <string>+</string>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item alignment="Qt::AlignmentFlag::AlignLeft">
+          <widget class="QPushButton" name="btnZoomOut_2">
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>18</pointsize>
+            </font>
+           </property>
+           <property name="toolTip">
+            <string>Zoom out the text area.</string>
+           </property>
+           <property name="whatsThis">
+            <string>Zoom Out</string>
+           </property>
+           <property name="accessibleName">
+            <string>Zoom Out</string>
+           </property>
+           <property name="accessibleDescription">
+            <string>Zoom out the text area.</string>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
-     </widget>
-     <widget class="QPushButton" name="btnCopy">
-      <property name="geometry">
-       <rect>
-        <x>300</x>
-        <y>50</y>
-        <width>201</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>201</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>201</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Copy to Clipboard</string>
-      </property>
-      <property name="icon">
-       <iconset theme="QIcon::ThemeIcon::EditCopy">
-        <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
-      </property>
-      <property name="shortcut">
-       <string>Ctrl+Shift+C</string>
-      </property>
-      <property name="default">
-       <bool>false</bool>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="aboutTab">
@@ -969,13 +1205,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <action name="actionCopy">
    <property name="icon">
     <iconset theme="QIcon::ThemeIcon::EditCopy">
-     <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
+     <normaloff>../../../../../../../.designer/backup</normaloff>../../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Copy</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+C</string>
+    <string>Ctrl+C</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -984,13 +1220,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <action name="actionPaste">
    <property name="icon">
     <iconset theme="QIcon::ThemeIcon::EditPaste">
-     <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
+     <normaloff>../../../../../../../.designer/backup</normaloff>../../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Paste</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+V</string>
+    <string>Ctrl+V</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -1028,30 +1264,59 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string>OperationChanged</string>
    </property>
   </action>
+  <action name="actionConfig">
+   <property name="text">
+    <string>Config</string>
+   </property>
+   <property name="toolTip">
+    <string>Configuration</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P, Ctrl+,</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="text">
+    <string>ZoomIn</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+=</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="text">
+    <string>ZoomOut</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>btnPaste</tabstop>
-  <tabstop>inputText</tabstop>
-  <tabstop>operationMode</tabstop>
-  <tabstop>btnEncode</tabstop>
-  <tabstop>btnDecode</tabstop>
-  <tabstop>btnBruteForce</tabstop>
-  <tabstop>btnCopy</tabstop>
  </tabstops>
  <resources>
   <include location="resources.qrc"/>
  </resources>
  <connections>
   <connection>
-   <sender>btnCopy</sender>
+   <sender>btnBruteForce</sender>
    <signal>clicked()</signal>
-   <receiver>actionCopy</receiver>
+   <receiver>actionBrute</receiver>
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>402</x>
-     <y>91</y>
+     <x>62</x>
+     <y>531</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -1060,30 +1325,14 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </hints>
   </connection>
   <connection>
-   <sender>btnPaste</sender>
+   <sender>btnConfig</sender>
    <signal>clicked()</signal>
-   <receiver>actionPaste</receiver>
+   <receiver>actionConfig</receiver>
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>402</x>
-     <y>91</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnEncode</sender>
-   <signal>clicked()</signal>
-   <receiver>actionEncode</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>712</x>
-     <y>551</y>
+     <x>62</x>
+     <y>531</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -1098,8 +1347,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>582</x>
-     <y>551</y>
+     <x>594</x>
+     <y>544</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -1108,14 +1357,14 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </hints>
   </connection>
   <connection>
-   <sender>btnBruteForce</sender>
+   <sender>btnEncode</sender>
    <signal>clicked()</signal>
-   <receiver>actionBrute</receiver>
+   <receiver>actionEncode</receiver>
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>452</x>
-     <y>551</y>
+     <x>721</x>
+     <y>544</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -1130,8 +1379,104 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>407</x>
-     <y>91</y>
+     <x>391</x>
+     <y>89</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnCopy</sender>
+   <signal>clicked()</signal>
+   <receiver>actionCopy</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>397</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnPaste</sender>
+   <signal>clicked()</signal>
+   <receiver>actionPaste</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>397</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnZoomIn_2</sender>
+   <signal>clicked()</signal>
+   <receiver>actionZoomIn</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>39</x>
+     <y>92</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnZoomIn</sender>
+   <signal>clicked()</signal>
+   <receiver>actionZoomIn</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>39</x>
+     <y>92</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnZoomOut_2</sender>
+   <signal>clicked()</signal>
+   <receiver>actionZoomOut</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>92</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnZoomOut</sender>
+   <signal>clicked()</signal>
+   <receiver>actionZoomOut</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>92</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
