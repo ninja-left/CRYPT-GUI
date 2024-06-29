@@ -1,14 +1,23 @@
 #!/usr/bin/env python3
 
-from PySide6.QtWidgets import QApplication, QDialog, QMainWindow, QMessageBox
+from PySide6.QtWidgets import (
+    QApplication,
+    QDialog,
+    QMainWindow,
+    QMessageBox,
+    QDialog,
+    QFileDialog,
+)
 from PySide6 import QtGui
 import pyperclip
 import sys
+import pathlib
 from multiprocessing import Pool, TimeoutError as mpTimeoutError
 from string import ascii_letters, ascii_uppercase
 
-from modules import main_ui, resources_rc, cracker, ciphers
+from modules import main_ui, resources_rc, cracker, ciphers, bf_ui
 
+brute_force_results = ""
 
 class BadInputError(Exception):
     def __init__(self, message: str = "Input is not valid"):
@@ -22,7 +31,171 @@ class BadKeyError(Exception):
         super().__init__(self.message)
 
 
-class Window(QMainWindow, main_ui.Ui_MainWindow):
+class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
+    def __init__(self, input_data="", salt="", salt_pattern="", hash_type=""):
+        super().__init__()
+        self.setupUi(self)
+        self.connectSignalSlots()
+        self.turnUI(False)
+        self.input_data = input_data
+        self.salt = salt
+        self.salt_pattern = salt_pattern
+        self.hash_type = hash_type
+        self.mode = ""
+
+    def turnUI(self, To=True):
+        self.label.setVisible(To)
+        self.label_2.setVisible(To)
+        self.label_3.setVisible(To)
+        self.label_4.setVisible(To)
+        self.label_5.setVisible(To)
+        self.btnCrack.setVisible(To)
+        self.inputChooseFile.setVisible(To)
+        self.inputFilePath.setVisible(To)
+        self.progressBar.setVisible(False)
+        self.inputLetters.setVisible(To)
+        self.inputNumbers.setVisible(To)
+        self.inputSpaces.setVisible(To)
+        self.inputSymbols.setVisible(To)
+        self.inputMaxLength.setVisible(To)
+        self.inputRamp.setVisible(To)
+        self.inputStartLength.setVisible(To)
+
+    def setUI(self, mode: str):
+        if mode != "brute":
+            self.label.setVisible(True)
+            self.inputChooseFile.setVisible(True)
+            self.inputFilePath.setVisible(True)
+        else:
+            self.label.setVisible(False)
+            self.inputChooseFile.setVisible(False)
+            self.inputFilePath.setVisible(False)
+        if mode == "brute":
+            self.label_2.setVisible(True)
+            self.label_3.setVisible(True)
+            self.label_4.setVisible(True)
+            self.label_5.setVisible(True)
+            self.inputLetters.setVisible(True)
+            self.inputNumbers.setVisible(True)
+            self.inputSpaces.setVisible(True)
+            self.inputSymbols.setVisible(True)
+            self.inputMaxLength.setVisible(True)
+            self.inputRamp.setVisible(True)
+            self.inputStartLength.setVisible(True)
+        else:
+            self.label_2.setVisible(False)
+            self.label_3.setVisible(False)
+            self.label_4.setVisible(False)
+            self.label_5.setVisible(False)
+            self.inputLetters.setVisible(False)
+            self.inputNumbers.setVisible(False)
+            self.inputSpaces.setVisible(False)
+            self.inputSymbols.setVisible(False)
+            self.inputMaxLength.setVisible(False)
+            self.inputRamp.setVisible(False)
+            self.inputStartLength.setVisible(False)
+        self.btnCrack.setVisible(True)
+        self.progressBar.setVisible(False)
+
+    def connectSignalSlots(self):
+        self.actionChooseFile.triggered.connect(self.ChooseFile)
+        self.actionConfigBrute.triggered.connect(self.ConfigBrute)
+        self.actionConfigWordList.triggered.connect(self.ConfigWL)
+        self.actionConfigRamp.triggered.connect(self.ConfigRamp)
+        self.actionCrack.triggered.connect(self.startCrack)
+
+    def ConfigBrute(self):
+        if self.inputBrute.isChecked():
+            self.inputWordList.setChecked(False)
+            self.turnUI()
+            self.mode = "brute"
+            self.setUI(self.mode)
+        else:
+            self.turnUI(False)
+            self.mode = ""
+
+    def ConfigWL(self):
+        if self.inputWordList.isChecked():
+            self.inputBrute.setChecked(False)
+            self.turnUI()
+            self.mode = "word"
+            self.setUI(self.mode)
+        else:
+            self.turnUI(False)
+            self.mode = ""
+
+    def ConfigRamp(self):
+        if self.inputRamp.isChecked():
+            self.label_4.setVisible(True)
+            self.inputStartLength.setVisible(True)
+        else:
+            self.label_4.setVisible(False)
+            self.inputStartLength.setText("")
+            self.inputStartLength.setVisible(False)
+
+    def startCrack(self):
+        global brute_force_results
+        input_data = self.input_data
+        file_path = self.inputFilePath.text()
+        if not file_path.strip():
+            MainWindow.showMessageBox(
+                self,
+                info="File path is empty.",
+                detail="Enter file path or use Browse button.",
+            )
+            return 1
+        if not pathlib.Path(file_path).absolute().exists():
+            MainWindow.showMessageBox(
+                self,
+                info="File doesn't exist. Use the browse button to select one.",
+                detail=f"Path: {pathlib.Path(file_path).absolute()}",
+            )
+            return 1
+        salt = self.salt
+        salt_pattern = self.salt_pattern
+        hash_type = self.hash_type
+        self.progressBar.setVisible(True)
+        if self.mode == "word":
+            results = cracker.WordList(
+                self.progressBar,
+                input_data,
+                file_path,
+                hash_type,
+            )
+            if results:
+                MainWindow.showMessageBox(
+                    self,
+                    title="Finished!",
+                    text="Found plain text!",
+                    info=results,
+                    level=1,
+                    button=2,
+                )
+                brute_force_results = results
+                self.close()
+            else:
+                brute_force_results = ""
+                MainWindow.showMessageBox(
+                    self,
+                    "Failed!",
+                    "Plain text not found.",
+                    "Try another Word list or use brute-force.",
+                )
+        else:
+            # TODO: implement brute-force function
+            print("Brute-force not implemented yet.")
+
+    def ChooseFile(self):
+        d = QFileDialog(self)
+        d.setFileMode(QFileDialog.ExistingFile)
+        d.setAcceptMode(QFileDialog.AcceptOpen)
+        d.setNameFilter("Text Files (*.txt *.list *.asc)")
+        if d.exec():
+            filename = d.selectedFiles()[0]
+            self.inputFilePath.setText(filename)
+
+
+class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -121,12 +294,6 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
             pool_result.wait(1)
             text = pool_result.get(timeout=self.pasteTimeout)
             self.inputText.setPlainText(self.inputText.toPlainText() + text)
-            self.showMessageBox(
-                title="Finished!",
-                text="Pasted data into the input area.",
-                level=1,
-                button=2,
-            )
         except mpTimeoutError:
             self.showMessageBox(
                 info="Pasting took too long to finish.",
@@ -432,7 +599,33 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
             raise
 
     def doBrute(self):
-        print("brute pressed")
+        global brute_force_results
+        input_data = self.inputText.toPlainText()
+        if not self.checkTextEmpty(
+            input_data, "input", "Type some data in input area or use paste button."
+        ):
+            return 0
+        alphabet = self.inputAlphabet.displayText()
+        salt = self.inputSalt.displayText()
+        salt_pattern = self.inputSaltPattern.displayText()
+        match self.Operation:
+            case "MD5" | "SHA256" | "SHA512":
+                hash_type = self.Operation
+            case _:
+                hash_type = "other"
+        if self.Operation == "Caesar Cipher":
+            results = cracker.caesar_brute(input_data, alphabet)
+            for i in results.items():
+                p = self.outputText.toPlainText()
+                self.outputText.setPlainText(f"{p}{i[0]}: {i[1]}\n")
+            self.showMessageBox(
+                title="Finished", text="Decrypted the input.", level=1, button=2
+            )
+        else:
+            d = BruteForceDialog(input_data, salt, salt_pattern, hash_type)
+            d.exec()
+            if brute_force_results:
+                self.outputText.setPlainText(brute_force_results)
 
     def doConfig(self):
         print("config pressed")
@@ -456,6 +649,6 @@ class Window(QMainWindow, main_ui.Ui_MainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    win = Window()
+    win = MainWindow()
     win.show()
     sys.exit(app.exec())
