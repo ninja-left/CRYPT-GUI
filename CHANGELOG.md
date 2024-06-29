@@ -3,8 +3,18 @@
 ### Added
 - Zoom in & Zoom out buttons
 - GUI: Added Config button
+- GUI: Brute-force dialog
+- compile_uic.sh: Brute-force UI
+- Code: Caesar Cipher & WordList brute-force functions
+- compile_fix.sh: Fixes resource file imports after compiling UI files
+- brute.py: [brute](https://github.com/rdegges/brute) library with fixed bug
 ### Changed
 - ROADMAP.md: Replaced link with list of features to add
+- compile.sh: Includes fix script
+- Code: class Window -> MainWindow
+### Removed
+- Code: Alert on pasting successfully
+
 ## [0.1.3]
 ### Added
 - Code: 2 Custom error classes
