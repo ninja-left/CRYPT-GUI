@@ -15,9 +15,10 @@ import pathlib
 from multiprocessing import Pool, TimeoutError as mpTimeoutError
 from string import ascii_letters, ascii_uppercase
 
-from modules import main_ui, resources_rc, cracker, ciphers, bf_ui
+from modules import main_ui, resources_rc, functions, ciphers, bf_ui, brute
 
 brute_force_results = ""
+
 
 class BadInputError(Exception):
     def __init__(self, message: str = "Input is not valid"):
@@ -137,31 +138,47 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
         global brute_force_results
         input_data = self.input_data
         file_path = self.inputFilePath.text()
-        if not file_path.strip():
-            MainWindow.showMessageBox(
-                self,
-                info="File path is empty.",
-                detail="Enter file path or use Browse button.",
-            )
-            return 1
-        if not pathlib.Path(file_path).absolute().exists():
-            MainWindow.showMessageBox(
-                self,
-                info="File doesn't exist. Use the browse button to select one.",
-                detail=f"Path: {pathlib.Path(file_path).absolute()}",
-            )
-            return 1
         salt = self.salt
         salt_pattern = self.salt_pattern
         hash_type = self.hash_type
+        length = self.inputMaxLength.text()
+        ramp = self.inputRamp.isChecked()
+        start_len = self.inputStartLength.text()
+        use_Letters = self.inputLetters.isChecked()
+        use_Numbers = self.inputNumbers.isChecked()
+        use_Symbols = self.inputSymbols.isChecked()
+        use_Space = self.inputSpaces.isChecked()
+        self.progressBar.setValue(0)
         self.progressBar.setVisible(True)
+
         if self.mode == "word":
-            results = cracker.WordList(
-                self.progressBar,
-                input_data,
-                file_path,
-                hash_type,
-            )
+            # Checks
+            if not file_path.strip():
+                MainWindow.showMessageBox(
+                    self,
+                    info="File path is empty.",
+                    detail="Enter file path or use Browse button.",
+                )
+                return 1
+            if not pathlib.Path(file_path).absolute().exists():
+                MainWindow.showMessageBox(
+                    self,
+                    info="File doesn't exist. Use the browse button to select one.",
+                    detail=f"Path: {pathlib.Path(file_path).absolute()}",
+                )
+                return 1
+
+            # Main
+            with open(file_path, "rb") as file_obj:
+                for password in file_obj:
+                    password = password.strip(b"\n")
+                    if functions.check_password(password, input_data, hash_type):
+                        results = password
+                        break
+                else:
+                    results = ""
+
+            # Results
             if results:
                 MainWindow.showMessageBox(
                     self,
@@ -181,34 +198,74 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
                     "Plain text not found.",
                     "Try another Word list or use brute-force.",
                 )
+
         else:
-            # TODO: implement brute-force function
-            
-            possible_keys = generate_possible_keys()  # Assume this function generates all possible keys
-            total_keys = len(possible_keys)
-            for i, key in enumerate(possible_keys):
-                decrypted_data = attempt_decrypt(input_data, key)  # Assume this function attempts to decrypt the data
-                if decrypted_data:
-                    MainWindow.showMessageBox(
-                        self,
-                        title="Finished!",
-                        text="Found plain text!",
-                        info=decrypted_data,
-                        level=1,
-                        button=2,
-                    )
-                    brute_force_results = decrypted_data
-                    self.close()
-                    return
-                self.progressBar.setValue((i + 1) * 100 / total_keys)
-            brute_force_results = ""
-            MainWindow.showMessageBox(
-                self,
-                "Failed!",
-                "Plain text not found.",
-                "Try another Word list or use brute-force.",
+            # Checks
+            if start_len:
+                try:
+                    start_len = int(start_len)
+                except:
+                    start_len = 1
+            else:
+                start_len = 1
+            if length:
+                try:
+                    length = int(length)
+                except:
+                    MainWindow.showMessageBox(self, info="Length is invalid.")
+                    return 1
+
+            # Main
+            total_keys = functions.generate_possible_keys(
+                length,
+                ramp,
+                use_Letters,
+                use_Symbols,
+                use_Numbers,
+                use_Space,
+                start_len,
             )
-            print("Brute-force not implemented yet.")
+            print(f"Total possible keys: {total_keys:,}")
+            i = 0
+            for password in brute.brute(
+                start_len,
+                length,
+                ramp,
+                use_Letters,
+                use_Numbers,
+                use_Symbols,
+                use_Space,
+            ):
+                if functions.check_password(password, input_data, hash_type, "b"):
+                    decrypted_data = password
+                    print("", decrypted_data)
+                    break
+                else:
+                    decrypted_data = ""
+                self.progressBar.setValue((i + 1) * 100 / total_keys)
+
+            # Results
+            if decrypted_data:
+                self.progressBar.setValue(100)
+                MainWindow.showMessageBox(
+                    self,
+                    title="Finished!",
+                    text="Found plain text!",
+                    info=decrypted_data,
+                    level=1,
+                    button=2,
+                )
+                brute_force_results = decrypted_data
+                self.close()
+                return
+            else:
+                brute_force_results = ""
+                MainWindow.showMessageBox(
+                    self,
+                    "Failed!",
+                    "Plain text not found.",
+                    "Tweak the options or try using Salts.",
+                )
 
     def ChooseFile(self):
         d = QFileDialog(self)
@@ -638,13 +695,22 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 hash_type = self.Operation
             case _:
                 hash_type = "other"
+
         if self.Operation == "Caesar Cipher":
-            results = cracker.caesar_brute(input_data, alphabet)
+            brute_force_data = dict()
+            for key in range(1, len(alphabet) + 1):
+                key = -key
+                keyMatch = ciphers.caesar_cipher(input_string, key, alphabet)
+                brute_force_data[f"Key {abs(key)}"] = keyMatch
+            results = brute_force_data
             for i in results.items():
                 p = self.outputText.toPlainText()
                 self.outputText.setPlainText(f"{p}{i[0]}: {i[1]}\n")
             self.showMessageBox(
-                title="Finished", text="Decrypted the input.", level=1, button=2
+                title="Finished",
+                text="Decrypted the input.",
+                level=1,
+                button=2,
             )
         else:
             d = BruteForceDialog(input_data, salt, salt_pattern, hash_type)
