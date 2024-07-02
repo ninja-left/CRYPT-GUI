@@ -1,5 +1,5 @@
 # Overall CRYPT Development & Features Roadmap
-- [ ] Implement brute-forcers
+- [X] Implement brute-forcers
 - [ ] Implement a configuration system
     - Using a config file maybe
     - A menu entry for editing the file

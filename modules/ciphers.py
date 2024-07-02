@@ -24,7 +24,7 @@ from re import search
 import passlib.hash
 
 
-# TODO: change the baseX functions so they may use alternative functions.
+# TODO: change the baseX functions so they may use alternative functions in order to change alphabet.
 def base16_encode(txt: str) -> str:
     return base64.b16encode(txt.encode("utf-8")).decode("utf-8")
 
@@ -334,9 +334,12 @@ def vig_cipher(text: str, key: str, alphabet: str, mode: str = "e" or "d") -> st
 
 
 # Hashes
-# TODO: add a way to include salt with the text
 def md5(text: str) -> str:
     return hashlib.md5(text.encode()).hexdigest()
+
+
+def md5_b(text: bytes) -> str:
+    return hashlib.md5(text).hexdigest()
 
 
 def md5_crypt(text: str) -> str:
@@ -347,12 +350,20 @@ def sha256(text: str) -> str:
     return hashlib.sha256(text.encode()).hexdigest()
 
 
+def sha256_b(text: bytes) -> str:
+    return hashlib.sha256(text).hexdigest()
+
+
 def sha256_crypt(text: str) -> str:
     return passlib.hash.sha256_crypt.hash(text)
 
 
 def sha512(text: str) -> str:
     return hashlib.sha512(text.encode()).hexdigest()
+
+
+def sha512_b(text: bytes) -> str:
+    return hashlib.sha512(text).hexdigest()
 
 
 def sha512_crypt(text: str) -> str:
