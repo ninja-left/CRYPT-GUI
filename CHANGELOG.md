@@ -8,6 +8,8 @@
 - Code: Caesar Cipher & WordList brute-force functions
 - compile_fix.sh: Fixes resource file imports after compiling UI files
 - brute.py: [brute](https://github.com/rdegges/brute) library with fixed bug
+- functions.py: Moved cracker functions to Crypt.py & Renamed it to functions.py
+- Code: Fully Implemented Brute-forcers
 ### Changed
 - ROADMAP.md: Replaced link with list of features to add
 - compile.sh: Includes fix script
@@ -56,6 +58,7 @@
 - Copy and Paste functions
 - Buttons change based on chosen operation mode
 
+[0.1.4]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.4
 [0.1.3]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.3
 [0.1.2]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.2
 [0.1.1]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.1
