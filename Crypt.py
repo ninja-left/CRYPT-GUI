@@ -183,6 +183,31 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
                 )
         else:
             # TODO: implement brute-force function
+            
+            possible_keys = generate_possible_keys()  # Assume this function generates all possible keys
+            total_keys = len(possible_keys)
+            for i, key in enumerate(possible_keys):
+                decrypted_data = attempt_decrypt(input_data, key)  # Assume this function attempts to decrypt the data
+                if decrypted_data:
+                    MainWindow.showMessageBox(
+                        self,
+                        title="Finished!",
+                        text="Found plain text!",
+                        info=decrypted_data,
+                        level=1,
+                        button=2,
+                    )
+                    brute_force_results = decrypted_data
+                    self.close()
+                    return
+                self.progressBar.setValue((i + 1) * 100 / total_keys)
+            brute_force_results = ""
+            MainWindow.showMessageBox(
+                self,
+                "Failed!",
+                "Plain text not found.",
+                "Try another Word list or use brute-force.",
+            )
             print("Brute-force not implemented yet.")
 
     def ChooseFile(self):
