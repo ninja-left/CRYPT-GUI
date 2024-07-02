@@ -8,12 +8,12 @@
 - Code: Caesar Cipher & WordList brute-force functions
 - compile_fix.sh: Fixes resource file imports after compiling UI files
 - brute.py: [brute](https://github.com/rdegges/brute) library with fixed bug
-- functions.py: Moved cracker functions to Crypt.py & Renamed it to functions.py
 - Code: Fully Implemented Brute-forcers
 ### Changed
 - ROADMAP.md: Replaced link with list of features to add
 - compile.sh: Includes fix script
 - Code: class Window -> MainWindow
+- functions.py: Moved cracker functions to Crypt.py & Renamed it to functions.py
 ### Removed
 - Code: Alert on pasting successfully
 
