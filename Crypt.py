@@ -169,11 +169,15 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
                 return 1
 
             # Main
+            total_lines = functions.get_file_lines(file_path)
+            i = 0
             with open(file_path, "rb") as file_obj:
                 for password in file_obj:
+                    i += 1
+                    self.progressBar.setValue(i / total_lines * 100)
                     password = password.strip(b"\n")
                     if functions.check_password(password, input_data, hash_type):
-                        results = password
+                        results = str(password)
                         break
                 else:
                     results = ""
@@ -236,17 +240,17 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
                 use_Symbols,
                 use_Space,
             ):
+                i += 1
+                self.progressBar.setValue((i + 1) * 100 / total_keys)
                 if functions.check_password(password, input_data, hash_type, "b"):
                     decrypted_data = password
                     print("", decrypted_data)
                     break
                 else:
                     decrypted_data = ""
-                self.progressBar.setValue((i + 1) * 100 / total_keys)
 
             # Results
             if decrypted_data:
-                self.progressBar.setValue(100)
                 MainWindow.showMessageBox(
                     self,
                     title="Finished!",
