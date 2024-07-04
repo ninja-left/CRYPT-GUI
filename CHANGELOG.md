@@ -1,4 +1,12 @@
 # Changelog
+## [0.1.5]
+### Added
+- Config file for setting different variables
+- Some variables now use the default set in config.yaml
+- Functions to save & load settings
+### Changed
+- Included a condition for salt patterns to check if SALT & INPUT are specified
+
 ## [0.1.4]
 ### Added
 - Zoom in & Zoom out buttons

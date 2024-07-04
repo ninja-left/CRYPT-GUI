@@ -18,10 +18,12 @@
 """
 
 import hashlib
+from pathlib import Path
 from multiprocessing import Pool
 from passlib.context import CryptContext
 import mmap
 from PySide6.QtWidgets import QProgressBar
+from ruamel.yaml import YAML, YAMLError
 from modules.ciphers import (
     md5_b,
     sha256_b,
@@ -123,3 +125,39 @@ def generate_possible_keys(
     else:
         total_combinations = total_options**length
     return total_combinations
+
+
+def save_settings(data: dict | None = None) -> bool:
+    """
+    if `data` is not specified, it will try to load
+    """
+    config_file = Path("config.yaml").absolute()
+    default_config_file = Path("default_config.yaml").absolute()
+    yaml = YAML(typ="safe")
+    yaml.indent(4)
+    yaml.allow_unicode = True
+    yaml.default_flow_style = False
+    try:
+        if not data:
+            with open(default_config_file, "r") as f:
+                data = yaml.load(f)
+        with open(config_file, "w") as f:
+            yaml.dump(data, f)
+    except:
+        return False
+    return True
+
+
+def load_settings() -> dict:
+    config_file = Path("config.yaml").absolute()
+    default_config_file = Path("default_config.yaml").absolute()
+    yaml = YAML(typ="safe")
+
+    try:
+        with open(config_file, "r") as f:
+            return yaml.load(f)
+    except:
+        with open(default_config_file, "r") as f:
+            data = yaml.load(f)
+        save_settings(data)
+        return data
