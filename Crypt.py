@@ -13,7 +13,6 @@ import pyperclip
 import sys
 import pathlib
 from multiprocessing import Pool, TimeoutError as mpTimeoutError
-from string import ascii_letters, ascii_uppercase
 
 from modules import main_ui, resources_rc, functions, ciphers, bf_ui, brute
 
@@ -43,6 +42,31 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
         self.salt_pattern = salt_pattern
         self.hash_type = hash_type
         self.mode = ""
+
+        # User settings
+        settings = functions.load_settings()
+        include = settings["brute"]["include"]
+
+        self.inputMaxLength.setText(settings["brute"]["max length"])
+        if settings["brute"]["ramp"]:
+            self.inputRamp.setChecked(True)
+        self.inputStartLength.setText(settings["brute"]["start length"])
+        if include["L"]:
+            self.inputLetters.setChecked(True)
+        else:
+            self.inputLetters.setChecked(False)
+        if include["D"]:
+            self.inputNumbers.setChecked(True)
+        else:
+            self.inputNumbers.setChecked(False)
+        if include["S"]:
+            self.inputSymbols.setChecked(True)
+        else:
+            self.inputSymbols.setChecked(False)
+        if include["W"]:
+            self.inputSpaces.setChecked(True)
+        else:
+            self.inputSpaces.setChecked(False)
 
     def turnUI(self, To=True):
         self.label.setVisible(To)
@@ -140,6 +164,15 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
         file_path = self.inputFilePath.text()
         salt = self.salt
         salt_pattern = self.salt_pattern
+        if salt:
+            if salt_pattern and "SALT" in salt_pattern and "INPUT" in salt_pattern:
+                good_data = salt_pattern.replace("SALT", salt).replace(
+                    "INPUT", input_data
+                )
+            else:
+                good_data = f"{salt}+{input_data}"
+        else:
+            good_data = input_data
         hash_type = self.hash_type
         length = self.inputMaxLength.text()
         ramp = self.inputRamp.isChecked()
@@ -286,26 +319,35 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.connectSignalSlots()
-        self.pasteTimeout = 1  # seconds
         self.Operation = ""
         self.defaultTextEncode = "Encode/Encrypt"
         self.defaultTextDecode = "Decode/Decrypt"
         self.defaultIconDecode = QtGui.QIcon()
         self.defaultIconDecode.addPixmap(":/assets/Unlocked.png")
         self.pool = Pool()
-        self.default_rounds_bcrypt = "14"
-        self.default_rounds_argon2 = "4"
-        self.default_rounds_pbkdf2 = "30000"
 
-        # TODO: User should be able to change default alphabets
-        # TODO: Read default alphabets from a config file
-        self.default_alphabet = ascii_letters
-        self.vigenere_alphabet = ascii_uppercase
-        self.b32_alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
-        self.b64_alphabet = (
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-        )
-        self.b85_alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+-;<=>?@^_`{|}~"
+        # User settings
+        settings = functions.load_settings()
+        self.paste_timeout = settings["other"]["paste timeout"]
+        self.default_font_size = settings["other"]["font size"]
+        self.rounds_bcrypt = settings["rounds"]["bcrypt"]
+        self.rounds_argon2 = settings["rounds"]["argon2"]
+        self.rounds_pbkdf2 = settings["rounds"]["pbkdf2"]
+        self.default_alphabet = settings["alphabets"]["default"]
+        self.b32_alphabet = settings["alphabets"]["base32"]
+        self.b64_alphabet = settings["alphabets"]["base64"]
+        self.b85_alphabet = settings["alphabets"]["base85"]
+        self.vigenere_alphabet = settings["alphabets"]["vigenere"]
+        self.caesar_key = settings["default keys"]["caesar cipher"]
+        self.vigenere_key = settings["default keys"]["vigenere"]
+        self.default_pattern = settings["default pattern"]
+
+        outputFont = self.outputText.font()
+        inputFont = self.inputText.font()
+        outputFont.setPointSize(self.default_font_size)
+        inputFont.setPointSize(self.default_font_size)
+        self.outputText.setFont(outputFont)
+        self.inputText.setFont(inputFont)
 
     def connectSignalSlots(self):
         self.actionCopy.triggered.connect(self.doCopy)
@@ -378,7 +420,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         try:
             pool_result = self.pool.apply_async(pyperclip.paste)
             pool_result.wait(1)
-            text = pool_result.get(timeout=self.pasteTimeout)
+            text = pool_result.get(timeout=self.paste_timeout)
             self.inputText.setPlainText(self.inputText.toPlainText() + text)
         except mpTimeoutError:
             self.showMessageBox(
@@ -453,8 +495,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                         self.inputKey.setEnabled(False)
                     case "Vigenere Cipher":
                         self.inputAlphabet.setText(self.vigenere_alphabet)
+                        self.inputKey.setText(self.vigenere_key)
                     case "Caesar Cipher":
                         self.btnBruteForce.setEnabled(True)
+                        self.inputKey.setText(self.caesar_key)
             case _:
                 # Hashes
                 self.btnEncode.setText("Hash")
@@ -470,6 +514,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 self.inputSalt.setEnabled(True)
                 self.inputRounds.setEnabled(False)
                 self.inputSaltPattern.setEnabled(True)
+                self.inputSaltPattern.setText(self.default_pattern)
                 self.inputPlainText.setEnabled(True)
                 if self.Operation in [
                     "bCrypt",
@@ -482,11 +527,11 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     self.inputRounds.setEnabled(True)
                     match self.Operation:
                         case "bCrypt":
-                            self.inputRounds.setText(self.default_rounds_bcrypt)
+                            self.inputRounds.setText(self.rounds_bcrypt)
                         case "Argon2":
-                            self.inputRounds.setText(self.default_rounds_argon2)
+                            self.inputRounds.setText(self.rounds_argon2)
                         case "PBKDF2 SHA256" | "PBKDF2 SHA512":
-                            self.inputRounds.setText(self.default_rounds_pbkdf2)
+                            self.inputRounds.setText(self.rounds_pbkdf2)
 
     def doDecode(self):
         input_data = self.inputText.toPlainText()
@@ -534,7 +579,11 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     if not plain.strip():
                         raise BadInputError("No plain text specified.")
                     if salt:
-                        if salt_pattern:
+                        if (
+                            salt_pattern
+                            and "SALT" in salt_pattern
+                            and "INPUT" in salt_pattern
+                        ):
                             good_plain = salt_pattern.replace("SALT", salt).replace(
                                 "INPUT", plain
                             )
@@ -641,7 +690,11 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     # Hashes
                     display_act = "Hashed"
                     if salt:
-                        if salt_pattern:
+                        if (
+                            salt_pattern
+                            and "SALT" in salt_pattern
+                            and "INPUT" in salt_pattern
+                        ):
                             good_data = salt_pattern.replace("SALT", salt).replace(
                                 "INPUT", input_data
                             )
