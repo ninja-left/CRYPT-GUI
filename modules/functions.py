@@ -158,4 +158,6 @@ def load_settings() -> dict:
             return yaml.load(f)
     except:
         with open(default_config_file, "r") as f:
-            return yaml.load(f)
+            data = yaml.load(f)
+        save_settings(data)
+        return data
