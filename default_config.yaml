@@ -8,29 +8,26 @@ alphabets:
   vigenere: ABCDEFGHIJKLMNOPQRSTUVWXYZ
 
 default keys:
-  caesar cipher: 1
-  vigenere: change
+  caesar cipher: '1'
+  vigenere: changeme
 
-salt pattern:
-  md5: SALT+INPUT
-  sha256: SALT+INPUT
-  sha512: SALT+INPUT
-  nt: SALT+INPUT
+default pattern: SALT+INPUT
 
 rounds:
-  bcrypt: 14
-  argon2: 4
-  pbkdf2: 30000
+  bcrypt: "14"
+  argon2: "4"
+  pbkdf2: "30000"
 
 brute:
-  max length: 8
-  ramp: yes
-  start length: 1
+  max length: "8"
+  ramp: true
+  start length: "1"
   include:
-    L: yes
-    D: yes
-    S: yes
-    W: no
+    L: true
+    D: true
+    S: true
+    W: false
 
 other:
-  font size: 12
+  font size: 10
+  paste timeout: 1  # seconds
