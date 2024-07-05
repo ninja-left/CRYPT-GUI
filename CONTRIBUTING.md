@@ -3,10 +3,7 @@
 Firstly, Thanks for considering to contribute!
 All types of contributions are encouraged and valued. See the below for different ways to help and details about how this project handles them. Please make sure to read the relevant section before making your contribution.
 
-If you like the project, but just don't have time to contribute, that's fine. There are other easy ways to support the project and show your appreciation, which I would also be very happy about:
-1. Star the project
-2. Refer `CRYPT` in your project's readme
-3. Mention the project at local meetups and tell your friends/colleagues
+If you like the project, but just don't have time to contribute, that's fine. There are easier ways to support the project and show your appreciation, for example staring the project.
 
 ## Code of Conduct
 
@@ -34,10 +31,10 @@ A good bug report shouldn't leave others needing to chase you up for more inform
 This section guides you through submitting an enhancement suggestion for CRYPT, including completely new features and minor improvements to existing functionality.
 
 Before submitting an enhancement:
-- Perform a [search](https://github.com/ninja-left/CRYPT-GUI/issues) to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
+- Perform a [search](https://github.com/ninja-left/CRYPT-GUI/issues?q=label%3Aenhancement) to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
 - Find out whether your idea fits with the scope and aims of the project. It's up to you to make a strong case to convince the project's developers of the merits of this feature. Keep in mind that we want features that will be useful to the majority of our users and not just a small subset. If you're just targeting a minority of users, consider writing an add-on/plugin library.
 
-Enhancement suggestions are tracked as [GitHub issues](https://github.com/ninja-left/CRYPT-GUI/issues).
+Enhancement suggestions are tracked as [GitHub issues](https://github.com/ninja-left/CRYPT-GUI/issues?q=label%3Aenhancement).
 - Use a **clear and descriptive title** for the issue to identify the suggestion.
 - Provide a **step-by-step description of the suggested enhancement** in as many details as possible.
 - **Describe the current behavior** and **explain which behavior you expected to see instead** and why. At this point you can also tell which alternatives do not work for you.
@@ -52,13 +49,12 @@ Steps for contributing:
 - Install/Update to Python 3.11.
 - Use [Black](https://github.com/psf/black) formater.
 - Create a new branch and start contribution.
-Pull Request
+- Pull Request
 
-When you're done with changes, create a pull request. Please be specific and give as much details about the changes as possible. Don't forget to link PR to issue if you are solving one.
+When you're done with changes, create a pull request. Please be specific and give as much details about the changes as possible. Don't forget to link to issue(s) if your PR solves any.
 Enable the checkbox to allow maintainer edits so the branch can be updated for a merge. We may ask questions or request additional information.
-We may ask for changes to be made before a PR can be merged, either using suggested changes or pull request comments.  You can make any other changes in your fork, then commit them to your branch.
+We may ask for changes to be made before a PR can be merged, either using suggested changes or pull request comments. You can make any other changes in your fork, then commit them to your branch.
 As you update your PR and apply changes, mark each conversation as resolved.
-If you run into any merge issues, checkout this git tutorial to help you resolve merge conflicts and other issues.
 
 ## Roadmap
-- [ ] Implement the original CRYPT
+See [ROADMAP.md](./ROADMAP.md) for details
