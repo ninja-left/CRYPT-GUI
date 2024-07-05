@@ -127,7 +127,7 @@ def generate_possible_keys(
     return total_combinations
 
 
-def save_settings(data: dict | None = None) -> bool:
+def save_settings(data: dict | None = None) -> None:
     """
     if `data` is not specified, it will try to load
     """
@@ -137,15 +137,11 @@ def save_settings(data: dict | None = None) -> bool:
     yaml.indent(4)
     yaml.allow_unicode = True
     yaml.default_flow_style = False
-    try:
-        if not data:
-            with open(default_config_file, "r") as f:
-                data = yaml.load(f)
-        with open(config_file, "w") as f:
-            yaml.dump(data, f)
-    except:
-        return False
-    return True
+    if not data:
+        with open(default_config_file, "r") as f:
+            data = yaml.load(f)
+    with open(config_file, "w") as f:
+        yaml.dump(data, f)
 
 
 def load_settings() -> dict:
