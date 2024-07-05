@@ -1,0 +1,14 @@
+<RCC>
+  <qresource lang="en">
+    <file>images/Configure.png</file>
+    <file>images/Crack.png</file>
+    <file>images/icon.png</file>
+    <file>images/Locked.png</file>
+    <file>images/Input.png</file>
+    <file>images/Save.png</file>
+    <file>images/Output.png</file>
+    <file>images/Unlocked.png</file>
+    <file>images/Load.png</file>
+    <file>images/Verify.png</file>
+  </qresource>
+</RCC>

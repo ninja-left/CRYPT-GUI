@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
-    <normaloff>:/assets/Configure.png</normaloff>:/assets/Configure.png</iconset>
+    <normaloff>:/images/Configure.png</normaloff>:/images/Configure.png</iconset>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
@@ -462,7 +462,7 @@
         </property>
         <property name="icon">
          <iconset resource="resources.qrc">
-          <normaloff>:/assets/Save.png</normaloff>:/assets/Save.png</iconset>
+          <normaloff>:/images/Save.png</normaloff>:/images/Save.png</iconset>
         </property>
         <property name="shortcut">
          <string>Ctrl+S</string>
@@ -482,7 +482,7 @@
         </property>
         <property name="icon">
          <iconset resource="resources.qrc">
-          <normaloff>:/assets/Load.png</normaloff>:/assets/Load.png</iconset>
+          <normaloff>:/images/Load.png</normaloff>:/images/Load.png</iconset>
         </property>
         <property name="shortcut">
          <string>Ctrl+L</string>

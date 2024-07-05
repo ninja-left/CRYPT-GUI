@@ -27,7 +27,7 @@ class Ui_Dialog(object):
             Dialog.setObjectName(u"Dialog")
         Dialog.resize(638, 780)
         icon = QIcon()
-        icon.addFile(u":/assets/Configure.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(u":/images/Configure.png", QSize(), QIcon.Normal, QIcon.Off)
         Dialog.setWindowIcon(icon)
         self.actionSaveSettings = QAction(Dialog)
         self.actionSaveSettings.setObjectName(u"actionSaveSettings")
@@ -361,7 +361,7 @@ class Ui_Dialog(object):
         self.btnSave.setObjectName(u"btnSave")
         self.btnSave.setMaximumSize(QSize(80, 25))
         icon1 = QIcon()
-        icon1.addFile(u":/assets/Save.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon1.addFile(u":/images/Save.png", QSize(), QIcon.Normal, QIcon.Off)
         self.btnSave.setIcon(icon1)
 
         self.horizontalLayout_18.addWidget(self.btnSave)
@@ -370,7 +370,7 @@ class Ui_Dialog(object):
         self.btnLoad.setObjectName(u"btnLoad")
         self.btnLoad.setMaximumSize(QSize(80, 25))
         icon2 = QIcon()
-        icon2.addFile(u":/assets/Load.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon2.addFile(u":/images/Load.png", QSize(), QIcon.Normal, QIcon.Off)
         self.btnLoad.setIcon(icon2)
 
         self.horizontalLayout_18.addWidget(self.btnLoad)
