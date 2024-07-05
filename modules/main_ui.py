@@ -434,12 +434,6 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addWidget(self.label_2)
 
-        self.label_3 = QLabel(self.verticalLayoutWidget_3)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_3.addWidget(self.label_3)
-
         self.textBrowser = QTextBrowser(self.verticalLayoutWidget_3)
         self.textBrowser.setObjectName(u"textBrowser")
         self.textBrowser.setOpenLinks(False)
@@ -522,7 +516,13 @@ class Ui_MainWindow(object):
         self.btnPaste.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+V", None))
 #endif // QT_CONFIG(shortcut)
         self.btnZoomIn.setText(QCoreApplication.translate("MainWindow", u"+", None))
+#if QT_CONFIG(shortcut)
+        self.btnZoomIn.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+=", None))
+#endif // QT_CONFIG(shortcut)
         self.btnZoomOut.setText(QCoreApplication.translate("MainWindow", u"-", None))
+#if QT_CONFIG(shortcut)
+        self.btnZoomOut.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+-", None))
+#endif // QT_CONFIG(shortcut)
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.inputTab), QCoreApplication.translate("MainWindow", u"Input", None))
 #if QT_CONFIG(tooltip)
         self.label_7.setToolTip(QCoreApplication.translate("MainWindow", u"Keywords: SALT, INPUT | \"SALT+INPUT\" means there would be a plus sign between salt and input before hashing.", None))
@@ -697,8 +697,17 @@ class Ui_MainWindow(object):
         self.btnConfig.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+,", None))
 #endif // QT_CONFIG(shortcut)
         self.btnBruteForce.setText(QCoreApplication.translate("MainWindow", u"&Brute Force", None))
+#if QT_CONFIG(shortcut)
+        self.btnBruteForce.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+B", None))
+#endif // QT_CONFIG(shortcut)
         self.btnDecode.setText(QCoreApplication.translate("MainWindow", u"&Decode/Decrypt", None))
+#if QT_CONFIG(shortcut)
+        self.btnDecode.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+D", None))
+#endif // QT_CONFIG(shortcut)
         self.btnEncode.setText(QCoreApplication.translate("MainWindow", u"&Encode/Encrypt", None))
+#if QT_CONFIG(shortcut)
+        self.btnEncode.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+E", None))
+#endif // QT_CONFIG(shortcut)
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.setupTab), QCoreApplication.translate("MainWindow", u"Setup", None))
 #if QT_CONFIG(tooltip)
         self.outputText.setToolTip(QCoreApplication.translate("MainWindow", u"Input area", None))
@@ -727,6 +736,9 @@ class Ui_MainWindow(object):
         self.btnZoomIn_2.setAccessibleDescription(QCoreApplication.translate("MainWindow", u"Zoom in the text area.", None))
 #endif // QT_CONFIG(accessibility)
         self.btnZoomIn_2.setText(QCoreApplication.translate("MainWindow", u"+", None))
+#if QT_CONFIG(shortcut)
+        self.btnZoomIn_2.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+=", None))
+#endif // QT_CONFIG(shortcut)
 #if QT_CONFIG(tooltip)
         self.btnZoomOut_2.setToolTip(QCoreApplication.translate("MainWindow", u"Zoom out the text area.", None))
 #endif // QT_CONFIG(tooltip)
@@ -740,9 +752,11 @@ class Ui_MainWindow(object):
         self.btnZoomOut_2.setAccessibleDescription(QCoreApplication.translate("MainWindow", u"Zoom out the text area.", None))
 #endif // QT_CONFIG(accessibility)
         self.btnZoomOut_2.setText(QCoreApplication.translate("MainWindow", u"-", None))
+#if QT_CONFIG(shortcut)
+        self.btnZoomOut_2.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+-", None))
+#endif // QT_CONFIG(shortcut)
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.outputTab), QCoreApplication.translate("MainWindow", u"Output", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"CRYPT GUI", None))
-        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Licenses", None))
         self.textBrowser.setDocumentTitle(QCoreApplication.translate("MainWindow", u"GNU General Public License v3.0", None))
         self.textBrowser.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><title>GNU General Public License v3.0</title><style type=\"text/css\">\n"
@@ -751,22 +765,35 @@ class Ui_MainWindow(object):
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">CRYPT GUI, A Collection of tools, is licensed under GPL v3.0 Copyright (c) 2024 Ninja Left</p>\n"
-"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">CRYPT was built using Python 3.11, Qt Designer &amp; Pyside6.</p>\n"
-"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; ma"
-                        "rgin-right:0px; -qt-block-indent:0; text-indent:0px;\">Some functions used in this software are from <a href=\"https://github.com/TheAlgorithms/Python\"><span style=\" text-decoration: underline; color:#b85b6a;\">This Repository</span></a></p>\n"
-"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ffffff;\">and are licensed under MIT Copyright (c) 2016-2024 TheAlgorithms and contributors.</span></p>\n"
+"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">CRYPT GUI is licensed under GPL v3.0 Copyright (c) 2024 Ninja Left</p>\n"
+"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">CRYPT was built using Python 3, Qt Designer &amp; Pyside6.</p>\n"
+"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-i"
+                        "ndent:0; text-indent:0px;\">Some functions used in this software are from <a href=\"https://github.com/TheAlgorithms/Python\"><span style=\" text-decoration: underline; color:#b85b6a;\">This Repository </span></a><span style=\" color:#ffffff;\">and are licensed under MIT Copyright (c) 2016-2024 TheAlgorithms and contributors.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
 "<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'monospace'; color:#ffffff;\">Icons:</span></p>\n"
-"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://www.flaticon.com/free-icon"
-                        "/configuration_9780271\"><span style=\" text-decoration: underline; color:#b85b6a;\">Configure icon by afif fudin - Flaticon</span></a></p>\n"
-"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://www.flaticon.com/free-icon/login_5729989\"><span style=\" text-decoration: underline; color:#b85b6a;\">Login icon by FR_Media - Flaticon</span></a></p>\n"
+"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://www.flaticon.com/free-icon/configuration_9780271\"><span style=\" text-decoration: underline; color:#b85b6a;\">Configure icon by afif fudin - Flaticon</span></a></p>\n"
+"<p style=\" "
+                        "margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://www.flaticon.com/free-icon/login_5729989\"><span style=\" text-decoration: underline; color:#b85b6a;\">Login icon by FR_Media - Flaticon</span></a></p>\n"
 "<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://www.flaticon.com/free-icon/logout_5729988\"><span style=\" text-decoration: underline; color:#b85b6a;\">Logout icon by FR_Media - Flaticon</span></a></p>\n"
-"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://www.flaticon.com/free-icon/lock_2549910\"><span style=\" text-decoration: underline; color:#b85b6a;\">Locked icon by Aswell Studio - Flaticon</span></"
-                        "a></p>\n"
-"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://www.flaticon.com/free-icon/unlock_2549951\"><span style=\" text-decoration: underline; color:#b85b6a;\">Unlocked icon by Aswell Studio - Flaticon</span></a></p>\n"
+"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://www.flaticon.com/free-icon/lock_2549910\"><span style=\" text-decoration: underline; color:#b85b6a;\">Locked icon by Aswell Studio - Flaticon</span></a></p>\n"
+"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://www.fl"
+                        "aticon.com/free-icon/unlock_2549951\"><span style=\" text-decoration: underline; color:#b85b6a;\">Unlocked icon by Aswell Studio - Flaticon</span></a></p>\n"
 "<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://www.flaticon.com/free-icon/unsecure_5690981\"><span style=\" text-decoration: underline; color:#b85b6a;\">Unsecure icon by juicy_fish - Flaticon</span></a></p>\n"
-"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://www.flaticon.com/free-icon/search_1828057\"><span style=\" text-decoration: underline; color:#b85b6a;\">Search icon by Pixel Perfect - Flaticon</span></a></p></body></html>", None))
+"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://www.flaticon.com/free-icon/search_1828057\"><span style=\" text-decoration: underline; color:#b85b6a;\">Search icon by Pixel Perfect - Flaticon</span></a></p>\n"
+"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://www.flaticon.com/free-icon/folder_3307447\"><span style=\" text-decoration: underline; color:#b85b6a;\">Folder icon by Meh"
+                        "wish - Flaticon</span></a></p>\n"
+"<p style=\" margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"https://www.flaticon.com/free-icon/floppy-disk_12629050\"><span style=\" text-decoration: underline; color:#b85b6a;\">Floppy disk icon by heisenberg_jr - Flaticon</span></a></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; text-decoration: underline; color:#b85b6a;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Shortcuts:</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Ctrl + V : Paste</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Ctrl + = : Zoom In</p>\n"
+"<p style=\" margin-top:0px; margin-bott"
+                        "om:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Ctrl + - : Zoom Out</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Ctrl + , : Settings</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Ctrl + B : Brute Force</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Ctrl + D : Decode</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Ctrl + E : Encode</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Ctrl + C : Copy</p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.aboutTab), QCoreApplication.translate("MainWindow", u"About", None))
     # retranslateUi
 

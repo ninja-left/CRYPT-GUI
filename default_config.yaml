@@ -11,8 +11,6 @@ default keys:
   caesar cipher: '1'
   vigenere: changeme
 
-default pattern: SALT+INPUT
-
 rounds:
   bcrypt: "14"
   argon2: "4"
@@ -31,3 +29,5 @@ brute:
 other:
   font size: 10
   paste timeout: 1  # seconds
+  default pattern: SALT+INPUT
+
