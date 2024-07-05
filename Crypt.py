@@ -14,7 +14,8 @@ import sys
 import pathlib
 from multiprocessing import Pool, TimeoutError as mpTimeoutError
 
-from modules import main_ui, resources_rc, functions, ciphers, bf_ui, brute, config_ui
+from modules import functions, ciphers, brute
+from modules.design import main_ui, config_ui, bf_ui, resources_rc
 
 brute_force_results = ""
 
@@ -402,7 +403,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.defaultTextEncode = "Encode/Encrypt"
         self.defaultTextDecode = "Decode/Decrypt"
         self.defaultIconDecode = QtGui.QIcon()
-        self.defaultIconDecode.addPixmap(":/assets/Unlocked.png")
+        self.defaultIconDecode.addPixmap(":/images/Unlocked.png")
         self.pool = Pool()
 
         # User settings
@@ -584,7 +585,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 self.btnEncode.setEnabled(True)
                 self.btnDecode.setText("Verify")
                 decode_icon = QtGui.QIcon()
-                decode_icon.addPixmap(":/assets/Verify.png")
+                decode_icon.addPixmap(":/images/Verify.png")
                 self.btnDecode.setIcon(decode_icon)
                 self.btnDecode.setEnabled(True)
                 self.btnBruteForce.setEnabled(True)
