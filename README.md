@@ -89,7 +89,7 @@ You can read [CONTRIBUTING.md] for details on contributing to the project.
 ## Roadmap
 See [ROADMAP.md] for details.
 
-[header]: ./modules/assets/head.png
+[header]: ./modules/design/images/head.png
 [LICENSE]: ./LICENSE
 [CONTRIBUTING.md]: ./CONTRIBUTING.md
 [ROADMAP.md]: ./ROADMAP.md
