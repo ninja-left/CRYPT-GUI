@@ -504,9 +504,12 @@
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
-  <action name="actionLoudSettings">
+  <action name="actionLoadSettings">
    <property name="text">
-    <string>LoudSettings</string>
+    <string>LoadSettings</string>
+   </property>
+   <property name="toolTip">
+    <string>LoadSettings</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
@@ -539,7 +542,7 @@
   <connection>
    <sender>btnLoad</sender>
    <signal>clicked()</signal>
-   <receiver>actionLoudSettings</receiver>
+   <receiver>actionLoadSettings</receiver>
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
