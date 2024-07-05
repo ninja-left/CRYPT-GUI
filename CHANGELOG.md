@@ -4,8 +4,13 @@
 - Config file for setting different variables
 - Some variables now use the default set in config.yaml
 - Functions to save & load settings
+- Added Save and Load icons
+- Added Config ui
+- Implemented config window
 ### Changed
 - Included a condition for salt patterns to check if SALT & INPUT are specified
+- compile_uic.sh & compile_fix.sh: Included config ui files
+- functions.py: SaveSettings no longer returns a boolean
 
 ## [0.1.4]
 ### Added
