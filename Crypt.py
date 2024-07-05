@@ -340,7 +340,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.vigenere_alphabet = settings["alphabets"]["vigenere"]
         self.caesar_key = settings["default keys"]["caesar cipher"]
         self.vigenere_key = settings["default keys"]["vigenere"]
-        self.default_pattern = settings["default pattern"]
+        self.default_pattern = settings["other"]["default pattern"]
 
         outputFont = self.outputText.font()
         inputFont = self.inputText.font()
