@@ -11,6 +11,11 @@
 - Included a condition for salt patterns to check if SALT & INPUT are specified
 - compile_uic.sh & compile_fix.sh: Included config ui files
 - functions.py: SaveSettings no longer returns a boolean
+- Renamed assets to images
+- Moved all UI files to design folder
+- compile_*.sh: Adapted to the renames and moves
+- Fixed imports
+- Fixed README header file location
 
 ## [0.1.4]
 ### Added
