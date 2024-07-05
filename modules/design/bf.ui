@@ -42,7 +42,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
-    <normaloff>:/assets/icon.png</normaloff>:/assets/icon.png</iconset>
+    <normaloff>:/images/Crack.png</normaloff>:/images/Crack.png</iconset>
   </property>
   <property name="accessibleName">
    <string>Brute-Force menu</string>
@@ -85,7 +85,7 @@
       </property>
       <property name="icon">
        <iconset resource="resources.qrc">
-        <normaloff>:/assets/Crack.png</normaloff>:/assets/Crack.png</iconset>
+        <normaloff>:/images/Crack.png</normaloff>:/images/Crack.png</iconset>
       </property>
      </widget>
     </item>
@@ -236,7 +236,7 @@
           </property>
           <property name="icon">
            <iconset resource="resources.qrc">
-            <normaloff>:/assets/Login.png</normaloff>:/assets/Login.png</iconset>
+            <normaloff>:/images/Input.png</normaloff>:/images/Input.png</iconset>
           </property>
          </widget>
         </item>

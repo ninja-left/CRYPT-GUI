@@ -38,7 +38,7 @@ class Ui_BruteForceDialog(object):
         BruteForceDialog.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         BruteForceDialog.setAcceptDrops(False)
         icon = QIcon()
-        icon.addFile(u":/assets/icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(u":/images/Crack.png", QSize(), QIcon.Normal, QIcon.Off)
         BruteForceDialog.setWindowIcon(icon)
         BruteForceDialog.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         BruteForceDialog.setAutoFillBackground(False)
@@ -68,9 +68,7 @@ class Ui_BruteForceDialog(object):
         self.btnCrack.setObjectName(u"btnCrack")
         self.btnCrack.setMinimumSize(QSize(170, 25))
         self.btnCrack.setMaximumSize(QSize(170, 25))
-        icon1 = QIcon()
-        icon1.addFile(u":/assets/Crack.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.btnCrack.setIcon(icon1)
+        self.btnCrack.setIcon(icon)
 
         self.gridLayout.addWidget(self.btnCrack, 3, 0, 1, 1, Qt.AlignmentFlag.AlignHCenter)
 
@@ -124,9 +122,9 @@ class Ui_BruteForceDialog(object):
         self.inputChooseFile = QPushButton(self.gridLayoutWidget)
         self.inputChooseFile.setObjectName(u"inputChooseFile")
         self.inputChooseFile.setMaximumSize(QSize(80, 25))
-        icon2 = QIcon()
-        icon2.addFile(u":/assets/Login.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.inputChooseFile.setIcon(icon2)
+        icon1 = QIcon()
+        icon1.addFile(u":/images/Input.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.inputChooseFile.setIcon(icon1)
 
         self.horizontalLayout_2.addWidget(self.inputChooseFile)
 
