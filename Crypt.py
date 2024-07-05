@@ -14,7 +14,7 @@ import sys
 import pathlib
 from multiprocessing import Pool, TimeoutError as mpTimeoutError
 
-from modules import main_ui, resources_rc, functions, ciphers, bf_ui, brute
+from modules import main_ui, resources_rc, functions, ciphers, bf_ui, brute, config_ui
 
 brute_force_results = ""
 
@@ -29,6 +29,85 @@ class BadKeyError(Exception):
     def __init__(self, message: str = "Key is not valid"):
         self.message = message
         super().__init__(self.message)
+
+
+class ConfigDialog(QDialog, config_ui.Ui_Dialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.connectSignalSlots()
+        self.LoadSettings()
+
+    def connectSignalSlots(self):
+        self.actionSaveSettings.triggered.connect(self.SaveSettings)
+        self.actionLoadSettings.triggered.connect(self.LoadSettings)
+
+    def SaveSettings(self):
+        try:
+            settings = functions.load_settings()
+        except Exception as e:
+            MainWindow.showMessageBox(
+                self, info="Could not load settings.", detail=str(e)
+            )
+            return 1
+        settings["alphabets"]["base32"] = self.inputAlph_B32.text()
+        settings["alphabets"]["base64"] = self.inputAlph_B64.text()
+        settings["alphabets"]["base85"] = self.inputAlph_B85.text()
+        settings["alphabets"]["default"] = self.inputAlph_Default.text()
+        settings["alphabets"]["vigenere"] = self.inputAlph_Vigenere.text()
+        settings["default keys"]["vigenere"] = self.inputKey_Vigenere.text()
+        settings["default keys"]["caesar cipher"] = self.inputKey_Caesar.text()
+        settings["rounds"]["bcrypt"] = self.inputRound_bCrypt.text()
+        settings["rounds"]["argon2"] = self.inputRound_Argon2.text()
+        settings["rounds"]["pbkdf2"] = self.inputRound_PBKDF2.text()
+        settings["brute"]["max length"] = self.inputBf_MaxLength.text()
+        settings["brute"]["ramp"] = self.inputBf_Ramp.isChecked()
+        settings["brute"]["start length"] = self.inputBf_StartLength.text()
+        settings["brute"]["include"]["L"] = self.inputBf_IncludeL.isChecked()
+        settings["brute"]["include"]["D"] = self.inputBf_IncludeD.isChecked()
+        settings["brute"]["include"]["S"] = self.inputBf_IncludeS.isChecked()
+        settings["brute"]["include"]["W"] = self.inputBf_IncludeW.isChecked()
+        settings["other"]["font size"] = int(self.inputOther_FontSize.text())
+        settings["other"]["paste timeout"] = int(self.inputOther_PasteTimeout.text())
+        settings["other"]["default pattern"] = self.inputOther_SaltPattern.text()
+        try:
+            functions.save_settings(settings)
+            MainWindow.showMessageBox(
+                self, "Finished!", "Saved Settings.", level=1, button=2
+            )
+        except Exception as e:
+            MainWindow.showMessageBox(
+                self, info="Could not save settings.", detail=str(e)
+            )
+
+    def LoadSettings(self):
+        try:
+            settings = functions.load_settings()
+        except Exception as e:
+            MainWindow.showMessageBox(
+                self, info="Could not load settings.", detail=str(e)
+            )
+            return 1
+        self.inputAlph_B32.setText(settings["alphabets"]["base32"])
+        self.inputAlph_B64.setText(settings["alphabets"]["base64"])
+        self.inputAlph_B85.setText(settings["alphabets"]["base85"])
+        self.inputAlph_Default.setText(settings["alphabets"]["default"])
+        self.inputAlph_Vigenere.setText(settings["alphabets"]["vigenere"])
+        self.inputKey_Vigenere.setText(settings["default keys"]["vigenere"])
+        self.inputKey_Caesar.setText(settings["default keys"]["caesar cipher"])
+        self.inputRound_bCrypt.setText(settings["rounds"]["bcrypt"])
+        self.inputRound_Argon2.setText(settings["rounds"]["argon2"])
+        self.inputRound_PBKDF2.setText(settings["rounds"]["pbkdf2"])
+        self.inputBf_MaxLength.setText(settings["brute"]["max length"])
+        self.inputBf_Ramp.setChecked(settings["brute"]["ramp"])
+        self.inputBf_StartLength.setText(settings["brute"]["start length"])
+        self.inputBf_IncludeL.setChecked(settings["brute"]["include"]["L"])
+        self.inputBf_IncludeD.setChecked(settings["brute"]["include"]["D"])
+        self.inputBf_IncludeS.setChecked(settings["brute"]["include"]["S"])
+        self.inputBf_IncludeW.setChecked(settings["brute"]["include"]["W"])
+        self.inputOther_FontSize.setText(str(settings["other"]["font size"]))
+        self.inputOther_PasteTimeout.setText(str(settings["other"]["paste timeout"]))
+        self.inputOther_SaltPattern.setText(settings["other"]["default pattern"])
 
 
 class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
@@ -776,7 +855,8 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 self.outputText.setPlainText(brute_force_results)
 
     def doConfig(self):
-        print("config pressed")
+        d = ConfigDialog()
+        d.exec()
 
     def doZoomIn(self):
         outputFont = self.outputText.font()
