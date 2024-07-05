@@ -252,6 +252,9 @@
            <property name="text">
             <string>+</string>
            </property>
+           <property name="shortcut">
+            <string>Ctrl+=</string>
+           </property>
           </widget>
          </item>
          <item alignment="Qt::AlignmentFlag::AlignLeft">
@@ -269,6 +272,9 @@
            </property>
            <property name="text">
             <string>-</string>
+           </property>
+           <property name="shortcut">
+            <string>Ctrl+-</string>
            </property>
           </widget>
          </item>
@@ -883,6 +889,9 @@
           <iconset resource="resources.qrc">
            <normaloff>:/assets/Crack.png</normaloff>:/assets/Crack.png</iconset>
          </property>
+         <property name="shortcut">
+          <string>Ctrl+B</string>
+         </property>
          <property name="autoDefault">
           <bool>false</bool>
          </property>
@@ -915,6 +924,9 @@
           <iconset resource="resources.qrc">
            <normaloff>:/assets/Unlocked.png</normaloff>:/assets/Unlocked.png</iconset>
          </property>
+         <property name="shortcut">
+          <string>Ctrl+D</string>
+         </property>
         </widget>
        </item>
        <item alignment="Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter">
@@ -940,6 +952,9 @@
          <property name="icon">
           <iconset resource="resources.qrc">
            <normaloff>:/assets/Locked.png</normaloff>:/assets/Locked.png</iconset>
+         </property>
+         <property name="shortcut">
+          <string>Ctrl+E</string>
          </property>
          <property name="checkable">
           <bool>false</bool>
@@ -1082,6 +1097,9 @@
            <property name="text">
             <string>+</string>
            </property>
+           <property name="shortcut">
+            <string>Ctrl+=</string>
+           </property>
            <property name="flat">
             <bool>false</bool>
            </property>
@@ -1114,6 +1132,9 @@
            </property>
            <property name="text">
             <string>-</string>
+           </property>
+           <property name="shortcut">
+            <string>Ctrl+-</string>
            </property>
           </widget>
          </item>
@@ -1156,16 +1177,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Licenses</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QTextBrowser" name="textBrowser">
          <property name="documentTitle">
           <string>GNU General Public License v3.0</string>
@@ -1178,10 +1189,9 @@ hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;CRYPT GUI, A Collection of tools, is licensed under GPL v3.0 Copyright (c) 2024 Ninja Left&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;CRYPT was built using Python 3.11, Qt Designer &amp;amp; Pyside6.&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Some functions used in this software are from &lt;a href=&quot;https://github.com/TheAlgorithms/Python&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;This Repository&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;and are licensed under MIT Copyright (c) 2016-2024 TheAlgorithms and contributors.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;CRYPT GUI is licensed under GPL v3.0 Copyright (c) 2024 Ninja Left&lt;/p&gt;
+&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;CRYPT was built using Python 3, Qt Designer &amp;amp; Pyside6.&lt;/p&gt;
+&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Some functions used in this software are from &lt;a href=&quot;https://github.com/TheAlgorithms/Python&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;This Repository &lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;and are licensed under MIT Copyright (c) 2016-2024 TheAlgorithms and contributors.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'monospace'; color:#ffffff;&quot;&gt;Icons:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/configuration_9780271&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Configure icon by afif fudin - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
@@ -1190,7 +1200,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/lock_2549910&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Locked icon by Aswell Studio - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/unlock_2549951&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Unlocked icon by Aswell Studio - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/unsecure_5690981&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Unsecure icon by juicy_fish - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/search_1828057&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Search icon by Pixel Perfect - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/search_1828057&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Search icon by Pixel Perfect - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/folder_3307447&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Folder icon by Mehwish - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/floppy-disk_12629050&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Floppy disk icon by heisenberg_jr - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; text-decoration: underline; color:#b85b6a;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Shortcuts:&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + V : Paste&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + = : Zoom In&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + - : Zoom Out&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + , : Settings&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + B : Brute Force&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + D : Decode&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + E : Encode&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + C : Copy&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="openLinks">
           <bool>false</bool>
