@@ -1,4 +1,5 @@
 # Overall CRYPT Development & Features Roadmap
+### Last update: 2024-08-27
 ## Pending
 - [ ] Implement a plugin system
     - Use `pluginlib`
@@ -45,4 +46,3 @@
     - Typing new alphabet
     - Reverting to default alphabet (By deleting `config.yaml`)
     - Setting new default alphabet (By editing `config.yaml` using any text editor or config button)
-#### Last update: 2024-08-27
