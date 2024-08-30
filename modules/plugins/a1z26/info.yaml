@@ -6,4 +6,5 @@ requirements: ''
 config:
   uses keys: false  # If true, should also set a `default key` value
   can change alphabet: false  # If, true, should also set an `alphabet` value
+  display name: a1z26 cipher  # This will be shown to users. If not set, will use `name` instead.
 
