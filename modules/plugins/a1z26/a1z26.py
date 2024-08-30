@@ -16,26 +16,28 @@ with open("modules/plugins/a1z26/info.yaml") as f:
     info = y.load(f)
 del y
 
-
 class A1Z26(Cipher):
     global info
     _alias_ = info["name"]
     _version_ = info["version"]
 
     def get_info(self) -> dict:
+        """This function returns data from plugin's info.yaml file"""
         global info
         return info
 
     def encode(self, plain: str) -> str:
         """
         >>> encode("myname")
-        [13, 25, 14, 1, 13, 5]
+        '13,25,14,1,13,5'
         """
         return ",".join([str(ord(elem) - 96) for elem in plain])
 
     def decode(self, encoded: list[int] | str) -> str:
         """
         >>> decode([13, 25, 14, 1, 13, 5])
+        'myname'
+        >>> decode("13,25,14,1,13,5")
         'myname'
         """
         if type(encoded) == str:
