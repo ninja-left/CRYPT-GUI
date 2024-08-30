@@ -15,6 +15,9 @@ import sys
 import pathlib
 from multiprocessing import Pool, TimeoutError as mpTimeoutError
 from pluginlib import PluginImportError
+import logging
+from time import localtime
+from sys import stdout
 
 from modules import functions, ciphers, brute
 from modules.design import main_ui, config_ui, bf_ui, resources_rc
@@ -437,6 +440,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.caesar_key = settings["default keys"]["caesar cipher"]
         self.vigenere_key = settings["default keys"]["vigenere"]
         self.default_pattern = settings["other"]["default pattern"]
+        self.log_level = settings["log level"]
 
         outputFont = self.outputText.font()
         inputFont = self.inputText.font()
@@ -447,6 +451,24 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
 
         # Plugins
         self.LoadPlugins()
+
+        # Error Logging
+        TIME = localtime()
+        self.Logger = logging.getLogger(__name__)
+        self.Logger.setLevel(self.log_level)
+        FORMATTER = logging.Formatter(
+            "[{asctime}] - {name}:{levelname} - {message}", "%Y-%m-%d %H:%M:%S", "{"
+        )
+        logging.handlers.TimedRotatingFileHandler
+        HANDLE_FILE = logging.handlers.TimedRotatingFileHandler(
+            f"Logs/events.log", "D", 1, 5, "utf-8", False, False
+        )
+        HANDLE_FILE.setFormatter(FORMATTER)
+        HANDLE_CONS = logging.StreamHandler(stdout)
+        HANDLE_CONS.setFormatter(FORMATTER)
+        self.Logger.addHandler(HANDLE_CONS)
+        self.Logger.addHandler(HANDLE_FILE)
+        # TODO: Log errors on exceptions
 
     def connectSignalSlots(self):
         self.actionCopy.triggered.connect(self.doCopy)
