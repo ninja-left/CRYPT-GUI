@@ -7,15 +7,18 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QDialog,
     QFileDialog,
+    QComboBox,
 )
 from PySide6 import QtGui
 import pyperclip
 import sys
 import pathlib
 from multiprocessing import Pool, TimeoutError as mpTimeoutError
+from pluginlib import PluginImportError
 
 from modules import functions, ciphers, brute
 from modules.design import main_ui, config_ui, bf_ui, resources_rc
+
 
 brute_force_results = ""
 
@@ -442,6 +445,9 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.outputText.setFont(outputFont)
         self.inputText.setFont(inputFont)
 
+        # Plugins
+        self.LoadPlugins()
+
     def connectSignalSlots(self):
         self.actionCopy.triggered.connect(self.doCopy)
         self.actionPaste.triggered.connect(self.doPaste)
@@ -626,6 +632,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                             case "PBKDF2 SHA256" | "PBKDF2 SHA512":
                                 self.inputRounds.setText(self.rounds_pbkdf2)
                 else:  # Plugins
+                    # Loading plugin info
+                    t = self.Plugins[self.operationMode.currentData()]()
+                    info = t.get_info()
+                    print(info)
                     # Everything enabled and texts set to default
                     self.btnEncode.setText(self.defaultTextEncode)
                     self.btnEncode.setEnabled(True)
@@ -905,6 +915,22 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         inputFont.setPointSize(inputFont.pointSize() - 1)
         self.outputText.setFont(outputFont)
         self.inputText.setFont(inputFont)
+
+    def LoadPlugins(self) -> None:
+        # Load and check plugins
+        try:
+            self.Plugins = functions.get_loader().plugins.Cipher
+        except PluginImportError as e:
+            if e.friendly:
+                sys.exit(e.friendly)
+            else:
+                raise
+        self.Plugins = functions.check_plugins(self.Plugins)
+
+        for i in self.Plugins:
+            info = self.Plugins[i]().get_info()
+            # info['name'] will be set as item data and can be used to call the plugin
+            self.operationMode.addItem(info["config"]["display name"], info["name"])
 
 
 if __name__ == "__main__":
