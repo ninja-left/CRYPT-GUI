@@ -405,6 +405,19 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.defaultIconDecode = QtGui.QIcon()
         self.defaultIconDecode.addPixmap(":/images/Unlocked.png")
         self.pool = Pool()
+        self.allHashes = (
+            "MD5",
+            "MD5 CRYPT",
+            "SHA256",
+            "SHA256 CRYPT",
+            "SHA512",
+            "SHA512 CRYPT",
+            "bCrypt",
+            "Argon2",
+            "NT Hash",
+            "PBKDF2 SHA256",
+            "PBKDF2 SHA512",
+        )
 
         # User settings
         settings = functions.load_settings()
@@ -580,38 +593,52 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                         self.btnBruteForce.setEnabled(True)
                         self.inputKey.setText(self.caesar_key)
             case _:
-                # Hashes
-                self.btnEncode.setText("Hash")
-                self.btnEncode.setEnabled(True)
-                self.btnDecode.setText("Verify")
-                decode_icon = QtGui.QIcon()
-                decode_icon.addPixmap(":/images/Verify.png")
-                self.btnDecode.setIcon(decode_icon)
-                self.btnDecode.setEnabled(True)
-                self.btnBruteForce.setEnabled(True)
-                self.inputAlphabet.setEnabled(False)
-                self.inputKey.setEnabled(False)
-                self.inputSalt.setEnabled(True)
-                self.inputRounds.setEnabled(False)
-                self.inputSaltPattern.setEnabled(True)
-                self.inputSaltPattern.setText(self.default_pattern)
-                self.inputPlainText.setEnabled(True)
-                if self.Operation in [
-                    "bCrypt",
-                    "Argon2",
-                    "PBKDF2 SHA256",
-                    "PBKDF2 SHA512",
-                ]:
-                    self.inputSalt.setEnabled(False)
-                    self.inputSaltPattern.setEnabled(False)
+                if self.Operation in self.allHashes:
+                    self.btnEncode.setText("Hash")
+                    self.btnEncode.setEnabled(True)
+                    self.btnDecode.setText("Verify")
+                    decode_icon = QtGui.QIcon()
+                    decode_icon.addPixmap(":/images/Verify.png")
+                    self.btnDecode.setIcon(decode_icon)
+                    self.btnDecode.setEnabled(True)
+                    self.btnBruteForce.setEnabled(True)
+                    self.inputAlphabet.setEnabled(False)
+                    self.inputKey.setEnabled(False)
+                    self.inputSalt.setEnabled(True)
+                    self.inputRounds.setEnabled(False)
+                    self.inputSaltPattern.setEnabled(True)
+                    self.inputSaltPattern.setText(self.default_pattern)
+                    self.inputPlainText.setEnabled(True)
+                    if self.Operation in [
+                        "bCrypt",
+                        "Argon2",
+                        "PBKDF2 SHA256",
+                        "PBKDF2 SHA512",
+                    ]:
+                        self.inputSalt.setEnabled(False)
+                        self.inputSaltPattern.setEnabled(False)
+                        self.inputRounds.setEnabled(True)
+                        match self.Operation:
+                            case "bCrypt":
+                                self.inputRounds.setText(self.rounds_bcrypt)
+                            case "Argon2":
+                                self.inputRounds.setText(self.rounds_argon2)
+                            case "PBKDF2 SHA256" | "PBKDF2 SHA512":
+                                self.inputRounds.setText(self.rounds_pbkdf2)
+                else:  # Plugins
+                    # Everything enabled and texts set to default
+                    self.btnEncode.setText(self.defaultTextEncode)
+                    self.btnEncode.setEnabled(True)
+                    self.btnDecode.setText(self.defaultTextDecode)
+                    self.btnDecode.setIcon(self.defaultIconDecode)
+                    self.btnDecode.setEnabled(True)
+                    self.btnBruteForce.setEnabled(True)
+                    self.inputAlphabet.setEnabled(True)
+                    self.inputKey.setEnabled(True)
+                    self.inputSalt.setEnabled(True)
+                    self.inputSaltPattern.setEnabled(True)
+                    self.inputPlainText.setEnabled(True)
                     self.inputRounds.setEnabled(True)
-                    match self.Operation:
-                        case "bCrypt":
-                            self.inputRounds.setText(self.rounds_bcrypt)
-                        case "Argon2":
-                            self.inputRounds.setText(self.rounds_argon2)
-                        case "PBKDF2 SHA256" | "PBKDF2 SHA512":
-                            self.inputRounds.setText(self.rounds_pbkdf2)
 
     def doDecode(self):
         input_data = self.inputText.toPlainText()
@@ -654,64 +681,66 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     decoded = ciphers.vig_cipher(input_data, current_key, alphabet, "d")
                     display_act = "Decrypted"
                 case _:
-                    # Hashes
-                    display_act = "Verified"
-                    if not plain.strip():
-                        raise BadInputError("No plain text specified.")
-                    if salt:
-                        if (
-                            salt_pattern
-                            and "SALT" in salt_pattern
-                            and "INPUT" in salt_pattern
-                        ):
-                            good_plain = salt_pattern.replace("SALT", salt).replace(
-                                "INPUT", plain
-                            )
+                    if self.Operation in self.allHashes:
+                        display_act = "Verified"
+                        if not plain.strip():
+                            raise BadInputError("No plain text specified.")
+                        if salt:
+                            if (
+                                salt_pattern
+                                and "SALT" in salt_pattern
+                                and "INPUT" in salt_pattern
+                            ):
+                                good_plain = salt_pattern.replace("SALT", salt).replace(
+                                    "INPUT", plain
+                                )
+                            else:
+                                good_plain = f"{salt}+{plain}"
                         else:
-                            good_plain = f"{salt}+{plain}"
-                    else:
-                        good_plain = plain
-                    match self.Operation:
-                        case "MD5":
-                            hashed_plain = ciphers.md5(good_plain)
-                        case "MD5 CRYPT":
-                            hashed_plain = ciphers.md5_crypt(good_plain)
-                        case "SHA256":
-                            hashed_plain = ciphers.sha256(good_plain)
-                        case "SHA256 CRYPT":
-                            hashed_plain = ciphers.sha256_crypt(good_plain)
-                        case "SHA512":
-                            hashed_plain = ciphers.sha512(good_plain)
-                        case "SHA512 CRYPT":
-                            hashed_plain = ciphers.sha512_crypt(good_plain)
-                        case "bCrypt":
-                            hashed_plain = ciphers.bcrypt_verify(plain, input_data)
-                        case "Argon2":
-                            hashed_plain = ciphers.argon2_verify(plain, input_data)
-                        case "NT Hash":
-                            hashed_plain = ciphers.nthash(good_plain)
-                        case "PBKDF2 SHA256":
-                            hashed_plain = ciphers.pbkdf2_256_verify(plain)
-                        case "PBKDF2 SHA512":
-                            hashed_plain = ciphers.pbkdf2_512_verify(plain)
-                        case _:
-                            hashed_plain = ""
+                            good_plain = plain
+                        match self.Operation:
+                            case "MD5":
+                                hashed_plain = ciphers.md5(good_plain)
+                            case "MD5 CRYPT":
+                                hashed_plain = ciphers.md5_crypt(good_plain)
+                            case "SHA256":
+                                hashed_plain = ciphers.sha256(good_plain)
+                            case "SHA256 CRYPT":
+                                hashed_plain = ciphers.sha256_crypt(good_plain)
+                            case "SHA512":
+                                hashed_plain = ciphers.sha512(good_plain)
+                            case "SHA512 CRYPT":
+                                hashed_plain = ciphers.sha512_crypt(good_plain)
+                            case "bCrypt":
+                                hashed_plain = ciphers.bcrypt_verify(plain, input_data)
+                            case "Argon2":
+                                hashed_plain = ciphers.argon2_verify(plain, input_data)
+                            case "NT Hash":
+                                hashed_plain = ciphers.nthash(good_plain)
+                            case "PBKDF2 SHA256":
+                                hashed_plain = ciphers.pbkdf2_256_verify(plain)
+                            case "PBKDF2 SHA512":
+                                hashed_plain = ciphers.pbkdf2_512_verify(plain)
+                            case _:
+                                hashed_plain = ""
 
-                    if self.Operation in [
-                        "bCrypt",
-                        "Argon2",
-                        "PBKDF2 SHA256",
-                        "PBKDF2 SHA512",
-                    ]:
-                        if hashed_plain:
-                            decoded = f"The Hash matches the plain text."
+                        if self.Operation in [
+                            "bCrypt",
+                            "Argon2",
+                            "PBKDF2 SHA256",
+                            "PBKDF2 SHA512",
+                        ]:
+                            if hashed_plain:
+                                decoded = f"The Hash matches the plain text."
+                            else:
+                                decoded = f"The Hash does not match the plain text."
                         else:
-                            decoded = f"The Hash does not match the plain text."
-                    else:
-                        if hashed_plain == input_data:
-                            decoded = f"The Hash matches the plain text:\n{input_data} = {hashed_plain}"
-                        else:
-                            decoded = f"The Hash does not match the plain text:\n{input_data} != {hashed_plain}"
+                            if hashed_plain == input_data:
+                                decoded = f"The Hash matches the plain text:\n{input_data} = {hashed_plain}"
+                            else:
+                                decoded = f"The Hash does not match the plain text:\n{input_data} != {hashed_plain}"
+                    else:  # Plugins
+                        decoded = "Plugins"
             self.outputText.setPlainText(decoded)
             self.showMessageBox(
                 title="Finished!", text=f"{display_act} the input.", level=1, button=2
@@ -767,44 +796,46 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     encoded = ciphers.vig_cipher(input_data, current_key, alphabet, "e")
                     display_act = "Encrypted"
                 case _:
-                    # Hashes
-                    display_act = "Hashed"
-                    if salt:
-                        if (
-                            salt_pattern
-                            and "SALT" in salt_pattern
-                            and "INPUT" in salt_pattern
-                        ):
-                            good_data = salt_pattern.replace("SALT", salt).replace(
-                                "INPUT", input_data
-                            )
+                    if self.Operation in self.allHashes:
+                        display_act = "Hashed"
+                        if salt:
+                            if (
+                                salt_pattern
+                                and "SALT" in salt_pattern
+                                and "INPUT" in salt_pattern
+                            ):
+                                good_data = salt_pattern.replace("SALT", salt).replace(
+                                    "INPUT", input_data
+                                )
+                            else:
+                                good_data = f"{salt}+{input_data}"
                         else:
-                            good_data = f"{salt}+{input_data}"
-                    else:
-                        good_data = input_data
-                    match self.Operation:
-                        case "MD5":
-                            encoded = ciphers.md5(good_data)
-                        case "MD5 CRYPT":
-                            encoded = ciphers.md5_crypt(good_data)
-                        case "SHA256":
-                            encoded = ciphers.sha256(good_data)
-                        case "SHA256 CRYPT":
-                            encoded = ciphers.sha256_crypt(good_data)
-                        case "SHA512":
-                            encoded = ciphers.sha512(good_data)
-                        case "SHA512 CRYPT":
-                            encoded = ciphers.sha512_crypt(good_data)
-                        case "bCrypt":
-                            encoded = ciphers.bcrypt_hash(input_data, rounds)
-                        case "Argon2":
-                            encoded = ciphers.argon2_hash(input_data, rounds)
-                        case "NT Hash":
-                            encoded = ciphers.nthash(good_data)
-                        case "PBKDF2 SHA256":
-                            encoded = ciphers.pbkdf2_256_hash(input_data, rounds)
-                        case "PBKDF2 SHA512":
-                            encoded = ciphers.pbkdf2_512_hash(input_data, rounds)
+                            good_data = input_data
+                        match self.Operation:
+                            case "MD5":
+                                encoded = ciphers.md5(good_data)
+                            case "MD5 CRYPT":
+                                encoded = ciphers.md5_crypt(good_data)
+                            case "SHA256":
+                                encoded = ciphers.sha256(good_data)
+                            case "SHA256 CRYPT":
+                                encoded = ciphers.sha256_crypt(good_data)
+                            case "SHA512":
+                                encoded = ciphers.sha512(good_data)
+                            case "SHA512 CRYPT":
+                                encoded = ciphers.sha512_crypt(good_data)
+                            case "bCrypt":
+                                encoded = ciphers.bcrypt_hash(input_data, rounds)
+                            case "Argon2":
+                                encoded = ciphers.argon2_hash(input_data, rounds)
+                            case "NT Hash":
+                                encoded = ciphers.nthash(good_data)
+                            case "PBKDF2 SHA256":
+                                encoded = ciphers.pbkdf2_256_hash(input_data, rounds)
+                            case "PBKDF2 SHA512":
+                                encoded = ciphers.pbkdf2_512_hash(input_data, rounds)
+                    else:  # Plugins
+                        encoded = "Plugins"
 
             self.outputText.setPlainText(encoded)
             self.showMessageBox(
