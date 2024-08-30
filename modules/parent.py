@@ -7,7 +7,6 @@ class Cipher(object):
     def get_info(self) -> dict:
         return dict()
 
-    @abstractmethod
     def encode(self, plain):
         return plain
 
