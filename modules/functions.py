@@ -189,22 +189,12 @@ def checkConfig(data: dict) -> None | KeyError:
         raise KeyError("`config` is set but no `can change alphabet` value present")
 
 
-def check_plugins() -> dict:
+def check_plugins(plugins: dict) -> dict:
     """Checks info.yaml file of all plugins and returns valid plugins"""
-    try:
-        P = get_loader().plugins.Ciphers
-    except PluginImportError as e:
-        if e.friendly:
-            sys.exit(e.friendly)
-        else:
-            raise
-    except:
-        raise
-
     bad = set()  # Add plugins with an invalid info.yaml file here
 
-    for i in P:
-        t = P[i]()
+    for i in plugins:
+        t = plugins[i]()
         info = t.get_info()
         try:
             checkConfig(info)
@@ -213,6 +203,6 @@ def check_plugins() -> dict:
             bad.add(i)
 
     for i in bad:
-        P.pop(i)
+        plugins.pop(i)
 
-    return P
+    return plugins
