@@ -440,7 +440,12 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.caesar_key = settings["default keys"]["caesar cipher"]
         self.vigenere_key = settings["default keys"]["vigenere"]
         self.default_pattern = settings["other"]["default pattern"]
-        self.log_level = settings["log level"]
+        try:
+            self.log_level = settings["log level"]
+        except KeyError:
+            settings["log level"] = "WARNING"
+            functions.save_settings(settings)
+            self.log_level = "WARNING"
 
         outputFont = self.outputText.font()
         inputFont = self.inputText.font()
@@ -459,10 +464,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         FORMATTER = logging.Formatter(
             "[{asctime}] - {name}:{levelname} - {message}", "%Y-%m-%d %H:%M:%S", "{"
         )
-        logging.handlers.TimedRotatingFileHandler
-        HANDLE_FILE = logging.handlers.TimedRotatingFileHandler(
-            f"Logs/events.log", "D", 1, 5, "utf-8", False, False
-        )
+        HANDLE_FILE = logging.FileHandler("events.log", "a", "utf-8", False)
+        # HANDLE_FILE = logging.handlers.TimedRotatingFileHandler(
+        #     f"Logs/events.log", "D", 1, 5, "utf-8", False, False
+        # )
         HANDLE_FILE.setFormatter(FORMATTER)
         HANDLE_CONS = logging.StreamHandler(stdout)
         HANDLE_CONS.setFormatter(FORMATTER)
