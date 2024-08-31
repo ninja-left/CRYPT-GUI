@@ -16,14 +16,24 @@ import pathlib
 from multiprocessing import Pool, TimeoutError as mpTimeoutError
 from pluginlib import PluginImportError
 import logging
-from time import localtime
-from sys import stdout
+from logging.handlers import TimedRotatingFileHandler
 
 from modules import functions, ciphers, brute
 from modules.design import main_ui, config_ui, bf_ui, resources_rc
 
 
 brute_force_results = ""
+
+Logger = logging.getLogger(__name__)
+FORMATTER = logging.Formatter(
+    "[{asctime}] - {name}:{levelname} - {message}", "%Y-%m-%d %H:%M:%S", "{"
+)
+HANDLE_FILE = TimedRotatingFileHandler("events.log", "D", 1, 5, "utf-8", False, False)
+HANDLE_FILE.setFormatter(FORMATTER)
+HANDLE_CONS = logging.StreamHandler(sys.stdout)
+HANDLE_CONS.setFormatter(FORMATTER)
+Logger.addHandler(HANDLE_CONS)
+Logger.addHandler(HANDLE_FILE)
 
 
 class BadInputError(Exception):
@@ -56,6 +66,7 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
             MainWindow.showMessageBox(
                 self, info="Could not load settings.", detail=str(e)
             )
+            Logger.error("Could not load settings: %s", str(e), exc_info=1)
             return 1
         settings["alphabets"]["base32"] = self.inputAlph_B32.text()
         settings["alphabets"]["base64"] = self.inputAlph_B64.text()
@@ -86,6 +97,7 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
             MainWindow.showMessageBox(
                 self, info="Could not save settings.", detail=str(e)
             )
+            Logger.error("Could not save settings: %s", str(e), exc_info=1)
 
     def LoadSettings(self):
         try:
@@ -94,6 +106,7 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
             MainWindow.showMessageBox(
                 self, info="Could not load settings.", detail=str(e)
             )
+            Logger.error("Could not load settings: %s", str(e), exc_info=1)
             return 1
         self.inputAlph_B32.setText(settings["alphabets"]["base32"])
         self.inputAlph_B64.setText(settings["alphabets"]["base64"])
@@ -336,6 +349,7 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
                     length = int(length)
                 except:
                     MainWindow.showMessageBox(self, info="Length is invalid.")
+                    Logger.error("Length is invalid", exc_info=1)
                     return 1
 
             # Main
@@ -443,6 +457,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         try:
             self.log_level = settings["log level"]
         except KeyError:
+            Logger.error("`log level` value not set in config.yaml", exc_info=1)
             settings["log level"] = "WARNING"
             functions.save_settings(settings)
             self.log_level = "WARNING"
@@ -458,22 +473,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.LoadPlugins()
 
         # Error Logging
-        TIME = localtime()
-        self.Logger = logging.getLogger(__name__)
-        self.Logger.setLevel(self.log_level)
-        FORMATTER = logging.Formatter(
-            "[{asctime}] - {name}:{levelname} - {message}", "%Y-%m-%d %H:%M:%S", "{"
-        )
-        HANDLE_FILE = logging.FileHandler("events.log", "a", "utf-8", False)
-        # HANDLE_FILE = logging.handlers.TimedRotatingFileHandler(
-        #     f"Logs/events.log", "D", 1, 5, "utf-8", False, False
-        # )
-        HANDLE_FILE.setFormatter(FORMATTER)
-        HANDLE_CONS = logging.StreamHandler(stdout)
-        HANDLE_CONS.setFormatter(FORMATTER)
-        self.Logger.addHandler(HANDLE_CONS)
-        self.Logger.addHandler(HANDLE_FILE)
-        # TODO: Log errors on exceptions
+        Logger.setLevel(self.log_level)
 
     def connectSignalSlots(self):
         self.actionCopy.triggered.connect(self.doCopy)
@@ -526,6 +526,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             return True
         except Exception as e:
             self.showMessageBox(info=str(e), detail=detailed)
+            Logger.error("Failed to check if text is empty: %s", str(e), exc_info=1)
             return False
 
     def doCopy(self):
@@ -553,13 +554,13 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 info="Pasting took too long to finish.",
                 detail="This could happen if there's no data in Clipboard. Make sure to copy something first.",
             )
-            raise
-        except:
+            Logger.error("Pasting took too long to finish.", exc_info=1)
+        except Exception as e:
             self.showMessageBox(
                 info="Copied data is not text.",
                 detail="Make sure that the data you're trying to paste is Text not Image or something else.",
             )
-            raise
+            Logger.error(str(e), exc_info=1)
 
     def doChangeOp(self):
         chosenMode = self.operationMode.currentText()
@@ -662,7 +663,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     # Loading plugin info
                     t = self.Plugins[self.operationMode.currentData()]()
                     info = t.get_info()
-                    print(info)
+                    Logger.debug(f"Plugin info: {info}")
                     # Everything enabled and texts set to default
                     self.btnEncode.setText(self.defaultTextEncode)
                     self.btnEncode.setEnabled(True)
@@ -784,16 +785,16 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             )
         except BadKeyError as e:
             self.showMessageBox(info="Provide a key.", detail=str(e))
-            raise
+            Logger.error(str(e), exc_info=1)
         except BadInputError as e:
             self.showMessageBox(info=str(e))
-            raise
+            Logger.error(str(e), exc_info=1)
         except Exception as e:
             self.showMessageBox(
                 info=f"Something's probably wrong with the input.",
                 detail=str(e),
             )
-            raise
+            Logger.error("Could not decode input: %s", str(e), exc_info=1)
 
     def doEncode(self):
         input_data = self.inputText.toPlainText()
@@ -880,10 +881,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             )
         except BadKeyError as e:
             self.showMessageBox(info="Provide a key.", detail=str(e))
-            raise
+            Logger.error(str(e), exc_info=1)
         except Exception as e:
             self.showMessageBox(detail=str(e))
-            raise
+            Logger.error(str(e), exc_info=1)
 
     def doBrute(self):
         global brute_force_results
@@ -949,9 +950,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             self.Plugins = functions.get_loader().plugins.Cipher
         except PluginImportError as e:
             if e.friendly:
-                sys.exit(e.friendly)
+                Logger.critical(str(e.friendly), exc_info=1)
             else:
-                raise
+                Logger.critical(str(e), exc_info=1)
+            sys.exit(1)
         self.Plugins = functions.check_plugins(self.Plugins)
 
         for i in self.Plugins:
