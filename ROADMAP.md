@@ -2,27 +2,12 @@
 ### Last update: 2024-08-27
 ## Pending
 - [ ] Implement a plugin system
-    - Use `pluginlib`
-    - Define 3 parents: Encoder, Decoder, Bruteforcer
-    - Example encoder named SomeCipher:
-        ```python
-        import pluginlib
-
-        import numpy
-        import ML1
-        # All required libraries should be
-        #added to a list named as below;
-        # User will be prompted to install
-        #them if needed.
-        requirements = ("MyLib1", "numpy")
-
-        @pluginlib.Parent('encoder')
-        class SomeCipher(object):
-            @pluginlib.abstractmethod
-            def encode(self, string):
-                # encode function
-                return "encoded"
-        ```
+    - [X] Use `pluginlib`
+    - [X] Define 1 parent with 4 functions: encode, decode, brute_force, & get_info
+    - [X] Example cipher (name `a1z26`) is included
+    - All plugins must be placed in `modules/plugins` folder under their own folder
+    - All plugins must have a `info.yaml` file
+    - [ ] Load plugins in the app
 - [ ] Implement the following functions:
     - Enigma Machine
     - Affine Cipher

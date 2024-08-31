@@ -2,3 +2,6 @@ venv
 __pycache__
 dev_*
 config.yaml
+.TODO
+*.log
+Logs

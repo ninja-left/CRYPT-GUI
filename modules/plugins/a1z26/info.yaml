@@ -1,0 +1,10 @@
+name: 'a1z26'
+version: '1.1.0'
+#  Module names should be the same as in a requirements.txt file.
+requirements: ''
+# Config will be read and saved to plugins_config.yaml
+config:
+  uses keys: false  # If true, should also set a `default key` value
+  can change alphabet: false  # If, true, should also set an `alphabet` value
+  display name: a1z26 cipher  # This will be shown to users. If not set, will use `name` instead.
+

@@ -1,0 +1,9 @@
+name: 'affine'
+version: '1.0.0'
+requirements: ''
+config:
+  uses keys: true
+  can change alphabet: true
+  default key: 6478
+  alphabet: " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+  display name: Affine Cipher

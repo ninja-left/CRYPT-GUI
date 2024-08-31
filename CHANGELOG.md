@@ -1,5 +1,5 @@
 # Changelog
-## [0.1.5]
+## [0.2.0]
 ### Added
 - Config file for setting different variables
 - Some variables now use the default set in config.yaml
@@ -7,6 +7,10 @@
 - Added Save and Load icons
 - Added Config ui
 - Implemented config window
+- Plugins system
+  - a1z26 plugin & Affine cipher plugin
+- new config value: default logging level
+- Logging system for tracking errors
 ### Changed
 - Included a condition for salt patterns to check if SALT & INPUT are specified
 - compile_uic.sh & compile_fix.sh: Included config ui files

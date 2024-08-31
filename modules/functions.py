@@ -24,6 +24,7 @@ from passlib.context import CryptContext
 import mmap
 from PySide6.QtWidgets import QProgressBar
 from ruamel.yaml import YAML, YAMLError
+from pluginlib import PluginLoader, PluginImportError
 from modules.ciphers import (
     md5_b,
     sha256_b,
@@ -34,6 +35,7 @@ from modules.ciphers import (
     caesar_cipher,
 )
 from modules.brute import brute
+import modules.parent
 
 HASH_CONTEXT = CryptContext(
     [
@@ -157,3 +159,50 @@ def load_settings() -> dict:
             data = yaml.load(f)
         save_settings(data)
         return data
+
+
+def get_loader() -> dict:
+    """return a dict of all plugins"""
+    return PluginLoader(paths=["./modules/plugins"])
+
+
+def hasKey(dic: dict, key) -> bool:
+    try:
+        dic[key]
+        return True
+    except:
+        return False
+
+
+def checkConfig(data: dict) -> None | KeyError:
+    if not hasKey(data, "name"):
+        raise KeyError("No `name` value in info.yaml")
+    if not hasKey(data, "version"):
+        raise KeyError("No `version` value in info.yaml")
+    if not hasKey(data, "requirements"):
+        raise KeyError("No `requirements` value in info.yaml")
+    if not hasKey(data, "config"):
+        raise KeyError("No `config` value in info.yaml")
+    if not hasKey(data["config"], "uses keys"):
+        raise KeyError("`config` is set but no `uses keys` value present")
+    if not hasKey(data["config"], "can change alphabet"):
+        raise KeyError("`config` is set but no `can change alphabet` value present")
+
+
+def check_plugins(plugins: dict) -> dict:
+    """Checks info.yaml file of all plugins and returns valid plugins"""
+    bad = set()  # Add plugins with an invalid info.yaml file here
+
+    for i in plugins:
+        t = plugins[i]()
+        info = t.get_info()
+        try:
+            checkConfig(info)
+        except KeyError as e:
+            print(e)
+            bad.add(i)
+
+    for i in bad:
+        plugins.pop(i)
+
+    return plugins
