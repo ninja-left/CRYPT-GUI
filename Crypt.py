@@ -661,19 +661,30 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     t = self.Plugins[self.operationMode.currentData()]()
                     info = t.get_info()
                     Logger.debug(f"Plugin info: {info}")
-                    # Everything enabled and texts set to default
+                    # Texts set to default and buttons enabled if supported by the plugin
                     self.btnEncode.setText(self.defaultTextEncode)
-                    self.btnEncode.setEnabled(True)
+                    self.btnEncode.setEnabled(info["config"]["has encoder"])
                     self.btnDecode.setText(self.defaultTextDecode)
                     self.btnDecode.setIcon(self.defaultIconDecode)
-                    self.btnDecode.setEnabled(True)
-                    self.btnBruteForce.setEnabled(True)
-                    self.inputAlphabet.setEnabled(True)
-                    self.inputKey.setEnabled(True)
-                    self.inputSalt.setEnabled(True)
-                    self.inputSaltPattern.setEnabled(True)
-                    self.inputPlainText.setEnabled(True)
-                    self.inputRounds.setEnabled(True)
+                    self.btnDecode.setEnabled(info["config"]["has decoder"])
+                    self.btnBruteForce.setEnabled(info["config"]["has brute"])
+                    self.inputAlphabet.setEnabled(info["config"]["can change alphabet"])
+                    if info["config"]["can change alphabet"]:
+                        self.inputAlphabet.setText(info["config"]["alphabet"])
+                    self.inputKey.setEnabled(info["config"]["uses keys"])
+                    if info["config"]["uses keys"]:
+                        self.inputKey.setText(str(info["config"]["default key"]))
+                    self.inputSalt.setEnabled(info["config"]["uses salt"])
+                    self.inputSaltPattern.setEnabled(info["config"]["uses salt"])
+                    if info['config']['uses salt']:
+                        if functions.hasKey(info["config"], "default pattern"):
+                            self.inputSaltPattern.setText(info["config"]["default pattern"])
+                        else:
+                            self.inputSaltPattern.setText(self.default_pattern)
+                    self.inputPlainText.setEnabled(info['config']['uses plaintext'])
+                    self.inputRounds.setEnabled(info['config']['uses rounds'])
+                    if info['config']['uses rounds']:
+                        self.inputRounds.setText(str(info['config']['default rounds']))
 
     def doDecode(self):
         input_data = self.inputText.toPlainText()
