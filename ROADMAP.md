@@ -7,7 +7,8 @@
     - [X] Example cipher (name `a1z26`) is included
     - All plugins must be placed in `modules/plugins` folder under their own folder
     - All plugins must have a `info.yaml` file
-    - [ ] Load plugins in the app
+    - [X] Load plugins in the app
+    - [ ] Encode/Decode/Brute-force buttons should work when pressed
 - [ ] Implement the following functions:
     - Enigma Machine
     - Affine Cipher
