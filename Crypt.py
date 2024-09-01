@@ -780,6 +780,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             self.showMessageBox(
                 title="Finished!", text=f"{display_act} the input.", level=1, button=2
             )
+            Logger.debug(f"{display_act}: {input_data}\n->\n{decoded}")
         except BadKeyError as e:
             self.showMessageBox(info="Provide a key.", detail=str(e))
             Logger.error(str(e), exc_info=1)
@@ -876,6 +877,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             self.showMessageBox(
                 title="Finished!", text=f"{display_act} the input.", level=1, button=2
             )
+            Logger.debug(f"{display_act}: {input_data}\n->\n{encoded}")
         except BadKeyError as e:
             self.showMessageBox(info="Provide a key.", detail=str(e))
             Logger.error(str(e), exc_info=1)
@@ -915,17 +917,21 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 level=1,
                 button=2,
             )
+            Logger.debug(f"Brute-forced: {input_data}\n{results.items()}")
         else:
             d = BruteForceDialog(input_data, salt, salt_pattern, hash_type)
             d.exec()
             if brute_force_results:
                 self.outputText.setPlainText(brute_force_results)
+                Logger.debug(f"Brute-forced: {input_data} -> {brute_force_results}")
 
-    def doConfig(self):
+    def doConfig(self) -> int:
+        """Executes ConfigDialog class"""
         d = ConfigDialog()
         d.exec()
 
-    def doZoomIn(self):
+    def doZoomIn(self) -> None:
+        """Get the current font of the TextBoxes, Increment it by 1, Set the new font"""
         outputFont = self.outputText.font()
         inputFont = self.inputText.font()
         outputFont.setPointSize(outputFont.pointSize() + 1)
@@ -933,7 +939,8 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.outputText.setFont(outputFont)
         self.inputText.setFont(inputFont)
 
-    def doZoomOut(self):
+    def doZoomOut(self) -> None:
+        """Get the current font of the TextBoxes, Decrement it by 1, Set the new font"""
         outputFont = self.outputText.font()
         inputFont = self.inputText.font()
         outputFont.setPointSize(outputFont.pointSize() - 1)
