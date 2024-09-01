@@ -1,10 +1,21 @@
-name: 'a1z26'
-version: '1.1.0'
+name: 'a1z26'  # MUST SET
+version: '1.1.0'  # MUST SET
 #  Module names should be the same as in a requirements.txt file.
-requirements: ''
-# Config will be read and saved to plugins_config.yaml
+# Modules should be coma (,) separated.
+# For example: 'Numpy,cffi,passlib,Pyside6'
+requirements: ''  # MUST SET
 config:
-  uses keys: false  # If true, should also set a `default key` value
-  can change alphabet: false  # If, true, should also set an `alphabet` value
-  display name: a1z26 cipher  # This will be shown to users. If not set, will use `name` instead.
-
+  uses keys: false  # MUST SET; If true, should also set a `default key` variable
+  # default key: 0  # MUST SET
+  can change alphabet: false  # MUST SET; If, true, should also set an `alphabet` variable
+  # alphabet: abc  # OPTIONAL
+  display name: a1z26 cipher  # OPTIONAL; This will be shown to users. If not set, will use `name` instead.
+  # The following 4 variables are MUST SET:
+  has encoder: true  # true if plugin has encode function
+  has decoder: true  # true if plugin has decode function
+  has brute: false  # true if plugin has brute_force function
+  uses salt: false  # If true, may also set a `default pattern`
+  # default pattern: 'SALT+PATTERN' # OPTIONAL; If not set, will read from user config
+  uses plaintext: false  # MUST SET
+  uses rounds: false  # MUST SET; If true, also set a `default rounds` variable
+  # default rounds: 0  # MUST SET

@@ -36,6 +36,7 @@ from modules.ciphers import (
 )
 from modules.brute import brute
 import modules.parent
+from Crypt import Logger
 
 HASH_CONTEXT = CryptContext(
     [
@@ -174,19 +175,58 @@ def hasKey(dic: dict, key) -> bool:
         return False
 
 
-def checkConfig(data: dict) -> None | KeyError:
-    if not hasKey(data, "name"):
-        raise KeyError("No `name` value in info.yaml")
-    if not hasKey(data, "version"):
-        raise KeyError("No `version` value in info.yaml")
-    if not hasKey(data, "requirements"):
-        raise KeyError("No `requirements` value in info.yaml")
-    if not hasKey(data, "config"):
-        raise KeyError("No `config` value in info.yaml")
-    if not hasKey(data["config"], "uses keys"):
-        raise KeyError("`config` is set but no `uses keys` value present")
-    if not hasKey(data["config"], "can change alphabet"):
-        raise KeyError("`config` is set but no `can change alphabet` value present")
+def chKeySet(data: dict, key) -> None:
+    if not hasKey(data, key):
+        raise KeyError(f"`{key}` is not set in info.yaml")
+
+
+def chKeyGood(data: dict, key, goal: object) -> None:
+    if type(data[key]) != goal:
+        raise ValueError(f"`{key}` must be of type `{goal}`")
+
+
+def checkConfig(data: dict) -> None:
+    chKeySet(data, "name")
+    chKeyGood(data, "name", str)
+
+    chKeySet(data, "version")
+    chKeyGood(data, "version", str)
+
+    chKeySet(data, "requirements")
+    chKeyGood(data, "requirements", str)
+
+    chKeySet(data, "config")
+    chKeyGood(data, "config", dict)
+
+    chKeySet(data["config"], "uses keys")
+    chKeyGood(data["config"], "uses keys", bool)
+    if data["config"]["uses keys"]:
+        chKeySet(data["config"], "default key")
+
+    chKeySet(data["config"], "can change alphabet")
+    chKeyGood(data["config"], "can change alphabet", bool)
+    if data["config"]["can change alphabet"]:
+        chKeySet(data["config"], "alphabet")
+
+    chKeySet(data["config"], "has encoder")
+    chKeyGood(data["config"], "has encoder", bool)
+
+    chKeySet(data["config"], "has decoder")
+    chKeyGood(data["config"], "has decoder", bool)
+
+    chKeySet(data["config"], "has brute")
+    chKeyGood(data["config"], "has brute", bool)
+
+    chKeySet(data["config"], "uses salt")
+    chKeyGood(data["config"], "uses salt", bool)
+
+    chKeySet(data["config"], "uses plaintext")
+    chKeyGood(data["config"], "uses plaintext", bool)
+
+    chKeySet(data["config"], "uses rounds")
+    chKeyGood(data["config"], "uses rounds", bool)
+    if data["config"]["uses rounds"]:
+        chKeySet(data["config"], "default rounds")
 
 
 def check_plugins(plugins: dict) -> dict:
@@ -199,7 +239,7 @@ def check_plugins(plugins: dict) -> dict:
         try:
             checkConfig(info)
         except KeyError as e:
-            print(e)
+            Logger.error(e, exc_info=1)
             bad.add(i)
 
     for i in bad:
