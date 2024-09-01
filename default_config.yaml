@@ -4,7 +4,6 @@ alphabets:
   default: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
   base32: ABCDEFGHIJKLMNOPQRSTUVWXYZ234567
   base64: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
-  base85: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+-;<=>?@^_`{|}~
   vigenere: ABCDEFGHIJKLMNOPQRSTUVWXYZ
 
 default keys:
