@@ -7,3 +7,9 @@ config:
   default key: 6478
   alphabet: " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
   display name: Affine Cipher
+  has encoder: true
+  has decoder: true
+  has brute: false
+  uses salt: false
+  uses plaintext: false
+  uses rounds: false
