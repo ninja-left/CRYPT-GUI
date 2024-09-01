@@ -449,7 +449,6 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.default_alphabet = settings["alphabets"]["default"]
         self.b32_alphabet = settings["alphabets"]["base32"]
         self.b64_alphabet = settings["alphabets"]["base64"]
-        self.b85_alphabet = settings["alphabets"]["base85"]
         self.vigenere_alphabet = settings["alphabets"]["vigenere"]
         self.caesar_key = settings["default keys"]["caesar cipher"]
         self.vigenere_key = settings["default keys"]["vigenere"]
@@ -593,15 +592,13 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 self.inputSaltPattern.setEnabled(False)
                 self.inputPlainText.setEnabled(False)
                 match self.Operation:
-                    case "Base16":
+                    case "Base16" | "Base85":
                         self.inputAlphabet.setText("")
                         self.inputAlphabet.setEnabled(False)
                     case "Base32":
                         self.inputAlphabet.setText(self.b32_alphabet)
                     case "Base64":
                         self.inputAlphabet.setText(self.b64_alphabet)
-                    case "Base85":
-                        self.inputAlphabet.setText(self.b85_alphabet)
             case "Caesar Cipher" | "Morse Code" | "Baconian Cipher" | "Vigenere Cipher":
                 self.btnEncode.setText("Encrypt")
                 self.btnEncode.setEnabled(True)
@@ -697,7 +694,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 case "Base16":
                     decoded = ciphers.base16_decode(input_data)
                 case "Base32":
-                    decoded = ciphers.base32_decode(input_data)
+                    decoded = ciphers.base32_decode(input_data, alphabet)
                 case "Base64":
                     decoded = ciphers.base64_decode(input_data, alphabet)
                 case "Base85":
@@ -814,7 +811,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 case "Base16":
                     encoded = ciphers.base16_encode(input_data)
                 case "Base32":
-                    encoded = ciphers.base32_encode(input_data)
+                    encoded = ciphers.base32_encode(input_data, alphabet)
                 case "Base64":
                     encoded = ciphers.base64_encode(input_data, alphabet)
                 case "Base85":

@@ -24,7 +24,6 @@ from re import search
 import passlib.hash
 
 
-# TODO: change the baseX functions so they may use alternative functions in order to change alphabet.
 def base16_encode(txt: str) -> str:
     return base64.b16encode(txt.encode("utf-8")).decode("utf-8")
 
@@ -33,12 +32,29 @@ def base16_decode(b16encoded: str) -> str:
     return base64.b16decode(b16encoded.encode("utf-8")).decode("utf-8")
 
 
-def base32_encode(string: str) -> str:
-    return base64.b32encode(string.encode("utf-8")).decode("utf-8")
+# Base32 code from https://github.com/TheAlgorithms/Python/blob/master/ciphers/base32.py
+def base32_encode(data: str, B32_alphabet: str) -> str:
+    """
+    Encodes data to Base32
+    >>> base32_encode("123456")
+    'GEZDGNBVGY======'
+    """
+    data = "".join(bin(ord(d))[2:].zfill(8) for d in data)
+    data = data.ljust(5 * ((len(data) // 5) + 1), "0")
+    b32_chunks = map("".join, zip(*[iter(data)] * 5))
+    b32_result = "".join(B32_alphabet[int(chunk, 2)] for chunk in b32_chunks)
+    return b32_result.ljust(8 * ((len(b32_result) // 8) + 1), "=")
 
 
-def base32_decode(encoded_bytes: str) -> str:
-    return base64.b32decode(encoded_bytes.encode("utf-8")).decode("utf-8")
+def base32_decode(data: str, B32_alphabet: str) -> str:
+    """
+    Decodes Base32 input
+    >>> base32_decode('GEZDGNBVGY======')
+    '123456'
+    """
+    chunks = "".join(bin(B32_alphabet.index(_d))[2:].zfill(5) for _d in data.strip("="))
+    data = list(map("".join, zip(*[iter(chunks)] * 8)))
+    return "".join([chr(int(_d, 2)) for _d in data])
 
 
 def base85_encode(string: str) -> str:
