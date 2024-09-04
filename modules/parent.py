@@ -26,4 +26,8 @@ class Cipher(object):
         return "decoded"
 
     def brute_force(self, encoded, **kwargs):
+        """
+        **kwargs:
+        alphabet, rounds
+        """
         return "decoded"
