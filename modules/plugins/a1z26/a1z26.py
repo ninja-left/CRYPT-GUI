@@ -26,14 +26,14 @@ class A1Z26(Cipher):
         global info
         return info
 
-    def encode(self, plain: str) -> str:
+    def encode(self, plain: str, **kwargs) -> str:
         """
         >>> encode("myname")
         '13,25,14,1,13,5'
         """
         return ",".join([str(ord(elem) - 96) for elem in plain])
 
-    def decode(self, encoded: list[int] | str) -> str:
+    def decode(self, encoded: list[int] | str, **kwargs) -> str:
         """
         >>> decode([13, 25, 14, 1, 13, 5])
         'myname'

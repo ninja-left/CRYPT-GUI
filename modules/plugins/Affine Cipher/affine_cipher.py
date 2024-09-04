@@ -71,17 +71,21 @@ class AffineCipher(Cipher):
                 f"Key A {key_a} and the symbol set size {len(alphabet)} are not relatively prime. Choose a different key."
             )
 
-    def encode(self, key: int, message: str, alphabet: str) -> str:
+    def encode(self, plain: str, **kwargs) -> str:
         """
+        **kwargs:
+            key: int, alphabet: str
         >>> encode(4545, 'The affine cipher is a type of monoalphabetic substitution cipher.')
         'VL}p MM{I}p~{HL}Gp{vp pFsH}pxMpyxIx JHL O}F{~pvuOvF{FuF{xIp~{HL}Gi'
         >>> encode(6478, 'This is an example output of affine cipher.')
         'GeJY2JY2d"2W1d=KXW2f#>K#>2f<2d<<J"W2.JKeWt4'
         """
+        key = kwargs["key"]
+        alphabet = kwargs["alphabet"]
         key_a, key_b = divmod(key, len(alphabet))
         self.check_keys(key_a, key_b, "encrypt", alphabet)
         cipher_text = ""
-        for symbol in message:
+        for symbol in plain:
             if symbol in alphabet:
                 sym_index = alphabet.find(symbol)
                 cipher_text += alphabet[(sym_index * key_a + key_b) % len(alphabet)]
@@ -89,18 +93,20 @@ class AffineCipher(Cipher):
                 cipher_text += symbol
         return cipher_text
 
-    def decode(self, key: int, message: str, alphabet: str) -> str:
+    def decode(self, plain: str, **kwargs) -> str:
         """
-        >>> decode(4545, 'VL}p MM{I}p~{HL}Gp{vp pFsH}pxMpyxIx JHL O}F{~pvuOvF{FuF{xIp~{HL}Gi')
+        **kwargs:
+            key: int, alphabet: str
+        >>> decode('VL}p MM{I}p~{HL}Gp{vp pFsH}pxMpyxIx JHL O}F{~pvuOvF{FuF{xIp~{HL}Gi', key=4545)
         'The affine cipher is a type of monoalphabetic substitution cipher.'
-        >>> decode(6478, 'GeJY2JY2d"2W1d=KXW2f#>K#>2f<2d<<J"W2.JKeWt4')
+        >>> decode('GeJY2JY2d"2W1d=KXW2f#>K#>2f<2d<<J"W2.JKeWt4', key=6478)
         'This is an example output of affine cipher.'
         """
         key_a, key_b = divmod(key, len(alphabet))
         self.check_keys(key_a, key_b, "decrypt", alphabet)
         plain_text = ""
         mod_inverse_of_key_a = self.find_mod_inverse(key_a, len(alphabet))
-        for symbol in message:
+        for symbol in plain:
             if symbol in alphabet:
                 sym_index = alphabet.find(symbol)
                 plain_text += alphabet[
