@@ -7,11 +7,23 @@ class Cipher(object):
     def get_info(self) -> dict:
         return dict()
 
-    def encode(self, plain):
-        return plain
+    def encode(self, plain, **kwargs):
+        """
+        **kwargs:
+        key, alphabet, rounds
 
-    def decode(self, encoded):
-        return encoded
+        These keyword arguments will be passed to the function when encode is called in the app.
+        """
+        return "encoded"
 
-    def brute_force(self, encoded):
-        return encoded
+    def decode(self, encoded, **kwargs):
+        """
+        **kwargs:
+        key, alphabet, plaintext
+
+        These keyword arguments will be passed to the function when decode is called in the app.
+        """
+        return "decoded"
+
+    def brute_force(self, encoded, **kwargs):
+        return "decoded"
