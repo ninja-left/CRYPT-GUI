@@ -70,7 +70,6 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
             return 1
         settings["alphabets"]["base32"] = self.inputAlph_B32.text()
         settings["alphabets"]["base64"] = self.inputAlph_B64.text()
-        settings["alphabets"]["base85"] = self.inputAlph_B85.text()
         settings["alphabets"]["default"] = self.inputAlph_Default.text()
         settings["alphabets"]["vigenere"] = self.inputAlph_Vigenere.text()
         settings["default keys"]["vigenere"] = self.inputKey_Vigenere.text()
@@ -88,6 +87,7 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
         settings["other"]["font size"] = int(self.inputOther_FontSize.text())
         settings["other"]["paste timeout"] = int(self.inputOther_PasteTimeout.text())
         settings["other"]["default pattern"] = self.inputOther_SaltPattern.text()
+        settings["other"]["log level"] = self.inputOther_LogLevel.currentText()
         try:
             functions.save_settings(settings)
             MainWindow.showMessageBox(
@@ -110,7 +110,6 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
             return 1
         self.inputAlph_B32.setText(settings["alphabets"]["base32"])
         self.inputAlph_B64.setText(settings["alphabets"]["base64"])
-        self.inputAlph_B85.setText(settings["alphabets"]["base85"])
         self.inputAlph_Default.setText(settings["alphabets"]["default"])
         self.inputAlph_Vigenere.setText(settings["alphabets"]["vigenere"])
         self.inputKey_Vigenere.setText(settings["default keys"]["vigenere"])
@@ -128,6 +127,7 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
         self.inputOther_FontSize.setText(str(settings["other"]["font size"]))
         self.inputOther_PasteTimeout.setText(str(settings["other"]["paste timeout"]))
         self.inputOther_SaltPattern.setText(settings["other"]["default pattern"])
+        self.inputOther_LogLevel.setCurrentText(settings["other"]["log level"])
 
 
 class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
@@ -472,7 +472,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.LoadPlugins()
 
         # Error Logging
-        Logger.setLevel(self.log_level)
+        if self.log_level == "OFF":
+            logging.disable(logging.CRITICAL)
+        else:
+            Logger.setLevel(self.log_level)
 
     def connectSignalSlots(self):
         self.actionCopy.triggered.connect(self.doCopy)
@@ -727,23 +730,23 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     decoded = ciphers.vig_cipher(input_data, current_key, alphabet, "d")
                     display_act = "Decrypted"
                 case _:
+                    if salt:
+                        if (
+                            salt_pattern
+                            and "SALT" in salt_pattern
+                            and "INPUT" in salt_pattern
+                        ):
+                            good_plain = salt_pattern.replace("SALT", salt).replace(
+                                "INPUT", plain
+                            )
+                        else:
+                            good_plain = f"{salt}+{plain}"
+                    else:
+                        good_plain = plain
                     if self.Operation in self.allHashes:
                         display_act = "Verified"
                         if not plain.strip():
                             raise BadInputError("No plain text specified.")
-                        if salt:
-                            if (
-                                salt_pattern
-                                and "SALT" in salt_pattern
-                                and "INPUT" in salt_pattern
-                            ):
-                                good_plain = salt_pattern.replace("SALT", salt).replace(
-                                    "INPUT", plain
-                                )
-                            else:
-                                good_plain = f"{salt}+{plain}"
-                        else:
-                            good_plain = plain
                         match self.Operation:
                             case "MD5":
                                 hashed_plain = ciphers.md5(good_plain)
@@ -764,9 +767,13 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                             case "NT Hash":
                                 hashed_plain = ciphers.nthash(good_plain)
                             case "PBKDF2 SHA256":
-                                hashed_plain = ciphers.pbkdf2_256_verify(plain)
+                                hashed_plain = ciphers.pbkdf2_256_verify(
+                                    good_plain, input_data
+                                )
                             case "PBKDF2 SHA512":
-                                hashed_plain = ciphers.pbkdf2_512_verify(plain)
+                                hashed_plain = ciphers.pbkdf2_512_verify(
+                                    good_plain, input_data
+                                )
                             case _:
                                 hashed_plain = ""
 
@@ -786,7 +793,18 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                             else:
                                 decoded = f"The Hash does not match the plain text:\n{input_data} != {hashed_plain}"
                     else:  # Plugins
-                        decoded = "Plugins"
+                        t = self.Plugins[self.operationMode.currentData()]()
+                        info = t.get_info()
+                        Logger.debug(info)
+                        if info["config"]["uses plaintext"] and not plain.strip():
+                            raise BadInputError("No plain text specified.")
+                        decoded = t.decode(
+                            input_data,
+                            key=current_key,
+                            alphabet=alphabet,
+                            plaintext=good_plain,
+                        )
+                        display_act = f"{info['config']['display name']}: decoded"
             self.outputText.setPlainText(decoded)
             self.showMessageBox(
                 title="Finished!", text=f"{display_act} the input.", level=1, button=2
@@ -843,21 +861,21 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     encoded = ciphers.vig_cipher(input_data, current_key, alphabet, "e")
                     display_act = "Encrypted"
                 case _:
+                    if salt:
+                        if (
+                            salt_pattern
+                            and "SALT" in salt_pattern
+                            and "INPUT" in salt_pattern
+                        ):
+                            good_data = salt_pattern.replace("SALT", salt).replace(
+                                "INPUT", input_data
+                            )
+                        else:
+                            good_data = f"{salt}+{input_data}"
+                    else:
+                        good_data = input_data
                     if self.Operation in self.allHashes:
                         display_act = "Hashed"
-                        if salt:
-                            if (
-                                salt_pattern
-                                and "SALT" in salt_pattern
-                                and "INPUT" in salt_pattern
-                            ):
-                                good_data = salt_pattern.replace("SALT", salt).replace(
-                                    "INPUT", input_data
-                                )
-                            else:
-                                good_data = f"{salt}+{input_data}"
-                        else:
-                            good_data = input_data
                         match self.Operation:
                             case "MD5":
                                 encoded = ciphers.md5(good_data)
@@ -882,7 +900,13 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                             case "PBKDF2 SHA512":
                                 encoded = ciphers.pbkdf2_512_hash(input_data, rounds)
                     else:  # Plugins
-                        encoded = "Plugins"
+                        t = self.Plugins[self.operationMode.currentData()]()
+                        info = t.get_info()
+                        Logger.debug(info)
+                        encoded = t.encode(
+                            good_data, key=current_key, alphabet=alphabet, rounds=rounds
+                        )
+                        display_act = f"{info['config']['display name']}: encoded"
 
             self.outputText.setPlainText(encoded)
             self.showMessageBox(
@@ -938,8 +962,11 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
 
     def doConfig(self) -> int:
         """Executes ConfigDialog class"""
-        d = ConfigDialog()
-        d.exec()
+        try:
+            d = ConfigDialog()
+            d.exec()
+        except Exception as e:
+            Logger.error(e, exc_info=1)
 
     def doZoomIn(self) -> None:
         """Get the current font of the TextBoxes, Increment it by 1, Set the new font"""
