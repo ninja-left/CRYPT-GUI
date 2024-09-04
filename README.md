@@ -90,9 +90,9 @@ You can read [CONTRIBUTING.md] for details on contributing to the project.
 See [ROADMAP.md] for details.
 
 [header]: ./modules/design/images/head.png
-[LICENSE]: ./LICENSE
-[CONTRIBUTING.md]: ./CONTRIBUTING.md
-[ROADMAP.md]: ./ROADMAP.md
+[LICENSE]: ./Docs/LICENSE
+[CONTRIBUTING.md]: ./Docs/CONTRIBUTING.md
+[ROADMAP.md]: ./Docs/ROADMAP.md
 [pyperclip repository]: https://github.com/spyoungtech/pyclip?tab=readme-ov-file#installation
 [Project License]: https://img.shields.io/github/license/ninja-left/CRYPT-GUI
 [Commit meter]: https://img.shields.io/github/commit-activity/m/ninja-left/CRYPT-GUI
