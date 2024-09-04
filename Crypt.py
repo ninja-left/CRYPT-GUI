@@ -938,6 +938,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         alphabet = self.inputAlphabet.displayText()
         salt = self.inputSalt.displayText()
         salt_pattern = self.inputSaltPattern.displayText()
+        rounds = self.inputRounds.displayText()
         match self.Operation:
             case "MD5" | "SHA256" | "SHA512":
                 hash_type = self.Operation
@@ -961,12 +962,29 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 button=2,
             )
             Logger.debug(f"Brute-forced: {input_data}\n{results.items()}")
-        else:
+        elif self.Operation in self.allHashes:
             d = BruteForceDialog(input_data, salt, salt_pattern, hash_type)
             d.exec()
             if brute_force_results:
                 self.outputText.setPlainText(brute_force_results)
                 Logger.debug(f"Brute-forced: {input_data} -> {brute_force_results}")
+        else:  # Plugins
+            t = self.Plugins[self.operationMode.currentData()]()
+            info = t.get_info()
+            Logger.debug(info)
+            if info["config"]["uses salt"] and salt:
+                if salt_pattern and "SALT" in salt_pattern and "INPUT" in salt_pattern:
+                    input_data = salt_pattern.replace("SALT", salt).replace(
+                        "INPUT", input_data
+                    )
+                else:
+                    input_data = f"{salt}+{input_data}"
+            results = t.brute_force(input_data, alphabet=alphabet, rounds=rounds)
+            if results:
+                self.showMessageBox("Finished", "Decoded the input.", level=1, button=2)
+            Logger.debug(
+                f"{info['config']['display name']} Brute-forced: {input_data} -> {results}"
+            )
 
     def doConfig(self) -> int:
         """Executes ConfigDialog class"""
@@ -996,6 +1014,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
 
     def LoadPlugins(self) -> None:
         # Load and check plugins
+        # TODO: check plugin requirements and prompt user to install them
         try:
             self.Plugins = functions.get_loader().plugins.Cipher
         except PluginImportError as e:
