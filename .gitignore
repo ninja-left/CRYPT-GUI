@@ -3,5 +3,5 @@ __pycache__
 dev_*
 config.yaml
 .TODO
-*.log
+*.log*
 Logs
