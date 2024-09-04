@@ -88,6 +88,11 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
         settings["other"]["paste timeout"] = int(self.inputOther_PasteTimeout.text())
         settings["other"]["default pattern"] = self.inputOther_SaltPattern.text()
         settings["other"]["log level"] = self.inputOther_LogLevel.currentText()
+        if settings['other']['log level'] == "OFF":
+            logging.disable(logging.CRITICAL)
+        else:
+            logging.disable(logging.NOTSET)
+            Logger.setLevel(settings['other']['log level'])
         try:
             functions.save_settings(settings)
             MainWindow.showMessageBox(
@@ -454,10 +459,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.vigenere_key = settings["default keys"]["vigenere"]
         self.default_pattern = settings["other"]["default pattern"]
         try:
-            self.log_level = settings["log level"]
+            self.log_level = settings["other"]["log level"]
         except KeyError:
             Logger.error("`log level` value not set in config.yaml", exc_info=1)
-            settings["log level"] = "WARNING"
+            settings["other"]["log level"] = "WARNING"
             functions.save_settings(settings)
             self.log_level = "WARNING"
 
@@ -475,7 +480,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         if self.log_level == "OFF":
             logging.disable(logging.CRITICAL)
         else:
+            logging.disable(logging.NOTSET)
             Logger.setLevel(self.log_level)
+
+        Logger.debug("Loaded settings: %s", settings)
 
     def connectSignalSlots(self):
         self.actionCopy.triggered.connect(self.doCopy)
@@ -1008,4 +1016,6 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = MainWindow()
     win.show()
-    sys.exit(app.exec())
+    x = app.exec()
+    logging.shutdown()
+    sys.exit(x)
