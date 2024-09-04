@@ -29,4 +29,4 @@ other:
   font size: 10
   paste timeout: 1  # seconds
   default pattern: SALT+INPUT
-log level: WARNING
+  log level: WARNING

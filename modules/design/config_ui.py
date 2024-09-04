@@ -16,9 +16,9 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QHBoxLayout,
-    QLabel, QLineEdit, QPushButton, QSizePolicy,
-    QSpacerItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDialog,
+    QHBoxLayout, QLabel, QLineEdit, QPushButton,
+    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
 
 
 class Ui_Dialog(object):
@@ -93,22 +93,6 @@ class Ui_Dialog(object):
 
 
         self.verticalLayout.addLayout(self.horizontalLayout_4)
-
-        self.horizontalLayout_5 = QHBoxLayout()
-        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
-        self.label_5 = QLabel(self.verticalLayoutWidget)
-        self.label_5.setObjectName(u"label_5")
-
-        self.horizontalLayout_5.addWidget(self.label_5)
-
-        self.inputAlph_B85 = QLineEdit(self.verticalLayoutWidget)
-        self.inputAlph_B85.setObjectName(u"inputAlph_B85")
-        self.inputAlph_B85.setMaximumSize(QSize(511, 25))
-
-        self.horizontalLayout_5.addWidget(self.inputAlph_B85)
-
-
-        self.verticalLayout.addLayout(self.horizontalLayout_5)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
@@ -351,6 +335,28 @@ class Ui_Dialog(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout_17)
 
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.label_5 = QLabel(self.verticalLayoutWidget)
+        self.label_5.setObjectName(u"label_5")
+        self.label_5.setMaximumSize(QSize(100, 25))
+
+        self.horizontalLayout_5.addWidget(self.label_5)
+
+        self.inputOther_LogLevel = QComboBox(self.verticalLayoutWidget)
+        self.inputOther_LogLevel.addItem("")
+        self.inputOther_LogLevel.addItem("")
+        self.inputOther_LogLevel.addItem("")
+        self.inputOther_LogLevel.addItem("")
+        self.inputOther_LogLevel.addItem("")
+        self.inputOther_LogLevel.setObjectName(u"inputOther_LogLevel")
+        self.inputOther_LogLevel.setMaximumSize(QSize(511, 25))
+
+        self.horizontalLayout_5.addWidget(self.inputOther_LogLevel)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_5)
+
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout.addItem(self.verticalSpacer)
@@ -403,7 +409,6 @@ class Ui_Dialog(object):
         self.label_6.setText(QCoreApplication.translate("Dialog", u"Default:", None))
         self.label_3.setText(QCoreApplication.translate("Dialog", u"Base 32:", None))
         self.label_4.setText(QCoreApplication.translate("Dialog", u"Base 64:", None))
-        self.label_5.setText(QCoreApplication.translate("Dialog", u"Base 85:", None))
         self.label_2.setText(QCoreApplication.translate("Dialog", u"Vigenere:", None))
         self.label_7.setText(QCoreApplication.translate("Dialog", u"Default Keys", None))
         self.label_8.setText(QCoreApplication.translate("Dialog", u"Caesar Cipher:", None))
@@ -426,6 +431,13 @@ class Ui_Dialog(object):
         self.label_20.setText(QCoreApplication.translate("Dialog", u"Font Size:", None))
         self.label_21.setText(QCoreApplication.translate("Dialog", u"Paste timeout:", None))
         self.label_22.setText(QCoreApplication.translate("Dialog", u"Salt Pattern:", None))
+        self.label_5.setText(QCoreApplication.translate("Dialog", u"Log Level", None))
+        self.inputOther_LogLevel.setItemText(0, QCoreApplication.translate("Dialog", u"DEBUG", None))
+        self.inputOther_LogLevel.setItemText(1, QCoreApplication.translate("Dialog", u"INFO", None))
+        self.inputOther_LogLevel.setItemText(2, QCoreApplication.translate("Dialog", u"WARNING", None))
+        self.inputOther_LogLevel.setItemText(3, QCoreApplication.translate("Dialog", u"ERROR", None))
+        self.inputOther_LogLevel.setItemText(4, QCoreApplication.translate("Dialog", u"OFF", None))
+
         self.btnSave.setText(QCoreApplication.translate("Dialog", u"&Save", None))
 #if QT_CONFIG(shortcut)
         self.btnSave.setShortcut(QCoreApplication.translate("Dialog", u"Ctrl+S", None))

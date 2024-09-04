@@ -18,8 +18,10 @@
 - Renamed assets to images
 - Moved all UI files to design folder
 - compile_*.sh: Adapted to the renames and moves
+### Fixes
 - Fixed imports
 - Fixed README header file location
+- Fixed log level and base85 settings for config dialog
 
 ## [0.1.4]
 ### Added
