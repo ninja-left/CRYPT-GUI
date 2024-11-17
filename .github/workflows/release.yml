@@ -1,0 +1,104 @@
+name: Publish Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get repo name
+        id: get_repo_name
+        run: |
+          ## Used for release zip
+          repo_fullname="${{ github.repository }}"
+          repo_name="${repo_fullname##*/}"
+
+          echo "Repo name: $repo_name"
+          echo "::set-output name=repo_name::$repo_name"
+
+      - name: Get version tag
+        id: get_version_tag
+        shell: bash
+        run: |
+          version=v$(grep -m 2 '^' Docs/CHANGELOG.md | sed 's/^## //' | sed 's/# Changelog//' | grep -m 1 '[0-9]*\.[0-9]*\.[0-9]*')
+          old_version=$(while read -r line; do echo "$line"; done < .release/old_version)
+
+          echo "Version: $version"
+          echo "Old Version: $old_version"
+
+          echo "::set-output name=version::$version"
+          echo "::set-output name=old_version::$old_version"
+
+      - name: Get description
+        id: get_desc
+        shell: bash
+        run: |
+          vers=${{ steps.get_version_tag.outputs.version }}
+          overs=${{ steps.get_version_tag.outputs.old_version }}
+          description=""
+          while IFS= read -r line; do
+            [[ -z "$line" ]] && break
+            description+="$line
+          "
+          done < Docs/CHANGELOG.md
+
+          DATA+="
+          **Full Changelog:** \`[$overs...$vers](https://github.com/ninja-left/CRYPT-GUI/compare/$overs...$vers)\`"
+
+          echo "Description:"
+          echo "$description"
+
+          echo "::set-output name=description::$description"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version_tag.outputs.version }}
+          release_name: ${{ steps.get_version_tag.outputs.version }}
+          body: ${{ steps.get_desc.outputs.description }}
+          draft: false
+          prerelease: false
+
+      - name: Create assets
+        id: create_assets
+        run: |
+          repo_name=${{ steps.get_repo_name.outputs.repo_name }}
+          version=${{ steps.get_version_tag.outputs.version }}
+          output_zip="${repo_name}-${version}.zip"
+          output_xz="${repo_name}-${version}.tar.xz"
+          git config tar.tar.xz.command "xz -c"
+          git archive --format zip -9 --prefix="${repo_name}/" --output "$output_zip" HEAD
+          git archive --format tar.xz --prefix="${repo_name}/" --output "$output_xz" HEAD
+
+          echo "::set-output name=output_zip::$output_zip"
+          echo "::set-output name=output_xz::$output_xz"
+
+      - name: Upload zip
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.create_assets.outputs.output_zip }}
+          asset_name: ${{ steps.create_assets.outputs.output_zip }}
+          asset_content_type: application/zip
+
+      - name: Upload tar
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.create_assets.outputs.output_xz }}
+          asset_name: ${{ steps.create_assets.outputs.output_xz }}
+          asset_content_type: application/x-gtar
