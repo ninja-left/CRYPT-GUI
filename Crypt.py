@@ -673,7 +673,8 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     # Loading plugin info
                     t = self.Plugins[self.operationMode.currentData()]()
                     info = t.get_info()
-                    Logger.debug(f"Plugin info: {info}")
+                    _i = info.pop("license")
+                    Logger.debug(f"Plugin info: {_i}")
                     # Texts set to default and buttons enabled if supported by the plugin
                     self.btnEncode.setText(self.defaultTextEncode)
                     self.btnEncode.setEnabled(info["config"]["has encoder"])
@@ -698,6 +699,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     self.inputRounds.setEnabled(info['config']['uses rounds'])
                     if info['config']['uses rounds']:
                         self.inputRounds.setText(str(info['config']['default rounds']))
+                    del info, _i, t
 
     def doDecode(self):
         input_data = self.inputText.toPlainText()
@@ -984,6 +986,12 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             results = t.brute_force(input_data, alphabet=alphabet, rounds=rounds)
             if results:
                 self.showMessageBox("Finished", "Decoded the input.", level=1, button=2)
+                if type(results) == dict:
+                    for i in results.items():
+                        p = self.outputText.toPlainText()
+                        self.outputText.setPlainText(f"{p}{i[0]}: {i[1]}\n")
+                else:
+                    self.outputText.setPlainText(results)
             Logger.debug(
                 f"{info['config']['display name']} Brute-forced: {input_data} -> {results}"
             )
