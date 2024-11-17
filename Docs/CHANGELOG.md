@@ -8,9 +8,10 @@
 - Added Config ui
 - Implemented config window
 - Plugins system
-  - a1z26 plugin & Affine cipher plugin
+  - a1z26, Affine cipher, & XOR cipher plugin
 - new config value: default logging level
 - Logging system for tracking errors
+- Plugin license shown on About tab
 ### Changed
 - Included a condition for salt patterns to check if SALT & INPUT are specified
 - compile_uic.sh & compile_fix.sh: Included config ui files
@@ -18,6 +19,7 @@
 - Renamed assets to images
 - Moved all UI files to design folder
 - compile_*.sh: Adapted to the renames and moves
+- Moved documents to /Docs
 ### Fixes
 - Fixed imports
 - Fixed README header file location
@@ -82,6 +84,7 @@
 - Copy and Paste functions
 - Buttons change based on chosen operation mode
 
+[0.2.0]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.2.0
 [0.1.4]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.4
 [0.1.3]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.3
 [0.1.2]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.2
