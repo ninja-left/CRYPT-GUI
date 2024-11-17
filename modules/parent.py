@@ -25,9 +25,9 @@ class Cipher(object):
         """
         return "decoded"
 
-    def brute_force(self, encoded, **kwargs):
+    def brute_force(self, encoded, **kwargs) -> str | dict:
         """
         **kwargs:
         alphabet, rounds
         """
-        return "decoded"
+        return {"keyX": "decoded"} or "decoded"
