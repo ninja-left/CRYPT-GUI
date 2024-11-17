@@ -22,7 +22,7 @@ jobs:
           repo_name="${repo_fullname##*/}"
 
           echo "Repo name: $repo_name"
-          echo "::set-output name=repo_name::$repo_name"
+          echo "repo_name=$repo_name" >> $GITHUB_OUTPUT
 
       - name: Get version tag
         id: get_version_tag
@@ -34,8 +34,8 @@ jobs:
           echo "Version: $version"
           echo "Old Version: $old_version"
 
-          echo "::set-output name=version::$version"
-          echo "::set-output name=old_version::$old_version"
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "old_version=$old_version" >> $GITHUB_OUTPUT
 
       - name: Get description
         id: get_desc
@@ -51,12 +51,23 @@ jobs:
           done < Docs/CHANGELOG.md
 
           DATA+="
-          **Full Changelog:** \`[$overs...$vers](https://github.com/ninja-left/CRYPT-GUI/compare/$overs...$vers)\`"
+          **Full Changelog:** https://github.com/ninja-left/CRYPT-GUI/compare/$overs...$vers"
 
           echo "Description:"
           echo "$description"
 
-          echo "::set-output name=description::$description"
+          ## https://trstringer.com/github-actions-multiline-strings/#option-2---environment-variable
+          echo "release_body<<EOF" >> $GITHUB_OUTPUT
+          echo "$description" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Update old_version
+        shell: bash
+        run: |
+          echo "${{ steps.get_version_tag.outputs.version }}" >.release/old_version
+          echo "\n">.release/old_version
+          echo "Old version content:"
+          cat .release/old_version
 
       - name: Create Release
         id: create_release
@@ -79,10 +90,10 @@ jobs:
           output_xz="${repo_name}-${version}.tar.xz"
           git config tar.tar.xz.command "xz -c"
           git archive --format zip -9 --prefix="${repo_name}/" --output "$output_zip" HEAD
-          git archive --format tar.xz --prefix="${repo_name}/" --output "$output_xz" HEAD
+          git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_xz" HEAD
 
-          echo "::set-output name=output_zip::$output_zip"
-          echo "::set-output name=output_xz::$output_xz"
+          echo "output_zip=$output_zip" >> $GITHUB_OUTPUT
+          echo "output_xz=$output_xz" >> $GITHUB_OUTPUT
 
       - name: Upload zip
         uses: actions/upload-release-asset@v1
