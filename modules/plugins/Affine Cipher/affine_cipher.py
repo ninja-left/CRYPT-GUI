@@ -3,8 +3,6 @@
 "gcd_by_iterative" from https://github.com/TheAlgorithms/Python/maths/greatest_common_divisor.py
 """
 
-import random
-import sys
 from ruamel.yaml import YAML
 from modules.parent import Cipher
 
