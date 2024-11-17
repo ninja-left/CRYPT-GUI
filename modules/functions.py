@@ -182,10 +182,11 @@ def chKeySet(data: dict, key) -> None:
 
 def chKeyGood(data: dict, key, goal: object) -> None:
     if type(data[key]) != goal:
-        raise ValueError(f"`{key}` must be of type `{goal}`")
+        raise ValueError(f"`{key}` must be of type `{goal}`; It is `{type(data[key])}`")
 
 
 def checkConfig(data: dict) -> None:
+    """checks required variables in plugin info.yaml"""
     chKeySet(data, "name")
     chKeyGood(data, "name", str)
 
@@ -228,6 +229,9 @@ def checkConfig(data: dict) -> None:
     if data["config"]["uses rounds"]:
         chKeySet(data["config"], "default rounds")
 
+    chKeySet(data, "license")
+    chKeyGood(data, "license", str)
+
 
 def check_plugins(plugins: dict) -> dict:
     """Checks info.yaml file of all plugins and returns valid plugins"""
@@ -246,3 +250,35 @@ def check_plugins(plugins: dict) -> dict:
         plugins.pop(i)
 
     return plugins
+
+
+def getMarkdownAbout() -> str:
+    """Returns markdown version of About text"""
+    return """# About
+CRYPT GUI is licensed under GPL v3.0 Copyright (c) 2024 Ninja Left\n
+CRYPT was built using Python 3, Qt Designer & Pyside6.\n
+Some functions used in ciphers.py are from [This Repository](https://github.com/TheAlgorithms/Python) and are\n
+licensed under MIT Copyright (c) 2016-2024 TheAlgorithms and contributors.\n
+brute.py is a modified version of [brute](https://github.com/rdegges/brute)
+
+## Shortcuts:
+Ctrl + V : Paste\n
+Ctrl + = : Zoom In\n
+Ctrl + - : Zoom Out\n
+Ctrl + , : Settings\n
+Ctrl + B : Brute Force\n
+Ctrl + D : Decode\n
+Ctrl + E : Encode\n
+Ctrl + C : Copy
+
+## Icons credits:
+[Configure icon by afif fudin - Flaticon](https://www.flaticon.com/free-icon/configuration_9780271)\n
+[Login icon by FR_Media - Flaticon](https://www.flaticon.com/free-icon/login_5729989)\n
+[Logout icon by FR_Media - Flaticon](https://www.flaticon.com/free-icon/logout_5729988)\n
+[Locked icon by Aswell Studio - Flaticon](https://www.flaticon.com/free-icon/lock_2549910)\n
+[Unlocked icon by Aswell Studio - Flaticon](https://www.flaticon.com/free-icon/unlock_2549951)\n
+[Unsecure icon by juicy_fish - Flaticon](https://www.flaticon.com/free-icon/unsecure_5690981)\n
+[Search icon by Pixel Perfect - Flaticon](https://www.flaticon.com/free-icon/search_1828057)\n
+[Folder icon by Mehwish - Flaticon](https://www.flaticon.com/free-icon/folder_3307447)\n
+[Floppy disk icon by heisenberg_jr - Flaticon](https://www.flaticon.com/free-icon/floppy-disk_12629050)\n
+"""
