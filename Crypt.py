@@ -1024,11 +1024,18 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 Logger.critical(str(e), exc_info=1)
             sys.exit(1)
         self.Plugins = functions.check_plugins(self.Plugins)
+        breakpoint()
+        _A = self.textBrowser.toMarkdown()
+        _A += "\n## Plugins\n"
 
         for i in self.Plugins:
             info = self.Plugins[i]().get_info()
             # info['name'] will be set as item data and can be used to call the plugin
             self.operationMode.addItem(info["config"]["display name"], info["name"])
+            # add plugin source URL, author, and license to About tab
+            _License = f""
+            _A += f"\n### {info['config']['display name']}\nby \"{info['author']}\""
+            self.textBrowser.setMarkdown(_A)
 
 
 if __name__ == "__main__":
