@@ -1,5 +1,5 @@
 # Changelog
-## [0.2.0]
+## 0.2.0
 ### Added
 - Config file for setting different variables
 - Some variables now use the default set in config.yaml
@@ -25,7 +25,7 @@
 - Fixed README header file location
 - Fixed log level and base85 settings for config dialog
 
-## [0.1.4]
+## 0.1.4
 ### Added
 - Zoom in & Zoom out buttons
 - GUI: Added Config button
@@ -43,7 +43,7 @@
 ### Removed
 - Code: Alert on pasting successfully
 
-## [0.1.3]
+## 0.1.3
 ### Added
 - Code: 2 Custom error classes
 - Code: 2 new alphabets (Base32 & Base85)
@@ -59,7 +59,7 @@
 ### Fixes
 - CHANGELOG.md: Fixed typo in repository name
 
-## [0.1.2]
+## 0.1.2
 ### Added
 - ciphers.py: file containing functions for encoding, decoding input.
 - cracker.py: Contains functions for brute-forcing hashes and some ciphers.
@@ -72,21 +72,14 @@
 ### Fixes
 - compile.sh: Now it works.
 
-## [0.1.1] - 2024-06-21
+## 0.1.1
 ### Added
 - Timeout for paste function (It won't freeze in case of empty clipboard on KDE Plasma Wayland)
 ### Changed
 - Paste now appends data
 - Renamed Crypt-VERSION.py to Crypt.py
 
-## [0.1.0] - 2024-06-13
+## 0.1.0
 ### Added
 - Copy and Paste functions
 - Buttons change based on chosen operation mode
-
-[0.2.0]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.2.0
-[0.1.4]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.4
-[0.1.3]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.3
-[0.1.2]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.2
-[0.1.1]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.1
-[0.1.0]: https://github.com/ninja-left/CRYPT-GUI/releases/tag/v0.1.0
