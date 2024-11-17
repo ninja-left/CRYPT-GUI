@@ -1,1 +1,5 @@
 .* export-ignore
+*.ui
+compile_*
+*.qrc
+LICENSE_WIKI
