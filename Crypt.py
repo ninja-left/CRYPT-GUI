@@ -443,6 +443,8 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             "PBKDF2 SHA256",
             "PBKDF2 SHA512",
         )
+        # Replaces HTML about with Markdown version
+        self.textBrowser.setMarkdown(functions.getMarkdownAbout())
 
         # User settings
         settings = functions.load_settings()
@@ -671,7 +673,8 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     # Loading plugin info
                     t = self.Plugins[self.operationMode.currentData()]()
                     info = t.get_info()
-                    Logger.debug(f"Plugin info: {info}")
+                    _i = info.pop("license")
+                    Logger.debug(f"Plugin info: {_i}")
                     # Texts set to default and buttons enabled if supported by the plugin
                     self.btnEncode.setText(self.defaultTextEncode)
                     self.btnEncode.setEnabled(info["config"]["has encoder"])
@@ -696,6 +699,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     self.inputRounds.setEnabled(info['config']['uses rounds'])
                     if info['config']['uses rounds']:
                         self.inputRounds.setText(str(info['config']['default rounds']))
+                    del info, _i, t
 
     def doDecode(self):
         input_data = self.inputText.toPlainText()
@@ -982,6 +986,12 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             results = t.brute_force(input_data, alphabet=alphabet, rounds=rounds)
             if results:
                 self.showMessageBox("Finished", "Decoded the input.", level=1, button=2)
+                if type(results) == dict:
+                    for i in results.items():
+                        p = self.outputText.toPlainText()
+                        self.outputText.setPlainText(f"{p}{i[0]}: {i[1]}\n")
+                else:
+                    self.outputText.setPlainText(results)
             Logger.debug(
                 f"{info['config']['display name']} Brute-forced: {input_data} -> {results}"
             )
@@ -1024,11 +1034,23 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 Logger.critical(str(e), exc_info=1)
             sys.exit(1)
         self.Plugins = functions.check_plugins(self.Plugins)
+        _A = self.textBrowser.toMarkdown()
+        _A += "## Plugins"
 
         for i in self.Plugins:
             info = self.Plugins[i]().get_info()
             # info['name'] will be set as item data and can be used to call the plugin
             self.operationMode.addItem(info["config"]["display name"], info["name"])
+
+            # add plugin source URL, author, and license to About tab
+            try:
+                _URL = f"\n\nSource: {info['source url']}"
+            except KeyError:
+                _URL = ""
+            _LICENSE = f"\n\n{info['license']}"
+            _A += f"\n### {info['config']['display name']}{_URL}{_LICENSE}"
+            self.textBrowser.setMarkdown(_A)
+        del _A, _URL, _LICENSE
 
 
 if __name__ == "__main__":

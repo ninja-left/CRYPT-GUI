@@ -1,7 +1,7 @@
-venv
+*venv*
 __pycache__
 dev_*
 config.yaml
-.TODO
+*TODO*
 *.log*
 Logs

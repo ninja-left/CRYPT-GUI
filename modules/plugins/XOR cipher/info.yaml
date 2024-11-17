@@ -1,7 +1,7 @@
-name: 'affine'
-version: '1.0.0'
+name: 'xor'
+version: '1.1.0'
 requirements: ''
-source url: https://github.com/TheAlgorithms/Python/blob/master/ciphers/affine_cipher.py
+source url: https://github.com/TheAlgorithms/Python/blob/master/ciphers/xor_cipher.py
 license: |-
   #### MIT License
 
@@ -25,14 +25,14 @@ license: |-
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 config:
+  can change alphabet: false
   uses keys: true
-  can change alphabet: true
-  default key: 6478
-  alphabet: " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
-  display name: Affine Cipher
+  default key: 128
+  display name: XOR Cipher
   has encoder: true
-  has decoder: true
-  has brute: false
+  has decoder: false
+  has brute: true
   uses salt: false
   uses plaintext: false
   uses rounds: false
+

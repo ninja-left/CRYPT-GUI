@@ -4,11 +4,35 @@ version: '1.1.0'  # MUST SET
 # Modules should be coma (,) separated.
 # For example: 'Numpy,cffi,passlib,Pyside6'
 requirements: ''  # MUST SET
+source url: https://github.com/TheAlgorithms/Python/blob/master/ciphers/a1z26.py  # OPTIONAL; a URL to the original source code
+license: |-
+  #### MIT License
+
+  Copyright (c) 2016-2022 TheAlgorithms and contributors
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+# ^^^^^^ MUST SET; a short copyright notice; This will be displayed in About tab under Plugins; Accepts Markdown
 config:
   uses keys: false  # MUST SET; If true, should also set a `default key` variable
-  # default key: 0  # MUST SET
+  # default key: 0  # MUST SET (If above is set)
   can change alphabet: false  # MUST SET; If, true, should also set an `alphabet` variable
-  # alphabet: abc  # OPTIONAL
+  # alphabet: abc  # MUST SET (If above is set)
   display name: a1z26 cipher  # OPTIONAL; This will be shown to users. If not set, will use `name` instead.
   # The following 4 variables are MUST SET:
   has encoder: true  # true if plugin has encode function
@@ -18,4 +42,4 @@ config:
   # default pattern: 'SALT+PATTERN' # OPTIONAL; If not set, will read from user config
   uses plaintext: false  # MUST SET
   uses rounds: false  # MUST SET; If true, also set a `default rounds` variable
-  # default rounds: 0  # MUST SET
+  # default rounds: 0  # MUST SET (if above is set)
