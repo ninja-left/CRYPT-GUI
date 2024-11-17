@@ -1,0 +1,56 @@
+name: Publish Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Extract version and description from CHANGELOG.md and update old_version
+        id: changelog
+        shell: bash
+        run: |
+          ChLog=Docs/CHANGELOG.md
+          OVersion=.release/old_version
+
+          version=v$(grep -m 2 '^' $ChLog | sed 's/^## //' | sed 's/# Changelog//' | grep -m 1 '[0-9]*\.[0-9]*\.[0-9]*')
+          old_version=$(while read -r line; do echo "$line"; done < $OVersion)
+
+          ## This will read from the start until it reaches a blank line
+          description=""
+          while IFS= read -r line; do
+            [[ -z "$line" ]] && break
+            description+="$line
+          "
+          done < $ChLog
+
+          DATA+="
+          **Full Changelog:** \`[$old_version...$version](https://github.com/ninja-left/CRYPT-GUI/compare/$old_version...$version)\`"
+
+          ## Update old_version
+          echo "$version
+          " | tee $OVersion
+
+          echo "Version found: $version"
+          echo "Description found:"
+          echo "$description"
+
+          Set outputs for use in later steps
+          echo "::set-output name=version::$version"
+          echo "::set-output name=description::$description"
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.changelog.outputs.version }}
+          release_name: ${{ steps.changelog.outputs.version }}
+          body: ${{ steps.changelog.outputs.description }}
+          draft: false
+          prerelease: false
