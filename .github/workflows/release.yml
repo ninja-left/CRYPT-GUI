@@ -77,7 +77,7 @@ jobs:
         with:
           tag_name: ${{ steps.get_version_tag.outputs.version }}
           release_name: ${{ steps.get_version_tag.outputs.version }}
-          body: ${{ steps.get_desc.outputs.description }}
+          body: ${{ steps.get_desc.outputs.release_body }}
           draft: false
           prerelease: false
 
