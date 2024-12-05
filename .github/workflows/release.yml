@@ -87,7 +87,8 @@ jobs:
           # Read contents of SHA256_CHECKSUMS.txt and add it to release body
           description+="
           \`\`\`checksums
-          $(cat ${{ steps.chk_sha256.outputs.output_checksums }} )\`\`\`"
+          $(cat ${{ steps.chk_sha256.outputs.output_checksums }} )
+          \`\`\`"
 
           echo "Description:"
           echo "$description"
