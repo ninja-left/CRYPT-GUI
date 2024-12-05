@@ -1,4 +1,10 @@
 # Changelog
+## 0.2.1
+### Changed
+- Excluded .ui , .qrc , compile scripts and LICENSE_WIKI files when creating release assets
+### Fixes
+- Fixed release body
+
 ## 0.2.0
 ### Added
 - Config file for setting different variables
