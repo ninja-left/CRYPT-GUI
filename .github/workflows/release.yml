@@ -4,6 +4,10 @@ on:
   push:
     tags:
       - "*"
+    branches:
+      - "main"
+    paths:
+      - "Docs/CHANGELOG.md"
   workflow_dispatch:
 
 jobs:
@@ -12,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get repo name
         id: get_repo_name
@@ -37,6 +41,33 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
           echo "old_version=$old_version" >> $GITHUB_OUTPUT
 
+      - name: Create assets
+        id: create_assets
+        run: |
+          repo_name=${{ steps.get_repo_name.outputs.repo_name }}
+          version=${{ steps.get_version_tag.outputs.version }}
+          output_zip="${repo_name}-${version}.zip"
+          output_xz="${repo_name}-${version}.tar.xz"
+          git config tar.tar.xz.command "xz -c"
+
+          git archive --format zip -9 --prefix="${repo_name}/" --output "$output_zip" HEAD
+          git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_xz" HEAD
+
+          echo "output_zip=$output_zip" >> $GITHUB_OUTPUT
+          echo "output_xz=$output_xz" >> $GITHUB_OUTPUT
+
+      - name: Create SHA256 checksums
+        id: chk_sha256
+        shell: bash
+        run: |
+          # Show and write hashes to SHA256_CHECKSUMS.txt
+          sha256sum ${{ steps.create_assets.outputs.output_zip }} | tee SHA256_CHECKSUMS.txt
+          sha256sum ${{ steps.create_assets.outputs.output_xz }} | tee -a SHA256_CHECKSUMS.txt
+          # Check them again
+          sha256sum -c SHA256_CHECKSUMS.txt
+          # Save for upload
+          echo "output_checksums=SHA256_CHECKSUMS.txt" >> $GITHUB_OUTPUT
+        
       - name: Get description
         id: get_desc
         shell: bash
@@ -52,6 +83,11 @@ jobs:
 
           description+="
           **Full Changelog:** https://github.com/ninja-left/CRYPT-GUI/compare/$overs...$vers"
+
+          # Read contents of SHA256_CHECKSUMS.txt and add it to release body
+          description+="
+          ```checksums
+          $(cat ${{ steps.chk_sha256.outputs.output_checksums }} )```"
 
           echo "Description:"
           echo "$description"
@@ -81,20 +117,6 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Create assets
-        id: create_assets
-        run: |
-          repo_name=${{ steps.get_repo_name.outputs.repo_name }}
-          version=${{ steps.get_version_tag.outputs.version }}
-          output_zip="${repo_name}-${version}.zip"
-          output_xz="${repo_name}-${version}.tar.xz"
-          git config tar.tar.xz.command "xz -c"
-          git archive --format zip -9 --prefix="${repo_name}/" --output "$output_zip" HEAD
-          git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_xz" HEAD
-
-          echo "output_zip=$output_zip" >> $GITHUB_OUTPUT
-          echo "output_xz=$output_xz" >> $GITHUB_OUTPUT
-
       - name: Upload zip
         uses: actions/upload-release-asset@v1
         env:
@@ -114,3 +136,13 @@ jobs:
           asset_path: ${{ steps.create_assets.outputs.output_xz }}
           asset_name: ${{ steps.create_assets.outputs.output_xz }}
           asset_content_type: application/x-gtar
+
+      - name: Upload checksums
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.chk_sha256.outputs.output_checksums }}
+          asset_name: ${{ steps.chk_sha256.outputs.output_checksums }}
+          asset_content_type: application/txt
