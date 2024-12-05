@@ -50,7 +50,7 @@ jobs:
           "
           done < Docs/CHANGELOG.md
 
-          DATA+="
+          description+="
           **Full Changelog:** https://github.com/ninja-left/CRYPT-GUI/compare/$overs...$vers"
 
           echo "Description:"
