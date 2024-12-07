@@ -11,25 +11,21 @@ on:
   workflow_dispatch:
 
 jobs:
-  release:
+  prepare:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Get repo name
-        id: get_repo_name
         run: |
           ## Used for release zip
           repo_fullname="${{ github.repository }}"
           repo_name="${repo_fullname##*/}"
 
-          echo "Repo name: $repo_name"
-          echo "repo_name=$repo_name" >> $GITHUB_OUTPUT
+          echo "$repo_fullname -> $repo_name"
+          echo "repo_name=$repo_name" >> $GITHUB_ENV
 
       - name: Get version tag
-        id: get_version_tag
         shell: bash
         run: |
           version=v$(grep -m 2 '^' Docs/CHANGELOG.md | sed 's/^## //' | sed 's/# Changelog//' | grep -m 1 '[0-9]*\.[0-9]*\.[0-9]*')
@@ -38,42 +34,47 @@ jobs:
           echo "Version: $version"
           echo "Old Version: $old_version"
 
-          echo "version=$version" >> $GITHUB_OUTPUT
-          echo "old_version=$old_version" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_ENV
+          echo "old_version=$old_version" >> $GITHUB_ENV
 
-      - name: Create assets
-        id: create_assets
+  release:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create source assets
         run: |
-          repo_name=${{ steps.get_repo_name.outputs.repo_name }}
-          version=${{ steps.get_version_tag.outputs.version }}
-          output_zip="${repo_name}-${version}.zip"
-          output_xz="${repo_name}-${version}.tar.xz"
+          repo_name=${{ env.repo_name }}
+          version=${{ env.version }}
+          output_zip="source-${repo_name}-${version}.zip"
+          output_xz="source-${repo_name}-${version}.tar.xz"
           git config tar.tar.xz.command "xz -c"
 
           git archive --format zip -9 --prefix="${repo_name}/" --output "$output_zip" HEAD
           git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_xz" HEAD
 
-          echo "output_zip=$output_zip" >> $GITHUB_OUTPUT
-          echo "output_xz=$output_xz" >> $GITHUB_OUTPUT
+          echo "output_zip=$output_zip" >> $GITHUB_ENV
+          echo "output_xz=$output_xz" >> $GITHUB_ENV
 
       - name: Create SHA256 checksums
-        id: chk_sha256
         shell: bash
         run: |
           # Show and write hashes to SHA256_CHECKSUMS.txt
-          sha256sum ${{ steps.create_assets.outputs.output_zip }} | tee SHA256_CHECKSUMS.txt
-          sha256sum ${{ steps.create_assets.outputs.output_xz }} | tee -a SHA256_CHECKSUMS.txt
+          FILE=SOURCE_SHA256.txt
+          sha256sum ${{ env.output_zip }} | tee $FILE
+          sha256sum ${{ env.output_xz }} | tee -a $FILE
+
           # Check them again
-          sha256sum -c SHA256_CHECKSUMS.txt
+          sha256sum -c $FILE
+
           # Save for upload
-          echo "output_checksums=SHA256_CHECKSUMS.txt" >> $GITHUB_OUTPUT
-        
+          echo "output_source_checksums=$FILE" >> $GITHUB_ENV
+
       - name: Get description
         id: get_desc
         shell: bash
         run: |
-          vers=${{ steps.get_version_tag.outputs.version }}
-          overs=${{ steps.get_version_tag.outputs.old_version }}
+          vers=${{ env.version }}
+          overs=${{ env.old_version }}
           description=""
           while IFS= read -r line; do
             [[ -z "$line" ]] && break
@@ -84,12 +85,6 @@ jobs:
           description+="
           **Full Changelog:** https://github.com/ninja-left/CRYPT-GUI/compare/$overs...$vers"
 
-          # Read contents of SHA256_CHECKSUMS.txt and add it to release body
-          description+="
-          \`\`\`checksums
-          $(cat ${{ steps.chk_sha256.outputs.output_checksums }} )
-          \`\`\`"
-
           echo "Description:"
           echo "$description"
 
@@ -98,22 +93,14 @@ jobs:
           echo "$description" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Update old_version
-        shell: bash
-        run: |
-          echo "${{ steps.get_version_tag.outputs.version }}" >.release/old_version
-          echo "\n">.release/old_version
-          echo "Old version content:"
-          cat .release/old_version
-
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.get_version_tag.outputs.version }}
-          release_name: ${{ steps.get_version_tag.outputs.version }}
+          tag_name: ${{ env.version }}
+          release_name: ${{ env.version }}
           body: ${{ steps.get_desc.outputs.release_body }}
           draft: false
           prerelease: false
@@ -124,8 +111,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.create_assets.outputs.output_zip }}
-          asset_name: ${{ steps.create_assets.outputs.output_zip }}
+          asset_path: ${{ env.output_zip }}
+          asset_name: ${{ env.output_zip }}
           asset_content_type: application/zip
 
       - name: Upload tar
@@ -134,8 +121,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.create_assets.outputs.output_xz }}
-          asset_name: ${{ steps.create_assets.outputs.output_xz }}
+          asset_path: ${{ env.output_xz }}
+          asset_name: ${{ env.output_xz }}
           asset_content_type: application/x-gtar
 
       - name: Upload checksums
@@ -144,6 +131,237 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.chk_sha256.outputs.output_checksums }}
-          asset_name: ${{ steps.chk_sha256.outputs.output_checksums }}
+          asset_path: ${{ env.output_source_checksums }}
+          asset_name: ${{ env.output_source_checksums }}
           asset_content_type: application/txt
+
+  build-linux:
+    needs: release
+    runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+
+        - name: Set up Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.11.2'
+
+        - name: Install dependencies
+          run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+            pip install pyinstaller
+
+        - name: Build with PyInstaller
+          run: |
+            pyinstaller -D \
+            --clean \
+            -n CRYPT \
+            -s \
+            -i modules/design/images/icon.png \
+            --add-data modules/plugins:modules/plugins \
+            --add-data Docs:Docs \
+            --add-data default_config.yaml:. \
+            --add-data modules/design:modules/design \
+            Crypt.py
+
+            mv dist/_internal/modules dist/_internal/default_config.yaml dist/_internal/Docs dist/
+
+        - name: Compress
+          run: |
+            repo_name=${{ env.repo_name }}
+            version=${{ env.version }}
+            output_name="compiled-linux-${repo_name}-${version}.tar.xz"
+            git config tar.tar.xz.command "xz -c"
+
+            git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_name" dist/*
+
+            echo "output_linux=$output_name" >> $GITHUB_ENV
+
+        - name: Create SHA256 checksums
+          run: |
+            FILE=${{ env.output_linux }}.sha256
+            sha256sum ${{ env.output_linux }} | tee $FILE
+
+            # Check them again
+            sha256sum -c $FILE
+
+            # Save for upload
+            echo "linux_checksum=$FILE" >> $GITHUB_ENV
+
+        - name: Upload archive
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+            asset_path: ${{ env.output_linux }}
+            asset_name: ${{ env.output_linux }}
+            asset_content_type: application/x-gtar
+
+        - name: Upload checksum
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+            asset_path: ${{ env.linux_checksum }}
+            asset_name: ${{ env.linux_checksum }}
+            asset_content_type: application/txt
+
+  build-macos:
+    needs: release
+    runs-on: macos-latest
+      steps:
+        - uses: actions/checkout@v4
+
+        - name: Set up Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.11.2'
+
+        - name: Install dependencies
+          run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+            pip install pyinstaller
+
+        - name: Build with PyInstaller
+          run: |
+            pyinstaller -D \
+            --clean \
+            -n CRYPT \
+            -s \
+            -i modules/design/images/icon.icns \
+            --add-data modules/plugins:modules/plugins \
+            --add-data Docs:Docs \
+            --add-data default_config.yaml:. \
+            --add-data modules/design:modules/design \
+            Crypt.py
+
+            mv dist/_internal/modules dist/_internal/default_config.yaml dist/_internal/Docs dist/
+
+        - name: Compress
+          run: |
+            repo_name=${{ env.repo_name }}
+            version=${{ env.version }}
+            output_name="compiled-macos-${repo_name}-${version}.tar.xz"
+            git config tar.tar.xz.command "xz -c"
+
+            git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_name" dist/*
+
+            echo "output_macos=$output_name" >> $GITHUB_ENV
+
+        - name: Create SHA256 checksums
+          run: |
+            FILE=${{ env.output_macos }}.sha256
+            shasum -a 256 ${{ env.output_macos }} | tee $FILE
+
+            # Save for upload
+            echo "macos_checksum=$FILE" >> $GITHUB_ENV
+
+        - name: Upload archive
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+            asset_path: ${{ env.output_macos }}
+            asset_name: ${{ env.output_macos }}
+            asset_content_type: application/x-gtar
+
+        - name: Upload checksum
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+            asset_path: ${{ env.macos_checksum }}
+            asset_name: ${{ env.macos_checksum }}
+            asset_content_type: application/txt
+
+  build-windows:
+    needs: release
+    runs-on: windows-latest
+      steps:
+        - uses: actions/checkout@v4
+
+        - name: Set up Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.11.2'
+
+        - name: Install dependencies
+          run: |
+            python -m pip install --upgrade pip setuptools wheel
+            pip install -r requirements.txt
+            pip install pyinstaller
+
+        - name: Build with PyInstaller
+          run: |
+            pyinstaller -D \
+            --clean \
+            -n CRYPT \
+            -s \
+            -i modules/design/images/icon.ico \
+            --add-data modules/plugins:modules/plugins \
+            --add-data Docs:Docs \
+            --add-data default_config.yaml:. \
+            --add-data modules/design:modules/design \
+            Crypt.py
+
+            move dist/_internal/modules dist/
+            move dist/_internal/default_config.yaml dist/
+            move dist/_internal/Docs dist/
+
+        - name: Compress
+          run: |
+            $repo_name = ${{ env.repo_name }}
+            $version = ${{ env.version }}
+            $output_name="compiled-windows-${repo_name}-${version}.zip"
+
+            Compress-Archive -Path './dist/*' -DestinationPath './$output_name'
+
+            echo "output_windows=$output_name" >> $GITHUB_ENV
+
+        - name: Create SHA256 checksums
+          run: |
+            $FILE="${{ env.output_windows }}.sha256"
+            $HASH = Get-FileHash -Path $FILE -Algorithm SHA256
+
+            echo "${HASH.Hash}"
+            $HASH.Hash | Out-File $FILE
+            # Save for upload
+            echo "windows_checksum=$FILE" >> $GITHUB_ENV
+
+        - name: Upload archive
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+            asset_path: ${{ env.output_windows }}
+            asset_name: ${{ env.output_windows }}
+            asset_content_type: application/zip
+
+        - name: Upload checksum
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+            asset_path: ${{ env.windows_checksum }}
+            asset_name: ${{ env.windows_checksum }}
+            asset_content_type: application/txt
+
+  finish-up:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update old_version
+        shell: bash
+        run: |
+          echo "${{ steps.get_version_tag.outputs.version }}" >.release/old_version
+          echo "\n">.release/old_version
+          echo "Old version content:"
+          cat .release/old_version
