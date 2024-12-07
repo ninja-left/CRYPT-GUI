@@ -1,16 +1,15 @@
 name: Publish Release
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
+    branches:
+      - 'main'
     paths:
       - "Docs/CHANGELOG.md"
   workflow_dispatch:
 
 jobs:
   prepare:
-    if: github.event.pull_request.merged == true || github.event.workflow_dispatch
     runs-on: ubuntu-latest
     outputs:
       repo_name: ${{ steps.get_repo_name.outputs.repo_name }}
