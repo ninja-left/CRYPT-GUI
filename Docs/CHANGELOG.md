@@ -2,6 +2,8 @@
 ## 0.2.2
 ### Added
 - Compiled archives for each release
+### Fixed
+- release triggered on any push
 
 ## 0.2.1
 ### Changed
