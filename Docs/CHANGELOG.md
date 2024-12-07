@@ -4,6 +4,7 @@
 - Compiled archives for each release
 ### Changed
 - Release triggered only when merging a pull-request for CHANGELOG.md
+- Used job.outputs to share release url between jobs
 ### Fixed
 - Release triggered on any push
 
