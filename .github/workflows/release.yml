@@ -185,7 +185,7 @@ jobs:
           repo_name: ${{ needs.prepare.outputs.repo_name }}
           version: ${{ needs.prepare.outputs.version }}
         run: |
-          output_name="compiled-linux-${{ env.repo_name }}-${{ env.version }}.tar.xz"
+          output_name="compiled-linux-$repo_name-$version.tar.xz"
 
           tar caf $output_name dist/*
 
@@ -263,7 +263,7 @@ jobs:
           repo_name: ${{ needs.prepare.outputs.repo_name }}
           version: ${{ needs.prepare.outputs.version }}
         run: |
-          output_name="compiled-macos-${{ env.repo_name }}-${{ env.version }}.tar.xz"
+          output_name="compiled-macos-$repo_name-$version.tar.xz"
 
           tar caf $output_name dist/*
 
@@ -302,10 +302,6 @@ jobs:
   build-windows:
     needs: release
     runs-on: windows-latest
-    env:
-      RELEASE_URL: ${{ needs.release.outputs.release_url }}
-      repo_name: ${{ needs.prepare.outputs.repo_name }}
-      version: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -322,16 +318,17 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-          pyinstaller -D \
-          --clean \
-          -n CRYPT \
-          -s \
-          -i modules/design/images/icon.ico \
-          --add-data modules/plugins:modules/plugins \
-          --add-data Docs:Docs \
-          --add-data default_config.yaml:. \
-          --add-data modules/design:modules/design \
-          --log-level ERROR \
+          # \ -> ` in powershell
+          pyinstaller -D `
+          --clean `
+          -n CRYPT `
+          -s `
+          -i modules/design/images/icon.ico `
+          --add-data "modules/plugins:modules/plugins" `
+          --add-data "Docs:Docs" `
+          --add-data "default_config.yaml:." `
+          --add-data "modules/design:modules/design" `
+          --log-level ERROR `
           Crypt.py
 
           move dist/CRYPT/_internal/modules dist/CRYPT/
@@ -344,7 +341,7 @@ jobs:
           repo_name: ${{ needs.prepare.outputs.repo_name }}
           version: ${{ needs.prepare.outputs.version }}
         run: |
-          $output_name="compiled-windows-${{ env.repo_name }}-${{ env.version }}.zip"
+          $output_name="compiled-windows-$repo_name-$version.zip"
 
           Compress-Archive -Path './dist/*' -DestinationPath './$output_name'
 
