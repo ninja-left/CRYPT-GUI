@@ -42,6 +42,8 @@ jobs:
     outputs:
       release_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
+      - uses: actions/checkout@v4
+
       - name: Create source assets
         run: |
           repo_name=${{ env.repo_name }}
@@ -361,6 +363,8 @@ jobs:
     needs: release
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Update old_version
         shell: bash
         run: |
