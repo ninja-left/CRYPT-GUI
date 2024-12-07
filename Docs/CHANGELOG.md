@@ -1,4 +1,8 @@
 # Changelog
+## 0.2.2
+### Added
+- Compiled archives for each release
+
 ## 0.2.1
 ### Changed
 - Excluded .ui , .qrc , compile scripts and LICENSE_WIKI files when creating release assets
