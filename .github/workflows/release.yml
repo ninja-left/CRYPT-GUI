@@ -185,9 +185,8 @@ jobs:
       - name: Compress
         run: |
           output_name="compiled-linux-${{ env.repo_name }}-${{ env.version }}.tar.xz"
-          git config tar.tar.xz.command "xz -c"
 
-          git archive --format tar.xz -9 --prefix="${{ env.repo_name }}/" --output "$output_name" dist/*
+          tar caf $output_name dist/*
 
           echo "output_linux=$output_name" >> $GITHUB_ENV
 
@@ -261,9 +260,8 @@ jobs:
       - name: Compress
         run: |
           output_name="compiled-macos-${{ env.repo_name }}-${{ env.version }}.tar.xz"
-          git config tar.tar.xz.command "xz -c"
 
-          git archive --format tar.xz -9 --prefix="${{ env.repo_name }}/" --output "$output_name" dist/*
+          tar caf $output_name dist/*
 
           echo "output_macos=$output_name" >> $GITHUB_ENV
 
