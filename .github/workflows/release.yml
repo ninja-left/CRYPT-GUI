@@ -37,6 +37,8 @@ jobs:
   release:
     needs: prepare
     runs-on: ubuntu-latest
+    outputs:
+      release_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
       - name: Create source assets
         run: |
@@ -135,6 +137,8 @@ jobs:
   build-linux:
     needs: release
     runs-on: ubuntu-latest
+    env:
+      RELEASE_URL: ${{ needs.release.outputs.release_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -191,7 +195,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+          upload_url: $env.RELEASE_URL
           asset_path: ${{ env.output_linux }}
           asset_name: ${{ env.output_linux }}
           asset_content_type: application/x-gtar
@@ -201,7 +205,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+          upload_url: $env.RELEASE_URL
           asset_path: ${{ env.linux_checksum }}
           asset_name: ${{ env.linux_checksum }}
           asset_content_type: application/txt
@@ -262,7 +266,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+          upload_url: $env.RELEASE_URL
           asset_path: ${{ env.output_macos }}
           asset_name: ${{ env.output_macos }}
           asset_content_type: application/x-gtar
@@ -272,7 +276,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+          upload_url: $env.RELEASE_URL
           asset_path: ${{ env.macos_checksum }}
           asset_name: ${{ env.macos_checksum }}
           asset_content_type: application/txt
@@ -336,7 +340,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+          upload_url: $env.RELEASE_URL
           asset_path: ${{ env.output_windows }}
           asset_name: ${{ env.output_windows }}
           asset_content_type: application/zip
@@ -346,7 +350,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+          upload_url: $env.RELEASE_URL
           asset_path: ${{ env.windows_checksum }}
           asset_name: ${{ env.windows_checksum }}
           asset_content_type: application/txt
@@ -358,7 +362,7 @@ jobs:
       - name: Update old_version
         shell: bash
         run: |
-          echo "${{ steps.get_version_tag.outputs.version }}" >.release/old_version
+          echo "${{ env.version }}" >.release/old_version
           echo "\n">.release/old_version
           echo "Old version content:"
           cat .release/old_version
