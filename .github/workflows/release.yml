@@ -180,10 +180,7 @@ jobs:
           --add-data modules/design:modules/design \
           Crypt.py
 
-          ls -lh
-          ls -lh dist/
-          ls -lh dist/_internal
-          mv dist/_internal/modules dist/_internal/default_config.yaml dist/_internal/Docs dist/
+          mv dist/CRYPT/_internal/modules dist/CRYPT/_internal/default_config.yaml dist/CRYPT/_internal/Docs dist/CRYPT/
 
       - name: Compress
         run: |
@@ -259,7 +256,7 @@ jobs:
           --add-data modules/design:modules/design \
           Crypt.py
 
-          mv dist/_internal/modules dist/_internal/default_config.yaml dist/_internal/Docs dist/
+          mv dist/CRYPT/_internal/modules dist/CRYPT/_internal/default_config.yaml dist/CRYPT/_internal/Docs dist/CRYPT/
 
       - name: Compress
         run: |
@@ -332,9 +329,9 @@ jobs:
           --add-data modules/design:modules/design \
           Crypt.py
 
-          move dist/_internal/modules dist/
-          move dist/_internal/default_config.yaml dist/
-          move dist/_internal/Docs dist/
+          move dist/CRYPT/_internal/modules dist/CRYPT/
+          move dist/CRYPT/_internal/default_config.yaml dist/CRYPT/
+          move dist/CRYPT/_internal/Docs dist/CRYPT/
 
       - name: Compress
         run: |
