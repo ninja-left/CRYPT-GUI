@@ -8,6 +8,7 @@
 ### Fixed
 - Release triggered on any push
 - if logic in prepare job
+- missing checkout@v4 steps in release & finish-up jobs
 
 ## 0.2.1
 ### Changed
