@@ -197,14 +197,14 @@ jobs:
           asset_content_type: application/x-gtar
 
       - name: Upload checksum
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ release.steps.create_release.outputs.upload_url }}
-            asset_path: ${{ env.linux_checksum }}
-            asset_name: ${{ env.linux_checksum }}
-            asset_content_type: application/txt
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.linux_checksum }}
+          asset_name: ${{ env.linux_checksum }}
+          asset_content_type: application/txt
 
   build-macos:
     needs: release
