@@ -2,12 +2,8 @@ name: Publish Release
 
 on:
   pull_request:
-    types:
-      - closed
     paths:
       - "Docs/CHANGELOG.md"
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
