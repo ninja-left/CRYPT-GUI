@@ -139,68 +139,68 @@ jobs:
   build-linux:
     needs: release
     runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-        - name: Set up Python
-          uses: actions/setup-python@v4
-          with:
-            python-version: '3.11.2'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.2'
 
-        - name: Install dependencies
-          run: |
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
-            pip install pyinstaller
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
 
-        - name: Build with PyInstaller
-          run: |
-            pyinstaller -D \
-            --clean \
-            -n CRYPT \
-            -s \
-            -i modules/design/images/icon.png \
-            --add-data modules/plugins:modules/plugins \
-            --add-data Docs:Docs \
-            --add-data default_config.yaml:. \
-            --add-data modules/design:modules/design \
-            Crypt.py
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller -D \
+          --clean \
+          -n CRYPT \
+          -s \
+          -i modules/design/images/icon.png \
+          --add-data modules/plugins:modules/plugins \
+          --add-data Docs:Docs \
+          --add-data default_config.yaml:. \
+          --add-data modules/design:modules/design \
+          Crypt.py
 
-            mv dist/_internal/modules dist/_internal/default_config.yaml dist/_internal/Docs dist/
+          mv dist/_internal/modules dist/_internal/default_config.yaml dist/_internal/Docs dist/
 
-        - name: Compress
-          run: |
-            repo_name=${{ env.repo_name }}
-            version=${{ env.version }}
-            output_name="compiled-linux-${repo_name}-${version}.tar.xz"
-            git config tar.tar.xz.command "xz -c"
+      - name: Compress
+        run: |
+          repo_name=${{ env.repo_name }}
+          version=${{ env.version }}
+          output_name="compiled-linux-${repo_name}-${version}.tar.xz"
+          git config tar.tar.xz.command "xz -c"
 
-            git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_name" dist/*
+          git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_name" dist/*
 
-            echo "output_linux=$output_name" >> $GITHUB_ENV
+          echo "output_linux=$output_name" >> $GITHUB_ENV
 
-        - name: Create SHA256 checksums
-          run: |
-            FILE=${{ env.output_linux }}.sha256
-            sha256sum ${{ env.output_linux }} | tee $FILE
+      - name: Create SHA256 checksums
+        run: |
+          FILE=${{ env.output_linux }}.sha256
+          sha256sum ${{ env.output_linux }} | tee $FILE
 
-            # Check them again
-            sha256sum -c $FILE
+          # Check them again
+          sha256sum -c $FILE
 
-            # Save for upload
-            echo "linux_checksum=$FILE" >> $GITHUB_ENV
+          # Save for upload
+          echo "linux_checksum=$FILE" >> $GITHUB_ENV
 
-        - name: Upload archive
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ release.steps.create_release.outputs.upload_url }}
-            asset_path: ${{ env.output_linux }}
-            asset_name: ${{ env.output_linux }}
-            asset_content_type: application/x-gtar
+      - name: Upload archive
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.output_linux }}
+          asset_name: ${{ env.output_linux }}
+          asset_content_type: application/x-gtar
 
-        - name: Upload checksum
+      - name: Upload checksum
           uses: actions/upload-release-asset@v1
           env:
             GITHUB_TOKEN: ${{ github.token }}
@@ -213,147 +213,147 @@ jobs:
   build-macos:
     needs: release
     runs-on: macos-latest
-      steps:
-        - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-        - name: Set up Python
-          uses: actions/setup-python@v4
-          with:
-            python-version: '3.11.2'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.2'
 
-        - name: Install dependencies
-          run: |
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
-            pip install pyinstaller
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
 
-        - name: Build with PyInstaller
-          run: |
-            pyinstaller -D \
-            --clean \
-            -n CRYPT \
-            -s \
-            -i modules/design/images/icon.icns \
-            --add-data modules/plugins:modules/plugins \
-            --add-data Docs:Docs \
-            --add-data default_config.yaml:. \
-            --add-data modules/design:modules/design \
-            Crypt.py
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller -D \
+          --clean \
+          -n CRYPT \
+          -s \
+          -i modules/design/images/icon.icns \
+          --add-data modules/plugins:modules/plugins \
+          --add-data Docs:Docs \
+          --add-data default_config.yaml:. \
+          --add-data modules/design:modules/design \
+          Crypt.py
 
-            mv dist/_internal/modules dist/_internal/default_config.yaml dist/_internal/Docs dist/
+          mv dist/_internal/modules dist/_internal/default_config.yaml dist/_internal/Docs dist/
 
-        - name: Compress
-          run: |
-            repo_name=${{ env.repo_name }}
-            version=${{ env.version }}
-            output_name="compiled-macos-${repo_name}-${version}.tar.xz"
-            git config tar.tar.xz.command "xz -c"
+      - name: Compress
+        run: |
+          repo_name=${{ env.repo_name }}
+          version=${{ env.version }}
+          output_name="compiled-macos-${repo_name}-${version}.tar.xz"
+          git config tar.tar.xz.command "xz -c"
 
-            git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_name" dist/*
+          git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_name" dist/*
 
-            echo "output_macos=$output_name" >> $GITHUB_ENV
+          echo "output_macos=$output_name" >> $GITHUB_ENV
 
-        - name: Create SHA256 checksums
-          run: |
-            FILE=${{ env.output_macos }}.sha256
-            shasum -a 256 ${{ env.output_macos }} | tee $FILE
+      - name: Create SHA256 checksums
+        run: |
+          FILE=${{ env.output_macos }}.sha256
+          shasum -a 256 ${{ env.output_macos }} | tee $FILE
 
-            # Save for upload
-            echo "macos_checksum=$FILE" >> $GITHUB_ENV
+          # Save for upload
+          echo "macos_checksum=$FILE" >> $GITHUB_ENV
 
-        - name: Upload archive
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ release.steps.create_release.outputs.upload_url }}
-            asset_path: ${{ env.output_macos }}
-            asset_name: ${{ env.output_macos }}
-            asset_content_type: application/x-gtar
+      - name: Upload archive
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.output_macos }}
+          asset_name: ${{ env.output_macos }}
+          asset_content_type: application/x-gtar
 
-        - name: Upload checksum
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ release.steps.create_release.outputs.upload_url }}
-            asset_path: ${{ env.macos_checksum }}
-            asset_name: ${{ env.macos_checksum }}
-            asset_content_type: application/txt
+      - name: Upload checksum
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.macos_checksum }}
+          asset_name: ${{ env.macos_checksum }}
+          asset_content_type: application/txt
 
   build-windows:
     needs: release
     runs-on: windows-latest
-      steps:
-        - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-        - name: Set up Python
-          uses: actions/setup-python@v4
-          with:
-            python-version: '3.11.2'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.2'
 
-        - name: Install dependencies
-          run: |
-            python -m pip install --upgrade pip setuptools wheel
-            pip install -r requirements.txt
-            pip install pyinstaller
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+          pip install pyinstaller
 
-        - name: Build with PyInstaller
-          run: |
-            pyinstaller -D \
-            --clean \
-            -n CRYPT \
-            -s \
-            -i modules/design/images/icon.ico \
-            --add-data modules/plugins:modules/plugins \
-            --add-data Docs:Docs \
-            --add-data default_config.yaml:. \
-            --add-data modules/design:modules/design \
-            Crypt.py
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller -D \
+          --clean \
+          -n CRYPT \
+          -s \
+          -i modules/design/images/icon.ico \
+          --add-data modules/plugins:modules/plugins \
+          --add-data Docs:Docs \
+          --add-data default_config.yaml:. \
+          --add-data modules/design:modules/design \
+          Crypt.py
 
-            move dist/_internal/modules dist/
-            move dist/_internal/default_config.yaml dist/
-            move dist/_internal/Docs dist/
+          move dist/_internal/modules dist/
+          move dist/_internal/default_config.yaml dist/
+          move dist/_internal/Docs dist/
 
-        - name: Compress
-          run: |
-            $repo_name = ${{ env.repo_name }}
-            $version = ${{ env.version }}
-            $output_name="compiled-windows-${repo_name}-${version}.zip"
+      - name: Compress
+        run: |
+          $repo_name = ${{ env.repo_name }}
+          $version = ${{ env.version }}
+          $output_name="compiled-windows-${repo_name}-${version}.zip"
 
-            Compress-Archive -Path './dist/*' -DestinationPath './$output_name'
+          Compress-Archive -Path './dist/*' -DestinationPath './$output_name'
 
-            echo "output_windows=$output_name" >> $GITHUB_ENV
+          echo "output_windows=$output_name" >> $GITHUB_ENV
 
-        - name: Create SHA256 checksums
-          run: |
-            $FILE="${{ env.output_windows }}.sha256"
-            $HASH = Get-FileHash -Path $FILE -Algorithm SHA256
+      - name: Create SHA256 checksums
+        run: |
+          $FILE="${{ env.output_windows }}.sha256"
+          $HASH = Get-FileHash -Path $FILE -Algorithm SHA256
 
-            echo "${HASH.Hash}"
-            $HASH.Hash | Out-File $FILE
-            # Save for upload
-            echo "windows_checksum=$FILE" >> $GITHUB_ENV
+          echo "${HASH.Hash}"
+          $HASH.Hash | Out-File $FILE
+          # Save for upload
+          echo "windows_checksum=$FILE" >> $GITHUB_ENV
 
-        - name: Upload archive
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ release.steps.create_release.outputs.upload_url }}
-            asset_path: ${{ env.output_windows }}
-            asset_name: ${{ env.output_windows }}
-            asset_content_type: application/zip
+      - name: Upload archive
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.output_windows }}
+          asset_name: ${{ env.output_windows }}
+          asset_content_type: application/zip
 
-        - name: Upload checksum
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ release.steps.create_release.outputs.upload_url }}
-            asset_path: ${{ env.windows_checksum }}
-            asset_name: ${{ env.windows_checksum }}
-            asset_content_type: application/txt
+      - name: Upload checksum
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ release.steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.windows_checksum }}
+          asset_name: ${{ env.windows_checksum }}
+          asset_content_type: application/txt
 
   finish-up:
     needs: release
