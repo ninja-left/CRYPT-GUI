@@ -185,7 +185,7 @@ jobs:
           repo_name: ${{ needs.prepare.outputs.repo_name }}
           version: ${{ needs.prepare.outputs.version }}
         run: |
-          output_name="compiled-linux-$repo_name-$version.tar.xz"
+          output_name="linux-$repo_name-$version.tar.xz"
 
           tar caf $output_name dist/*
 
@@ -263,7 +263,7 @@ jobs:
           repo_name: ${{ needs.prepare.outputs.repo_name }}
           version: ${{ needs.prepare.outputs.version }}
         run: |
-          output_name="compiled-macos-$repo_name-$version.tar.xz"
+          output_name="macos-$repo_name-$version.tar.xz"
 
           tar caf $output_name dist/*
 
@@ -341,7 +341,7 @@ jobs:
           repo_name: ${{ needs.prepare.outputs.repo_name }}
           version: ${{ needs.prepare.outputs.version }}
         run: |
-          $output_name="compiled-windows-$repo_name-$version.zip"
+          $output_name="windows-$repo_name-$version.zip"
 
           Compress-Archive -Path './dist/*' -DestinationPath './$output_name'
 
