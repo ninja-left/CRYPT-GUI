@@ -2,8 +2,10 @@
 ## 0.2.2
 ### Added
 - Compiled archives for each release
+### Changed
+- Release triggered only when merging a pull-request for CHANGELOG.md
 ### Fixed
-- release triggered on any push
+- Release triggered on any push
 
 ## 0.2.1
 ### Changed
