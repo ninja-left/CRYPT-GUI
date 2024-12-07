@@ -12,39 +12,47 @@ jobs:
   prepare:
     if: github.event.pull_request.merged == true || github.event.workflow_dispatch
     runs-on: ubuntu-latest
+    outputs:
+      repo_name: ${{ steps.get_repo_name.outputs.repo_name }}
+      version: ${{ steps.get_version.outputs.version }}
+      old_version: ${{ steps.get_version.outputs.old_version }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Get repo name
+        id: get_repo_name
         run: |
           ## Used for release zip
-          repo_fullname="${{ github.repository }}"
-          repo_name="${repo_fullname##*/}"
-
-          echo "$repo_fullname -> $repo_name"
-          echo "repo_name=$repo_name" >> $GITHUB_ENV
+          echo "repo_name=CRYPT-GUI" >> $GITHUB_OUTPUT
 
       - name: Get version tag
+        id: get_version
         shell: bash
         run: |
+          # Read the first 2 lines from CHANGELOG.md and remove '## ' & '# Changelog' from the output and return only the version
           version=v$(grep -m 2 '^' Docs/CHANGELOG.md | sed 's/^## //' | sed 's/# Changelog//' | grep -m 1 '[0-9]*\.[0-9]*\.[0-9]*')
+          # Read old_version file until a blankline is reached and return the output
           old_version=$(while read -r line; do echo "$line"; done < .release/old_version)
 
           echo "Version: $version"
           echo "Old Version: $old_version"
 
-          echo "version=$version" >> $GITHUB_ENV
-          echo "old_version=$old_version" >> $GITHUB_ENV
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "old_version=$old_version" >> $GITHUB_OUTPUT
 
   release:
     needs: prepare
     runs-on: ubuntu-latest
     outputs:
       release_url: ${{ steps.create_release.outputs.upload_url }}
+    env:
+      version: ${{ needs.prepare.outputs.version }}
+      repo_name: ${{ needs.prepare.outputs.repo_name }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Create source assets
+        id: create_source_assets
         run: |
           repo_name=${{ env.repo_name }}
           version=${{ env.version }}
@@ -59,6 +67,7 @@ jobs:
           echo "output_xz=$output_xz" >> $GITHUB_ENV
 
       - name: Create SHA256 checksums
+        id: hash_source_assets
         shell: bash
         run: |
           # Show and write hashes to SHA256_CHECKSUMS.txt
@@ -76,8 +85,6 @@ jobs:
         id: get_desc
         shell: bash
         run: |
-          vers=${{ env.version }}
-          overs=${{ env.old_version }}
           description=""
           while IFS= read -r line; do
             [[ -z "$line" ]] && break
@@ -86,10 +93,12 @@ jobs:
           done < Docs/CHANGELOG.md
 
           description+="
-          **Full Changelog:** https://github.com/ninja-left/CRYPT-GUI/compare/$overs...$vers"
+          **Full Changelog:** https://github.com/ninja-left/CRYPT-GUI/compare/${{ env.old_version }}...${{ env.version }}"
 
           echo "Description:"
+          echo "-----"
           echo "$description"
+          echo "-----"
 
           ## https://trstringer.com/github-actions-multiline-strings/#option-2---environment-variable
           echo "release_body<<EOF" >> $GITHUB_OUTPUT
@@ -143,6 +152,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RELEASE_URL: ${{ needs.release.outputs.release_url }}
+      repo_name: ${{ needs.prepare.outputs.repo_name }}
+      version: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -174,12 +185,10 @@ jobs:
 
       - name: Compress
         run: |
-          repo_name=${{ env.repo_name }}
-          version=${{ env.version }}
-          output_name="compiled-linux-${repo_name}-${version}.tar.xz"
+          output_name="compiled-linux-${{ env.repo_name }}-${{ env.version }}.tar.xz"
           git config tar.tar.xz.command "xz -c"
 
-          git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_name" dist/*
+          git archive --format tar.xz -9 --prefix="${{ env.repo_name }}/" --output "$output_name" dist/*
 
           echo "output_linux=$output_name" >> $GITHUB_ENV
 
@@ -217,6 +226,10 @@ jobs:
   build-macos:
     needs: release
     runs-on: macos-latest
+    env:
+      RELEASE_URL: ${{ needs.release.outputs.release_url }}
+      repo_name: ${{ needs.prepare.outputs.repo_name }}
+      version: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -248,12 +261,10 @@ jobs:
 
       - name: Compress
         run: |
-          repo_name=${{ env.repo_name }}
-          version=${{ env.version }}
-          output_name="compiled-macos-${repo_name}-${version}.tar.xz"
+          output_name="compiled-macos-${{ env.repo_name }}-${{ env.version }}.tar.xz"
           git config tar.tar.xz.command "xz -c"
 
-          git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_name" dist/*
+          git archive --format tar.xz -9 --prefix="${{ env.repo_name }}/" --output "$output_name" dist/*
 
           echo "output_macos=$output_name" >> $GITHUB_ENV
 
@@ -288,6 +299,10 @@ jobs:
   build-windows:
     needs: release
     runs-on: windows-latest
+    env:
+      RELEASE_URL: ${{ needs.release.outputs.release_url }}
+      repo_name: ${{ needs.prepare.outputs.repo_name }}
+      version: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -321,9 +336,7 @@ jobs:
 
       - name: Compress
         run: |
-          $repo_name = ${{ env.repo_name }}
-          $version = ${{ env.version }}
-          $output_name="compiled-windows-${repo_name}-${version}.zip"
+          $output_name="compiled-windows-${{ env.repo_name }}-${{ env.version }}.zip"
 
           Compress-Archive -Path './dist/*' -DestinationPath './$output_name'
 
@@ -362,6 +375,8 @@ jobs:
   finish-up:
     needs: release
     runs-on: ubuntu-latest
+    env:
+      version: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
