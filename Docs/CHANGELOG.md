@@ -7,6 +7,7 @@
 - Used job.outputs to share release url between jobs
 ### Fixed
 - Release triggered on any push
+- if logic in prepare job
 
 ## 0.2.1
 ### Changed
