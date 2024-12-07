@@ -2,9 +2,10 @@
 ## 0.2.2
 ### Added
 - Compiled archives for each release
-### Changed
+### Changes
 - Release triggered only when merging a pull-request for CHANGELOG.md
 - Used job.outputs to share release url between jobs
+- Renamed dist/ to dist/CRYPT when moving files/folders to correct location for compression
 ### Fixed
 - Release triggered on any push
 - if logic in prepare job
