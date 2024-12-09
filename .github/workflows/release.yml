@@ -44,6 +44,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release_url: ${{ steps.create_release.outputs.upload_url }}
+      version: ${{ steps.create_source_assets.outputs.version }}
+      repo_name: ${{ steps.create_source_assets.outputs.repo_name }}
     env:
       version: ${{ needs.prepare.outputs.version }}
       old_version: ${{ needs.prepare.outputs.old_version }}
@@ -65,6 +67,8 @@ jobs:
 
           echo "output_zip=$output_zip" >> $GITHUB_ENV
           echo "output_xz=$output_xz" >> $GITHUB_ENV
+          echo "version=$version" >> GITHUB_OUTPUT
+          echo "repo_name=$repo_name" >> GITHUB_OUTPUT
 
       - name: Create SHA256 checksums
         id: hash_source_assets
@@ -152,8 +156,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RELEASE_URL: ${{ needs.release.outputs.release_url }}
-      repo_name: ${{ needs.prepare.outputs.repo_name }}
-      version: ${{ needs.prepare.outputs.version }}
+      repo_name: ${{ needs.release.outputs.repo_name }}
+      version: ${{ needs.release.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -230,8 +234,8 @@ jobs:
     runs-on: macos-latest
     env:
       RELEASE_URL: ${{ needs.release.outputs.release_url }}
-      repo_name: ${{ needs.prepare.outputs.repo_name }}
-      version: ${{ needs.prepare.outputs.version }}
+      repo_name: ${{ needs.release.outputs.repo_name }}
+      version: ${{ needs.release.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -304,8 +308,8 @@ jobs:
     runs-on: windows-latest
     env:
       RELEASE_URL: ${{ needs.release.outputs.release_url }}
-      repo_name: ${{ needs.prepare.outputs.repo_name }}
-      version: ${{ needs.prepare.outputs.version }}
+      repo_name: ${{ needs.release.outputs.repo_name }}
+      version: ${{ needs.release.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -351,7 +355,7 @@ jobs:
 
       - name: Create SHA256 checksums
         run: |
-          $FILE=${{ env.output_windows }}.sha256
+          $FILE="${{ env.output_windows }}.sha256"
           $HASH = Get-FileHash -Path ${{ env.output_windows }} -Algorithm SHA256
 
           echo "$HASH.Hash"
@@ -383,7 +387,7 @@ jobs:
     needs: [build-linux, build-macos, build-windows]
     runs-on: ubuntu-latest
     env:
-      version: ${{ needs.prepare.outputs.version }}
+      version: ${{ needs.release.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 

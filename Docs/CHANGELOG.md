@@ -2,6 +2,8 @@
 ## 0.2.3
 ### Changes
 - Moved step env variables to job env
+- Bumped dependency version to newer ones
+- release outputs repo_name & version and build-* jobs use these outputs
 ### Fixes
 - Corrected env variable use in compress steps
 - Fixed Windows-build hash input file
