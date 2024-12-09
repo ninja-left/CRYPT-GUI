@@ -5,6 +5,6 @@ cffi==1.17.1
 passlib==1.7.4
 pluginlib==0.9.4
 pyperclip==1.9.0
-PySide6==6.8.0.2
+PySide6==6.8.1
 ruamel.yaml==0.18.6
 setuptools==70.0.0
