@@ -95,6 +95,10 @@ jobs:
           touch $output_zip
           touch $output_xz
           echo "Created dummy assets"
+          echo "output_zip=$output_zip" >> $GITHUB_ENV
+          echo "output_xz=$output_xz" >> $GITHUB_ENV
+          echo "version=$version" >> GITHUB_OUTPUT
+          echo "repo_name=$repo_name" >> GITHUB_OUTPUT
 
       - name: Create SHA256 checksums
         id: hash_source_assets
@@ -466,6 +470,7 @@ jobs:
           echo "output_windows=$output_name" >> $GITHUB_ENV
 
       - name: Create SHA256 checksums
+        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
         run: |
           $FILE="${{ env.output_windows }}.sha256"
           echo $FILE
@@ -474,6 +479,17 @@ jobs:
 
           echo "$HASH.Hash"
           $HASH.Hash | Out-File $FILE
+
+          echo "windows_checksum=$FILE" >> $GITHUB_ENV
+
+      - name: Fake SHA256 checksums
+        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'test') }}
+        run: |
+          $FILE="${{ env.output_windows }}.sha256"
+          echo $FILE
+          echo ${env.output_windows}
+
+          echo "text" | Out-File $FILE
 
           echo "windows_checksum=$FILE" >> $GITHUB_ENV
 
