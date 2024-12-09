@@ -46,6 +46,7 @@ jobs:
       release_url: ${{ steps.create_release.outputs.upload_url }}
     env:
       version: ${{ needs.prepare.outputs.version }}
+      old_version: ${{ needs.prepare.outputs.old_version }}
       repo_name: ${{ needs.prepare.outputs.repo_name }}
     steps:
       - uses: actions/checkout@v4
