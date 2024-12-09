@@ -149,6 +149,10 @@ jobs:
   build-linux:
     needs: release
     runs-on: ubuntu-latest
+    env:
+      RELEASE_URL: ${{ needs.release.outputs.release_url }}
+      repo_name: ${{ needs.prepare.outputs.repo_name }}
+      version: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -181,11 +185,8 @@ jobs:
           ls -lh dist/CRYPT
 
       - name: Compress
-        env:
-          repo_name: ${{ needs.prepare.outputs.repo_name }}
-          version: ${{ needs.prepare.outputs.version }}
         run: |
-          output_name="compiled-linux-$repo_name-$version.tar.xz"
+          output_name="linux-${{ env.repo_name }}-${{ env.version }}.tar.xz"
 
           tar caf $output_name dist/*
 
@@ -193,8 +194,9 @@ jobs:
 
       - name: Create SHA256 checksums
         run: |
-          FILE=${{ env.output_linux }}.sha256
-          sha256sum ${{ env.output_linux }} | tee $FILE
+          compiled=${{ env.output_linux }}
+          FILE=$compiled.sha256
+          sha256sum $compiled | tee $FILE
 
           # Check them again
           sha256sum -c $FILE
@@ -205,7 +207,6 @@ jobs:
       - name: Upload archive
         uses: actions/upload-release-asset@v1
         env:
-          RELEASE_URL: ${{ needs.release.outputs.release_url }}
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ env.RELEASE_URL }}
@@ -216,7 +217,6 @@ jobs:
       - name: Upload checksum
         uses: actions/upload-release-asset@v1
         env:
-          RELEASE_URL: ${{ needs.release.outputs.release_url }}
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ env.RELEASE_URL }}
@@ -227,6 +227,10 @@ jobs:
   build-macos:
     needs: release
     runs-on: macos-latest
+    env:
+      RELEASE_URL: ${{ needs.release.outputs.release_url }}
+      repo_name: ${{ needs.prepare.outputs.repo_name }}
+      version: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -259,11 +263,8 @@ jobs:
           ls -lh dist/CRYPT
 
       - name: Compress
-        env:
-          repo_name: ${{ needs.prepare.outputs.repo_name }}
-          version: ${{ needs.prepare.outputs.version }}
         run: |
-          output_name="compiled-macos-$repo_name-$version.tar.xz"
+          output_name="macos-${{ env.repo_name }}-${{ env.version }}.tar.xz"
 
           tar caf $output_name dist/*
 
@@ -280,7 +281,6 @@ jobs:
       - name: Upload archive
         uses: actions/upload-release-asset@v1
         env:
-          RELEASE_URL: ${{ needs.release.outputs.release_url }}
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ env.RELEASE_URL }}
@@ -291,7 +291,6 @@ jobs:
       - name: Upload checksum
         uses: actions/upload-release-asset@v1
         env:
-          RELEASE_URL: ${{ needs.release.outputs.release_url }}
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ env.RELEASE_URL }}
@@ -302,6 +301,10 @@ jobs:
   build-windows:
     needs: release
     runs-on: windows-latest
+    env:
+      RELEASE_URL: ${{ needs.release.outputs.release_url }}
+      repo_name: ${{ needs.prepare.outputs.repo_name }}
+      version: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -337,11 +340,9 @@ jobs:
           dir dist/CRYPT
 
       - name: Compress
-        env:
-          repo_name: ${{ needs.prepare.outputs.repo_name }}
-          version: ${{ needs.prepare.outputs.version }}
         run: |
-          $output_name="compiled-windows-$repo_name-$version.zip"
+          $output_name="windows-${{ env.repo_name }}-${{ env.version }}.zip"
+          echo $output_name
 
           Compress-Archive -Path './dist/*' -DestinationPath './$output_name'
 
@@ -349,10 +350,10 @@ jobs:
 
       - name: Create SHA256 checksums
         run: |
-          $FILE="${{ env.output_windows }}.sha256"
-          $HASH = Get-FileHash -Path $FILE -Algorithm SHA256
+          $FILE=${{ env.output_windows }}.sha256
+          $HASH = Get-FileHash -Path ${{ env.output_windows }} -Algorithm SHA256
 
-          echo "${HASH.Hash}"
+          echo "$HASH.Hash"
           $HASH.Hash | Out-File $FILE
           # Save for upload
           echo "windows_checksum=$FILE" >> $GITHUB_ENV
@@ -360,7 +361,6 @@ jobs:
       - name: Upload archive
         uses: actions/upload-release-asset@v1
         env:
-          RELEASE_URL: ${{ needs.release.outputs.release_url }}
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ env.RELEASE_URL }}
@@ -371,7 +371,6 @@ jobs:
       - name: Upload checksum
         uses: actions/upload-release-asset@v1
         env:
-          RELEASE_URL: ${{ needs.release.outputs.release_url }}
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ env.RELEASE_URL }}
