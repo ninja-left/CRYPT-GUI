@@ -1,4 +1,11 @@
 # Changelog
+## 0.2.3
+### Changes
+- Moved step env variables to job env
+### Fixes
+- Corrected env variable use in compress steps
+- Fixed Windows-build hash input file
+
 ## 0.2.2
 ### Added
 - Compiled archives for each release
@@ -6,7 +13,7 @@
 - Release triggered only when merging a pull-request for CHANGELOG.md
 - Used job.outputs to share release url between jobs
 - Renamed dist/ to dist/CRYPT when moving files/folders to correct location for compression
-### Fixed
+### Fixed
 - Release triggered on any push
 - if logic in prepare job
 - missing checkout@v4 steps in release & finish-up jobs
