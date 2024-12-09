@@ -1,5 +1,5 @@
 # Changelog
-## 0.2.3
+## 0.2.3
 ### Changes
 - Moved step env variables to job env
 ### Fixes
