@@ -5,6 +5,7 @@
 ### Fixes
 - Corrected env variable use in compress steps
 - Fixed Windows-build hash input file
+- Added missing old_version to release job.env
 
 ## 0.2.2
 ### Added
