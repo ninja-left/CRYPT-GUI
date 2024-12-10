@@ -409,12 +409,11 @@ jobs:
           echo $output_name
           echo $repo_name
 
-          if ( '${{ inputs.releaseType }}' == 'test' ) {
+          if ( '${{ inputs.releaseType }}' -eq 'test' ) {
             $output_name | Out-File $output_name
           } else {
             Compress-Archive -Path './dist/*' -DestinationPath './$output_name'
           }
-          fi
 
           echo "output_windows=$output_name" >> $GITHUB_ENV
 
