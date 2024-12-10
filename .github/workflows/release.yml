@@ -423,7 +423,7 @@ jobs:
           echo "$FILE"
           echo "windows file: ${{ env.output_windows }}"
 
-          if [ ${{ inputs.releaseType }} == 'test' ]; then {
+          if ( '${{ inputs.releaseType }}' -eq 'test' ) {
             echo "text" | Out-File $FILE
           else {
             $HASH = Get-FileHash -Path ${{ env.output_windows }} -Algorithm SHA256
