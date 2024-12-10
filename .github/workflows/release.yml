@@ -113,7 +113,7 @@ jobs:
           echo $repo_name
           echo $output_name
 
-          if [ ${{ inputs.releaseType }} == 'test' ]; then {
+          if [ '${{ inputs.releaseType }}' == 'test' ]; then {
             touch $output_name
           }
           else {
@@ -141,14 +141,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Compiled-Lin
-          path: ${{ env.output_linux }}
-
-      - name: Upload checksum
-        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: Compiled-Lin
-          path: ${{ env.linux_checksum }}
+          path: |
+            ${{ env.output_linux }}
+            ${{ env.linux_checksum }}
 
       - name: show assets
         if: ${{ contains(inputs.releaseType, 'test') }}
@@ -200,7 +195,7 @@ jobs:
           echo $output_name
           echo $repo_name
 
-          if [ ${{ inputs.releaseType }} == 'test' ]; then {
+          if [ '${{ inputs.releaseType }}' == 'test' ]; then {
           touch $output_name
           } else {
             tar caf $output_name dist/*
@@ -223,14 +218,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Compiled-Mac
-          path: ${{ env.output_macos }}
-
-      - name: Upload checksum
-        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: Compiled-Mac
-          path: ${{ env.macos_checksum }}
+          path: |
+            ${{ env.output_macos }}
+            ${{ env.macos_checksum }}
 
       - name: show assets
         if: ${{ contains(inputs.releaseType, 'test') }}
@@ -308,14 +298,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Compiled-Win
-          path: ${{ env.output_windows }}
-
-      - name: Upload checksum
-        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: Compiled-Win
-          path: ${{ env.windows_checksum }}
+          path: |
+            ${{ env.output_windows }}
+            ${{ env.windows_checksum }}
 
       - name: show assets
         if: ${{ contains(inputs.releaseType, 'test') }}
@@ -415,7 +400,7 @@ jobs:
         shell: bash
         run: |
           echo ${{ env.version }}
-          if [ ${{ inputs.releaseType }} == 'test' ]; then {
+          if [ '${{ inputs.releaseType }}' == 'test' ]; then {
             echo "No changes made to .release/old_version"
           } else {
             echo "${{ env.version }}" >.release/old_version
