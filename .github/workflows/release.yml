@@ -404,7 +404,7 @@ jobs:
 
       - name: Compress
         run: |
-          $repo_name = ${{ env.repo_name }}
+          $repo_name="${{ env.repo_name }}"
           $output_name="windows-${repo_name}.zip"
           echo $output_name
           echo $repo_name
@@ -421,7 +421,7 @@ jobs:
       - name: Create SHA256 checksums
         run: |
           $FILE="${{ env.output_windows }}.sha256"
-          echo $FILE
+          echo "$FILE"
           echo "windows file: ${{ env.output_windows }}"
 
           if [ ${{ inputs.releaseType }} == 'test' ]; then {
