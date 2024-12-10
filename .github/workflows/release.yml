@@ -326,6 +326,8 @@ jobs:
   release:
     needs: [prepare, build-linux, build-macos, build-windows]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       version: ${{ needs.prepare.outputs.version }}
       release_body: ${{ needs.prepare.outputs.release_body }}
