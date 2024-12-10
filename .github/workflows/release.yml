@@ -69,113 +69,9 @@ jobs:
           echo "$description" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-  release:
-    needs: prepare
-    runs-on: ubuntu-latest
-    outputs:
-      release_url: ${{ steps.create_release.outputs.upload_url }}
-    env:
-      version: ${{ needs.prepare.outputs.version }}
-      release_body: ${{ needs.prepare.outputs.release_body }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Create source assets
-        id: create_source_assets
-        run: |
-          repo_name=${{ env.repo_name }}
-          output_zip="source-${repo_name}.zip"
-          output_xz="source-${repo_name}.tar.xz"
-          echo $repo_name
-          echo $output_zip
-          echo $output_xz
-
-          git config tar.tar.xz.command "xz -c"
-
-          if [ ${{ inputs.releaseType }} == 'test' ]; then {
-            touch $output_zip; touch $output_xz
-          } else {
-            git archive --format zip -9 --prefix="${repo_name}/" --output "$output_zip" HEAD
-            git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_xz" HEAD
-          }
-          fi
-
-          echo "output_zip=$output_zip" >> $GITHUB_ENV
-          echo "output_xz=$output_xz" >> $GITHUB_ENV
-
-      - name: Create SHA256 checksums
-        id: hash_source_assets
-        shell: bash
-        run: |
-          # Show and write hashes to SHA256_CHECKSUMS.txt
-          FILE=SOURCE_SHA256.txt
-          sha256sum ${{ env.output_zip }} | tee $FILE
-          sha256sum ${{ env.output_xz }} | tee -a $FILE
-
-          # Check them again
-          sha256sum -c $FILE
-
-          # Save for upload
-          echo "output_source_checksums=$FILE" >> $GITHUB_ENV
-
-      - name: Create Release
-        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ env.version }}
-          release_name: ${{ env.version }}
-          body: ${{ steps.get_desc.outputs.release_body }}
-          draft: false
-          prerelease: false
-
-      - name: Upload zip
-        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.output_zip }}
-          asset_name: ${{ env.output_zip }}
-          asset_content_type: application/zip
-
-      - name: Upload tar
-        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.output_xz }}
-          asset_name: ${{ env.output_xz }}
-          asset_content_type: application/x-gtar
-
-      - name: Upload checksums
-        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.output_source_checksums }}
-          asset_name: ${{ env.output_source_checksums }}
-          asset_content_type: application/txt
-
-      - name: show assets
-        if: ${{ contains(inputs.releaseType, 'test') }}
-        run: |
-          echo ${{ env.output_zip }}
-          echo ${{ env.output_xz }}
-          echo ${{ env.output_source_checksums }}
-
   build-linux:
     needs: release
     runs-on: ubuntu-latest
-    env:
-      RELEASE_URL: ${{ needs.release.outputs.release_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -242,25 +138,17 @@ jobs:
 
       - name: Upload archive
         if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ env.RELEASE_URL }}
-          asset_path: ${{ env.output_linux }}
-          asset_name: ${{ env.output_linux }}
-          asset_content_type: application/x-gtar
+          name: Compiled-Lin
+          path: ${{ env.output_linux }}
 
       - name: Upload checksum
         if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ env.RELEASE_URL }}
-          asset_path: ${{ env.linux_checksum }}
-          asset_name: ${{ env.linux_checksum }}
-          asset_content_type: application/txt
+          name: Compiled-Lin
+          path: ${{ env.linux_checksum }}
 
       - name: show assets
         if: ${{ contains(inputs.releaseType, 'test') }}
@@ -271,8 +159,6 @@ jobs:
   build-macos:
     needs: release
     runs-on: macos-latest
-    env:
-      RELEASE_URL: ${{ needs.release.outputs.release_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -334,25 +220,17 @@ jobs:
 
       - name: Upload archive
         if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ env.RELEASE_URL }}
-          asset_path: ${{ env.output_macos }}
-          asset_name: ${{ env.output_macos }}
-          asset_content_type: application/x-gtar
+          name: Compiled-Mac
+          path: ${{ env.output_macos }}
 
       - name: Upload checksum
         if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ env.RELEASE_URL }}
-          asset_path: ${{ env.macos_checksum }}
-          asset_name: ${{ env.macos_checksum }}
-          asset_content_type: application/txt
+          name: Compiled-Mac
+          path: ${{ env.macos_checksum }}
 
       - name: show assets
         if: ${{ contains(inputs.releaseType, 'test') }}
@@ -363,8 +241,6 @@ jobs:
   build-windows:
     needs: release
     runs-on: windows-latest
-    env:
-      RELEASE_URL: ${{ needs.release.outputs.release_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -428,26 +304,18 @@ jobs:
           echo "windows_checksum=$FILE" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Upload archive
-        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == push }}
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ env.RELEASE_URL }}
-          asset_path: ${{ env.output_windows }}
-          asset_name: ${{ env.output_windows }}
-          asset_content_type: application/zip
+          name: Compiled-Win
+          path: ${{ env.output_windows }}
 
       - name: Upload checksum
-        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == push }}
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ env.RELEASE_URL }}
-          asset_path: ${{ env.windows_checksum }}
-          asset_name: ${{ env.windows_checksum }}
-          asset_content_type: application/txt
+          name: Compiled-Win
+          path: ${{ env.windows_checksum }}
 
       - name: show assets
         if: ${{ contains(inputs.releaseType, 'test') }}
@@ -455,8 +323,83 @@ jobs:
           echo ${{ env.windows_checksum }}
           echo ${{ env.output_windows }}
 
+  release:
+    needs: [prepare, build-linux, build-macos, build-windows]
+    runs-on: ubuntu-latest
+    env:
+      version: ${{ needs.prepare.outputs.version }}
+      release_body: ${{ needs.prepare.outputs.release_body }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create source assets
+        run: |
+          repo_name=${{ env.repo_name }}
+          output_zip="source-${repo_name}.zip"
+          output_xz="source-${repo_name}.tar.xz"
+          echo $repo_name
+          echo $output_zip
+          echo $output_xz
+
+          git config tar.tar.xz.command "xz -c"
+
+          if [ ${{ inputs.releaseType }} == 'test' ]; then {
+            touch $output_zip; touch $output_xz
+          } else {
+            git archive --format zip -9 --prefix="${repo_name}/" --output "$output_zip" HEAD
+            git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_xz" HEAD
+          }
+          fi
+
+          ls -lh
+
+          echo "output_zip=$output_zip" >> $GITHUB_ENV
+          echo "output_xz=$output_xz" >> $GITHUB_ENV
+
+      - name: Create SHA256 checksums
+        id: hash_source_assets
+        shell: bash
+        run: |
+          # Show and write hashes to SHA256_CHECKSUMS.txt
+          FILE=SOURCE_SHA256.txt
+          sha256sum ${{ env.output_zip }} | tee $FILE
+          sha256sum ${{ env.output_xz }} | tee -a $FILE
+
+          # Check them again
+          sha256sum -c $FILE
+
+          # Save for upload
+          echo "output_source_checksums=$FILE" >> $GITHUB_ENV
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Move to-be-upload files to deploy
+        run: |
+          mkdir -v deploy
+          ls -lhAX
+          mv --verbose ${{ env.output_zip }} ${{ env.output_xz }} Compiled-Lin/* Compiled-Win/* Compiled-Mac/* deploy
+          ls -lhAX deploy/
+
+      - name: Create release & upload files
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: deploy/*
+          tag: ${{ env.version }}
+          file_glob: true
+          body: |
+            ${{ needs.prepare.outputs.release_body }}
+
+      - name: show assets
+        if: ${{ contains(inputs.releaseType, 'test') }}
+        run: |
+          echo ${{ env.output_zip }}
+          echo ${{ env.output_xz }}
+          echo ${{ env.output_source_checksums }}
+
   finish-up:
-    needs: [build-linux, build-macos, build-windows]
+    needs: [release]
     runs-on: ubuntu-latest
     env:
       version: ${{ needs.prepare.outputs.version }}
