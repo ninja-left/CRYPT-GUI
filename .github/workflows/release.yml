@@ -304,14 +304,14 @@ jobs:
           echo "windows_checksum=$FILE" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Upload archive
-        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == "push" }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
         uses: actions/upload-artifact@v4
         with:
           name: Compiled-Win
           path: ${{ env.output_windows }}
 
       - name: Upload checksum
-        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == "push" }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
         uses: actions/upload-artifact@v4
         with:
           name: Compiled-Win
