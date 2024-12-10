@@ -8,7 +8,8 @@
 - Moved some of step.if to step.run
 - Merged fake asset creation with original ones
 - Removed version from asset builds
-- Moved repo_name to workflow env  closes [#82](https://github.com/ninja-left/CRYPT-GUI/issues/82)
+- Moved repo_name to workflow env
+- Changed actions for uploading assets and creating release
 ### Fixes
 - Corrected env variable use in compress steps
 - Fixed Windows-build hash input file
