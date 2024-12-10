@@ -425,6 +425,7 @@ jobs:
 
           if ( '${{ inputs.releaseType }}' -eq 'test' ) {
             echo "text" | Out-File $FILE
+          }
           else {
             $HASH = Get-FileHash -Path ${{ env.output_windows }} -Algorithm SHA256
             echo "$HASH.Hash"
