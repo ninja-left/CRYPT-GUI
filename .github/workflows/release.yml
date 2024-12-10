@@ -17,21 +17,17 @@ on:
           - test
           - release
 
+env:
+  repo_name: CRYPT-GUI
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      repo_name: ${{ steps.get_repo_name.outputs.repo_name }}
       version: ${{ steps.get_version.outputs.version }}
-      old_version: ${{ steps.get_version.outputs.old_version }}
+      release_body: ${{ steps.get_desc.outputs.release_body }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Get repo name
-        id: get_repo_name
-        run: |
-          ## Used for release zip
-          echo "repo_name=CRYPT-GUI" >> $GITHUB_OUTPUT
 
       - name: Get version tag
         id: get_version
@@ -46,74 +42,8 @@ jobs:
           echo "Old Version: $old_version"
 
           echo "version=$version" >> $GITHUB_OUTPUT
-          echo "old_version=$old_version" >> $GITHUB_OUTPUT
-
-  release:
-    needs: prepare
-    runs-on: ubuntu-latest
-    outputs:
-      release_url: ${{ steps.create_release.outputs.upload_url }}
-      version: ${{ steps.create_source_assets.outputs.version }}
-      repo_name: ${{ steps.create_source_assets.outputs.repo_name }}
-    env:
-      version: ${{ needs.prepare.outputs.version }}
-      old_version: ${{ needs.prepare.outputs.old_version }}
-      repo_name: ${{ needs.prepare.outputs.repo_name }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Create source assets
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
-        id: create_source_assets
-        run: |
-          repo_name=${{ env.repo_name }}
-          version=${{ env.version }}
-          output_zip="source-${repo_name}-${version}.zip"
-          output_xz="source-${repo_name}-${version}.tar.xz"
-          git config tar.tar.xz.command "xz -c"
-
-          git archive --format zip -9 --prefix="${repo_name}/" --output "$output_zip" HEAD
-          git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_xz" HEAD
-
-          echo "output_zip=$output_zip" >> $GITHUB_ENV
-          echo "output_xz=$output_xz" >> $GITHUB_ENV
-          echo "version=$version" >> GITHUB_OUTPUT
-          echo "repo_name=$repo_name" >> GITHUB_OUTPUT
-
-      - name: fake source assets
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'test') }}
-        run: |
-          repo_name=${{ env.repo_name }}
-          version=${{ env.version }}
-          output_zip="source-${repo_name}-${version}.zip"
-          output_xz="source-${repo_name}-${version}.tar.xz"
-          echo $repo_name
-          echo $version
-          echo $output_zip
-          echo $output_xz
-
-          touch $output_zip
-          touch $output_xz
-          echo "Created dummy assets"
-          echo "output_zip=$output_zip" >> $GITHUB_ENV
-          echo "output_xz=$output_xz" >> $GITHUB_ENV
-          echo "version=$version" >> GITHUB_OUTPUT
-          echo "repo_name=$repo_name" >> GITHUB_OUTPUT
-
-      - name: Create SHA256 checksums
-        id: hash_source_assets
-        shell: bash
-        run: |
-          # Show and write hashes to SHA256_CHECKSUMS.txt
-          FILE=SOURCE_SHA256.txt
-          sha256sum ${{ env.output_zip }} | tee $FILE
-          sha256sum ${{ env.output_xz }} | tee -a $FILE
-
-          # Check them again
-          sha256sum -c $FILE
-
-          # Save for upload
-          echo "output_source_checksums=$FILE" >> $GITHUB_ENV
+          echo "version=$version" >> $GITHUB_ENV
+          echo "old_version=$old_version" >> $GITHUB_ENV
 
       - name: Get description
         id: get_desc
@@ -139,8 +69,57 @@ jobs:
           echo "$description" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+  release:
+    needs: prepare
+    runs-on: ubuntu-latest
+    outputs:
+      release_url: ${{ steps.create_release.outputs.upload_url }}
+    env:
+      version: ${{ needs.prepare.outputs.version }}
+      release_body: ${{ needs.prepare.outputs.release_body }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create source assets
+        id: create_source_assets
+        run: |
+          repo_name=${{ env.repo_name }}
+          output_zip="source-${repo_name}.zip"
+          output_xz="source-${repo_name}.tar.xz"
+          echo $repo_name
+          echo $output_zip
+          echo $output_xz
+
+          git config tar.tar.xz.command "xz -c"
+
+          if [ ${{ inputs.releaseType }} == 'test' ]; then {
+            touch $output_zip; touch $output_xz
+          } else {
+            git archive --format zip -9 --prefix="${repo_name}/" --output "$output_zip" HEAD
+            git archive --format tar.xz -9 --prefix="${repo_name}/" --output "$output_xz" HEAD
+          }
+          fi
+
+          echo "output_zip=$output_zip" >> $GITHUB_ENV
+          echo "output_xz=$output_xz" >> $GITHUB_ENV
+
+      - name: Create SHA256 checksums
+        id: hash_source_assets
+        shell: bash
+        run: |
+          # Show and write hashes to SHA256_CHECKSUMS.txt
+          FILE=SOURCE_SHA256.txt
+          sha256sum ${{ env.output_zip }} | tee $FILE
+          sha256sum ${{ env.output_xz }} | tee -a $FILE
+
+          # Check them again
+          sha256sum -c $FILE
+
+          # Save for upload
+          echo "output_source_checksums=$FILE" >> $GITHUB_ENV
+
       - name: Create Release
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -153,7 +132,7 @@ jobs:
           prerelease: false
 
       - name: Upload zip
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -164,7 +143,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload tar
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -175,7 +154,7 @@ jobs:
           asset_content_type: application/x-gtar
 
       - name: Upload checksums
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -186,7 +165,7 @@ jobs:
           asset_content_type: application/txt
 
       - name: show assets
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'test') }}
+        if: ${{ contains(inputs.releaseType, 'test') }}
         run: |
           echo ${{ env.output_zip }}
           echo ${{ env.output_xz }}
@@ -197,26 +176,24 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RELEASE_URL: ${{ needs.release.outputs.release_url }}
-      repo_name: ${{ needs.release.outputs.repo_name }}
-      version: ${{ needs.release.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         uses: actions/setup-python@v4
         with:
           python-version: '3.11.2'
 
       - name: Install dependencies
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
 
       - name: Build with PyInstaller
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         run: |
           pyinstaller -D \
           --clean \
@@ -234,29 +211,19 @@ jobs:
           ls -lh dist/CRYPT
 
       - name: Compress
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
         run: |
           repo_name=${{ env.repo_name }}
-          version=${{ env.version }}
-          output_name="linux-${repo_name}-${version}.tar.xz"
-          echo $output_name
-
-          # tar caf $output_name dist/*
-
-          echo "output_linux=$output_name" >> $GITHUB_ENV
-
-      - name: Fake Compress
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'test') }}
-        run: |
-          repo_name=${{ env.repo_name }}
-          version=${{ env.version }}
-          output_name="linux-${repo_name}-${version}.tar.xz"
+          output_name="linux-${repo_name}.tar.xz"
           echo $repo_name
-          echo $version
           echo $output_name
 
-          touch $output_name
-          echo "Created dummy asset"
+          if [ ${{ inputs.releaseType }} == 'test' ]; then {
+            touch $output_name
+          }
+          else {
+            tar caf $output_name dist/*
+          }
+          fi
 
           echo "output_linux=$output_name" >> $GITHUB_ENV
 
@@ -264,7 +231,7 @@ jobs:
         run: |
           compiled=${{ env.output_linux }}
           echo $compiled
-          FILE=$compiled.sha256
+          FILE="${compiled}.sha256"
           sha256sum $compiled | tee $FILE
 
           # Check them again
@@ -274,7 +241,7 @@ jobs:
           echo "linux_checksum=$FILE" >> $GITHUB_ENV
 
       - name: Upload archive
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -285,7 +252,7 @@ jobs:
           asset_content_type: application/x-gtar
 
       - name: Upload checksum
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -296,7 +263,7 @@ jobs:
           asset_content_type: application/txt
 
       - name: show assets
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'test') }}
+        if: ${{ contains(inputs.releaseType, 'test') }}
         run: |
           echo ${{ env.linux_checksum }}
           echo ${{ env.output_linux }}
@@ -306,26 +273,24 @@ jobs:
     runs-on: macos-latest
     env:
       RELEASE_URL: ${{ needs.release.outputs.release_url }}
-      repo_name: ${{ needs.release.outputs.repo_name }}
-      version: ${{ needs.release.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         uses: actions/setup-python@v4
         with:
           python-version: '3.11.2'
 
       - name: Install dependencies
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
 
       - name: Build with PyInstaller
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         run: |
           pyinstaller -D \
           --clean \
@@ -343,28 +308,18 @@ jobs:
           ls -lh dist/CRYPT
 
       - name: Compress
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
         run: |
           repo_name=${{ env.repo_name }}
-          version=${{ env.version }}
-          output_name="macos-${repo_name}-${version}.tar.xz"
-
-          tar caf $output_name dist/*
-
-          echo "output_macos=$output_name" >> $GITHUB_ENV
-
-      - name: Fake Compress
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'test') }}
-        run: |
-          repo_name=${{ env.repo_name }}
-          version=${{ env.version }}
-          output_name="macos-${repo_name}-${version}.tar.xz"
+          output_name="macos-${repo_name}.tar.xz"
           echo $output_name
           echo $repo_name
-          echo $version
 
+          if [ ${{ inputs.releaseType }} == 'test' ]; then {
           touch $output_name
-          echo "Created dummy asset"
+          } else {
+            tar caf $output_name dist/*
+          }
+          fi
 
           echo "output_macos=$output_name" >> $GITHUB_ENV
 
@@ -378,7 +333,7 @@ jobs:
           echo "macos_checksum=$FILE" >> $GITHUB_ENV
 
       - name: Upload archive
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -389,7 +344,7 @@ jobs:
           asset_content_type: application/x-gtar
 
       - name: Upload checksum
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -400,7 +355,7 @@ jobs:
           asset_content_type: application/txt
 
       - name: show assets
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'test') }}
+        if: ${{ contains(inputs.releaseType, 'test') }}
         run: |
           echo ${{ env.macos_checksum }}
           echo ${{ env.output_macos }}
@@ -410,26 +365,24 @@ jobs:
     runs-on: windows-latest
     env:
       RELEASE_URL: ${{ needs.release.outputs.release_url }}
-      repo_name: ${{ needs.release.outputs.repo_name }}
-      version: ${{ needs.release.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         uses: actions/setup-python@v4
         with:
           python-version: '3.11.2'
 
       - name: Install dependencies
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         run: |
           python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
           pip install pyinstaller
 
       - name: Build with PyInstaller
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         run: |
           # \ -> ` in powershell
           pyinstaller -D `
@@ -450,51 +403,39 @@ jobs:
           dir dist/CRYPT
 
       - name: Compress
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
         run: |
-          $output_name="windows-${{ env.repo_name }}-${{ env.version }}.zip"
+          $repo_name = ${{ env.repo_name }}
+          $output_name="windows-${repo_name}.zip"
           echo $output_name
+          echo $repo_name
 
-          Compress-Archive -Path './dist/*' -DestinationPath './$output_name'
-
-          echo "output_windows=$output_name" >> $GITHUB_ENV
-
-      - name: Fake Compress
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'test') }}
-        run: |
-          $output_name="windows-${{ env.repo_name }}-${{ env.version }}.zip"
-          echo $output_name
-
-          $output_name | Out-File $output_name
+          if [ ${{ inputs.releaseType }} == 'test' ]; then {
+            $output_name | Out-File $output_name
+          } else {
+            Compress-Archive -Path './dist/*' -DestinationPath './$output_name'
+          }
+          fi
 
           echo "output_windows=$output_name" >> $GITHUB_ENV
 
       - name: Create SHA256 checksums
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
         run: |
           $FILE="${{ env.output_windows }}.sha256"
           echo $FILE
-          echo ${{ env.output_windows }}
-          $HASH = Get-FileHash -Path ${{ env.output_windows }} -Algorithm SHA256
+          echo "windows file: ${{ env.output_windows }}"
 
-          echo "$HASH.Hash"
-          $HASH.Hash | Out-File $FILE
-
-          echo "windows_checksum=$FILE" >> $GITHUB_ENV
-
-      - name: Fake SHA256 checksums
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'test') }}
-        run: |
-          $FILE="${{ env.output_windows }}.sha256"
-          echo $FILE
-          echo ${env.output_windows}
-
-          echo "text" | Out-File $FILE
+          if [ ${{ inputs.releaseType }} == 'test' ]; then {
+            echo "text" | Out-File $FILE
+          else {
+            $HASH = Get-FileHash -Path ${{ env.output_windows }} -Algorithm SHA256
+            echo "$HASH.Hash"
+            $HASH.Hash | Out-File $FILE
+          }
 
           echo "windows_checksum=$FILE" >> $GITHUB_ENV
 
       - name: Upload archive
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -505,7 +446,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload checksum
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
+        if: ${{ contains(inputs.releaseType, 'release') || github.event.push }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -516,17 +457,16 @@ jobs:
           asset_content_type: application/txt
 
       - name: show assets
-        if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'test') }}
+        if: ${{ contains(inputs.releaseType, 'test') }}
         run: |
           echo ${{ env.windows_checksum }}
           echo ${{ env.output_windows }}
 
   finish-up:
     needs: [build-linux, build-macos, build-windows]
-    if: ${{ contains(github.event.workflow_dispatch.inputs.releaseType, 'release') || github.event.push }}
     runs-on: ubuntu-latest
     env:
-      version: ${{ needs.release.outputs.version }}
+      version: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -534,7 +474,11 @@ jobs:
         shell: bash
         run: |
           echo ${{ env.version }}
-          echo "${{ env.version }}" >.release/old_version
-          echo "\n">.release/old_version
-          echo "Old version content:"
-          cat .release/old_version
+          if [ ${{ inputs.releaseType }} == 'test' ]; then {
+            echo "No changes made to .release/old_version"
+          } else {
+            echo "${{ env.version }}" >.release/old_version
+            echo "\n">.release/old_version
+            echo "Old version content:"
+            cat .release/old_version
+          }
