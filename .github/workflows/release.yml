@@ -374,9 +374,11 @@ jobs:
           echo "output_source_checksums=$FILE" >> $GITHUB_ENV
 
       - name: Download all artifacts
+        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
         uses: actions/download-artifact@v4
 
       - name: Move to-be-upload files to deploy
+        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
         run: |
           mkdir -v deploy
           ls -lhAX
@@ -384,6 +386,7 @@ jobs:
           ls -lhAX deploy/
 
       - name: Create release & upload files
+        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
