@@ -4,6 +4,11 @@
 - Moved step env variables to job env
 - Bumped dependency version to newer ones
 - release outputs repo_name & version and build-* jobs use these outputs
+- Moved get_desc to prepare
+- Moved some of step.if to step.run
+- Merged fake asset creation with original ones
+- Removed version from asset builds
+- Moved repo_name to workflow env  closes [#82](https://github.com/ninja-left/CRYPT-GUI/issues/82)
 ### Fixes
 - Corrected env variable use in compress steps
 - Fixed Windows-build hash input file
