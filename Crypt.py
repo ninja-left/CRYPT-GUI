@@ -5,16 +5,22 @@ from PySide6.QtWidgets import (
     QDialog,
     QMainWindow,
     QMessageBox,
-    QDialog,
     QFileDialog,
-    QComboBox,
 )
-from PySide6 import QtGui
+from PySide6.QtGui import QIcon
 import clipman
 from sys import argv, stdout, exit
 from pathlib import Path
 from pluginlib import PluginImportError
-import logging
+from logging import (
+    getLogger,
+    Formatter,
+    StreamHandler,
+    disable,
+    CRITICAL,
+    NOTSET,
+    shutdown,
+)
 from logging.handlers import TimedRotatingFileHandler
 
 from modules import functions, ciphers, brute
@@ -23,13 +29,13 @@ from modules.design import main_ui, config_ui, bf_ui, resources_rc
 
 brute_force_results = ""
 
-Logger = logging.getLogger(__name__)
-FORMATTER = logging.Formatter(
+Logger = getLogger(__name__)
+FORMATTER = Formatter(
     "[{asctime}] - {name}:{levelname} - {message}", "%Y-%m-%d %H:%M:%S", "{"
 )
 HANDLE_FILE = TimedRotatingFileHandler("events.log", "D", 1, 5, "utf-8", False, False)
 HANDLE_FILE.setFormatter(FORMATTER)
-HANDLE_CONS = logging.StreamHandler(stdout)
+HANDLE_CONS = StreamHandler(stdout)
 HANDLE_CONS.setFormatter(FORMATTER)
 Logger.addHandler(HANDLE_CONS)
 Logger.addHandler(HANDLE_FILE)
@@ -88,9 +94,9 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
         settings["other"]["default pattern"] = self.inputOther_SaltPattern.text()
         settings["other"]["log level"] = self.inputOther_LogLevel.currentText()
         if settings['other']['log level'] == "OFF":
-            logging.disable(logging.CRITICAL)
+            disable(CRITICAL)
         else:
-            logging.disable(logging.NOTSET)
+            disable(NOTSET)
             Logger.setLevel(settings['other']['log level'])
         try:
             functions.save_settings(settings)
@@ -478,9 +484,9 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
 
         # Error Logging
         if self.log_level == "OFF":
-            logging.disable(logging.CRITICAL)
+            disable(CRITICAL)
         else:
-            logging.disable(logging.NOTSET)
+            disable(NOTSET)
             Logger.setLevel(self.log_level)
 
         Logger.debug("Loaded settings: %s", settings)
@@ -1065,5 +1071,5 @@ if __name__ == "__main__":
     win = MainWindow()
     win.show()
     x = app.exec()
-    logging.shutdown()
+    shutdown()
     exit(x)
