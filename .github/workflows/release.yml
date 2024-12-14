@@ -105,7 +105,25 @@ jobs:
           Crypt.py
 
           mv dist/CRYPT/_internal/modules dist/CRYPT/_internal/default_config.yaml dist/CRYPT/_internal/Docs dist/CRYPT/
-          ls -lh dist/CRYPT
+          ## Move CRYPT to the project root so compiled archive's root folder is CRYPT not dist/CRYPT
+          mv dist/CRYPT .
+          rmdir dist
+          ls -lh CRYPT/
+
+      - name: Test
+        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
+        shell: bash
+        run: |
+          pip install pytest pytest-qt
+          cd CRYPT
+          ./CRYPT --test
+          exit_code=$?
+          echo $exit_code
+
+          if [ $exit_code -ne 0 ]; then
+            echo "Program failed with exit code $exit_code"
+            exit $exit_code
+          fi
 
       - name: Compress
         run: |
@@ -118,7 +136,7 @@ jobs:
             touch $output_name
           }
           else {
-            tar caf $output_name dist/*
+            tar caf $output_name CRYPT/
           }
           fi
 
@@ -187,7 +205,25 @@ jobs:
           Crypt.py
 
           mv dist/CRYPT/_internal/modules dist/CRYPT/_internal/default_config.yaml dist/CRYPT/_internal/Docs dist/CRYPT/
-          ls -lh dist/CRYPT
+          ## Move CRYPT to the project root so compiled archive's root folder is CRYPT not dist/CRYPT
+          mv dist/CRYPT .
+          rmdir dist
+          ls -lh CRYPT/
+
+      - name: Test
+        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
+        shell: bash
+        run: |
+          pip install pytest pytest-qt
+          cd CRYPT
+          ./CRYPT --test
+          exit_code=$?
+          echo $exit_code
+
+          if [ $exit_code -ne 0 ]; then
+            echo "Program failed with exit code $exit_code"
+            exit $exit_code
+          fi
 
       - name: Compress
         run: |
@@ -197,9 +233,9 @@ jobs:
           echo $repo_name
 
           if [ '${{ inputs.releaseType }}' == 'test' ]; then {
-          touch $output_name
+            touch $output_name
           } else {
-            tar caf $output_name dist/*
+            tar caf $output_name CRYPT/
           }
           fi
 
@@ -265,7 +301,25 @@ jobs:
           Move-Item dist/CRYPT/_internal/modules dist/CRYPT/
           Move-Item dist/CRYPT/_internal/default_config.yaml dist/CRYPT/
           Move-Item dist/CRYPT/_internal/Docs dist/CRYPT/
-          Get-ChildItem dist/CRYPT/
+          ## Move CRYPT to the project root so compiled archive's root folder is CRYPT not dist/CRYPT
+          Move-Item -Path "dist\CRYPT" -Destination "."
+          Remove-Item -Path "dist" -Recurse
+          Get-ChildItem CRYPT
+
+      - name: Test
+        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
+        shell: bash
+        run: |
+          pip install pytest pytest-qt
+          cd CRYPT
+          ./CRYPT --test
+          exit_code=$?
+          echo $exit_code
+
+          if [ $exit_code -ne 0 ]; then
+            echo "Program failed with exit code $exit_code"
+            exit $exit_code
+          fi
 
       - name: Compress
         run: |
@@ -275,7 +329,7 @@ jobs:
           if ('${{ inputs.releaseType }}' -eq 'test') {
               Set-Content $output_name "test"
           } else {
-              Compress-Archive -Path './dist/*' -DestinationPath "./$output_name"
+              Compress-Archive -Path './CRYPT' -DestinationPath "./$output_name"
           }
 
           echo "output_windows=$output_name" | Out-File -FilePath $env:GITHUB_ENV -Append
