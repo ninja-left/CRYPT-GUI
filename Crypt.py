@@ -673,8 +673,9 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     # Loading plugin info
                     t = self.Plugins[self.operationMode.currentData()]()
                     info = t.get_info()
-                    _i = info.pop("license")
-                    Logger.debug(f"Plugin info: {_i}")
+                    info.pop("license")
+                    # remove license because they are long and pollute the log file
+                    Logger.debug(f"Plugin info: {info}")
                     # Texts set to default and buttons enabled if supported by the plugin
                     self.btnEncode.setText(self.defaultTextEncode)
                     self.btnEncode.setEnabled(info["config"]["has encoder"])
@@ -699,7 +700,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     self.inputRounds.setEnabled(info['config']['uses rounds'])
                     if info['config']['uses rounds']:
                         self.inputRounds.setText(str(info['config']['default rounds']))
-                    del info, _i, t
+                    del info, t
 
     def doDecode(self):
         input_data = self.inputText.toPlainText()
@@ -1054,6 +1055,8 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
 
 
 if __name__ == "__main__":
+    if "--test" in sys.argv:
+        sys.exit(functions.run_tests())
     app = QApplication(sys.argv)
     win = MainWindow()
     win.show()
