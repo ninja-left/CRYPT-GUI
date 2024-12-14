@@ -537,7 +537,8 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 raise Exception(f"There's no data in {area} area.")
             return True
         except Exception as e:
-            self.showMessageBox(info=str(e), detail=detailed)
+            if not "--test" in sys.argv:  # Do not show message box when testing
+                self.showMessageBox(info=str(e), detail=detailed)
             Logger.error("Failed to check if text is empty: %s", str(e), exc_info=1)
             return False
 
@@ -548,12 +549,13 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         ):
             return 0
         pyperclip.copy(text)
-        self.showMessageBox(
-            title="Finished!",
-            text="The output data has been copied.",
-            level=1,
-            button=2,
-        )
+        if not "--test" in sys.argv:  # Do not show message box when testing
+            self.showMessageBox(
+                title="Finished!",
+                text="The output data has been copied.",
+                level=1,
+                button=2,
+            )
 
     def doPaste(self):
         try:
@@ -562,16 +564,18 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             text = pool_result.get(timeout=self.paste_timeout)
             self.inputText.setPlainText(self.inputText.toPlainText() + text)
         except mpTimeoutError:
-            self.showMessageBox(
-                info="Pasting took too long to finish.",
-                detail="This could happen if there's no data in Clipboard. Make sure to copy something first.",
-            )
+            if not "--test" in sys.argv:  # Do not show message box when testing
+                self.showMessageBox(
+                    info="Pasting took too long to finish.",
+                    detail="This could happen if there's no data in Clipboard. Make sure to copy something first.",
+                )
             Logger.error("Pasting took too long to finish.", exc_info=1)
         except Exception as e:
-            self.showMessageBox(
-                info="Copied data is not text.",
-                detail="Make sure that the data you're trying to paste is Text not Image or something else.",
-            )
+            if not "--test" in sys.argv:  # Do not show message box when testing
+                self.showMessageBox(
+                    info="Copied data is not text.",
+                    detail="Make sure that the data you're trying to paste is Text not Image or something else.",
+                )
             Logger.error(str(e), exc_info=1)
 
     def doChangeOp(self):
