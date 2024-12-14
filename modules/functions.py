@@ -287,4 +287,4 @@ Ctrl + C : Copy
 def run_tests() -> int:
     import pytest
 
-    return pytest.main(["-q", "--tb=short", "tests/"])
+    return pytest.main(["-q", "--tb=short", "modules/tests/"])
