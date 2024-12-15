@@ -1,30 +1,29 @@
 # -*- coding: UTF-8 -*-
 """
-    CRYPT Brute-Forcer, Password hash brute-force functions
+    CRYPT, a set of tools
     Copyright (C) 2024  Ninja Left
 
-    CRYPT Brute-Forcer is free software: you can redistribute it and/or modify
+    CRYPT is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     any later version.
 
-    CRYPT Brute-Forcer is distributed in the hope that it will be useful,
+    CRYPT is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with CRYPT Brute-Forcer.  If not, see <https://www.gnu.org/licenses/>.
+    along with CRYPT.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import hashlib
 from pathlib import Path
-from multiprocessing import Pool
 from passlib.context import CryptContext
 import mmap
-from PySide6.QtWidgets import QProgressBar
-from ruamel.yaml import YAML, YAMLError
-from pluginlib import PluginLoader, PluginImportError
+from ruamel.yaml import YAML
+from pluginlib import PluginLoader
+from subprocess import run  # Used for installing requirements
+from sys import exit
 from modules.ciphers import (
     md5_b,
     sha256_b,
@@ -36,7 +35,8 @@ from modules.ciphers import (
 )
 from modules.brute import brute
 import modules.parent
-from Crypt import Logger
+from modules.logger_config import get_logger
+
 
 HASH_CONTEXT = CryptContext(
     [
@@ -50,6 +50,7 @@ HASH_CONTEXT = CryptContext(
         "pbkdf2_sha512",
     ]
 )
+Logger = get_logger()
 
 
 def get_file_lines(file: str) -> int:
@@ -185,6 +186,37 @@ def chKeyGood(data: dict, key, goal: object) -> None:
         raise ValueError(f"`{key}` must be of type `{goal}`; It is `{type(data[key])}`")
 
 
+def chRequirements(requirements: str) -> None:
+    Logger.info("Checking plugin's requirements")
+    if requirements == "":
+        Logger.info("Plugin has no value in it's requirements")
+        return None
+    # First, convert all ', ' to commas (,) and then convert all spaces to commas and finally separate requirements by comma
+    # so 'R1, R2,R3 R4,R5' would become 'R1,R2,R3,R4,R5'
+    Logger.debug("Requirements: %s", requirements)
+    requirements = ",".join(",".join(requirements.split(", ")).split(" ")).split(",")
+    Logger.info("Found %d requirements", len(requirements))
+    Logger.info("Requirements: %s", requirements)
+    Logger.info("Installing...")
+    try:
+        results = run(
+            ["pip", "install"] + requirements,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        Logger.info("%s", results.stdout)
+        Logger.info("Done")
+        return None
+    except Exception as e:
+        Logger.critical(
+            "Something went wrong when installing requirements:\n %s",
+            str(e),
+            exc_info=1,
+        )
+        exit(1)
+
+
 def checkConfig(data: dict) -> None:
     """checks required variables in plugin info.yaml"""
     chKeySet(data, "name")
@@ -195,6 +227,7 @@ def checkConfig(data: dict) -> None:
 
     chKeySet(data, "requirements")
     chKeyGood(data, "requirements", str)
+    chRequirements(data["requirements"])
 
     chKeySet(data, "config")
     chKeyGood(data, "config", dict)
@@ -242,12 +275,15 @@ def check_plugins(plugins: dict) -> dict:
         info = t.get_info()
         try:
             checkConfig(info)
+            Logger.info("Checked `%s`", info["name"])
         except KeyError as e:
             Logger.error(e, exc_info=1)
             bad.add(i)
 
+    Logger.debug("Bad plugins: %s", len(bad))
     for i in bad:
         plugins.pop(i)
+        Logger.debug("Removed `%s`", i)
 
     return plugins
 
