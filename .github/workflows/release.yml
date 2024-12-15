@@ -312,7 +312,7 @@ jobs:
         run: |
           pip install pytest pytest-qt
           cd CRYPT
-          ./CRYPT --test
+          ./CRYPT.exe --test
           exit_code=$?
           echo $exit_code
 
