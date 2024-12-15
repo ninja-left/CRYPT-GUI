@@ -19,6 +19,7 @@ on:
 
 env:
   repo_name: CRYPT-GUI
+  python_version: 3.11.9
 
 jobs:
   prepare:
@@ -79,7 +80,7 @@ jobs:
         if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11.2'
+          python-version: ${{ env.python_version }}
 
       - name: Install dependencies
         if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
@@ -104,7 +105,25 @@ jobs:
           Crypt.py
 
           mv dist/CRYPT/_internal/modules dist/CRYPT/_internal/default_config.yaml dist/CRYPT/_internal/Docs dist/CRYPT/
-          ls -lh dist/CRYPT
+          ## Move CRYPT to the project root so compiled archive's root folder is CRYPT not dist/CRYPT
+          mv dist/CRYPT .
+          rmdir dist
+          ls -lh CRYPT/
+
+      - name: Test
+        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
+        shell: bash
+        run: |
+          pip install pytest pytest-qt
+          cd CRYPT
+          ./CRYPT --test
+          exit_code=$?
+          echo $exit_code
+
+          if [ $exit_code -ne 0 ]; then
+            echo "Program failed with exit code $exit_code"
+            exit $exit_code
+          fi
 
       - name: Compress
         run: |
@@ -117,7 +136,7 @@ jobs:
             touch $output_name
           }
           else {
-            tar caf $output_name dist/*
+            tar caf $output_name CRYPT/
           }
           fi
 
@@ -161,7 +180,7 @@ jobs:
         if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11.2'
+          python-version: ${{ env.python_version }}
 
       - name: Install dependencies
         if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
@@ -186,7 +205,25 @@ jobs:
           Crypt.py
 
           mv dist/CRYPT/_internal/modules dist/CRYPT/_internal/default_config.yaml dist/CRYPT/_internal/Docs dist/CRYPT/
-          ls -lh dist/CRYPT
+          ## Move CRYPT to the project root so compiled archive's root folder is CRYPT not dist/CRYPT
+          mv dist/CRYPT .
+          rmdir dist
+          ls -lh CRYPT/
+
+      - name: Test
+        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
+        shell: bash
+        run: |
+          pip install pytest pytest-qt
+          cd CRYPT
+          ./CRYPT --test
+          exit_code=$?
+          echo $exit_code
+
+          if [ $exit_code -ne 0 ]; then
+            echo "Program failed with exit code $exit_code"
+            exit $exit_code
+          fi
 
       - name: Compress
         run: |
@@ -196,9 +233,9 @@ jobs:
           echo $repo_name
 
           if [ '${{ inputs.releaseType }}' == 'test' ]; then {
-          touch $output_name
+            touch $output_name
           } else {
-            tar caf $output_name dist/*
+            tar caf $output_name CRYPT/
           }
           fi
 
@@ -238,7 +275,7 @@ jobs:
         if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11.2'
+          python-version: ${{ env.python_version }}
 
       - name: Install dependencies
         if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
@@ -264,7 +301,25 @@ jobs:
           Move-Item dist/CRYPT/_internal/modules dist/CRYPT/
           Move-Item dist/CRYPT/_internal/default_config.yaml dist/CRYPT/
           Move-Item dist/CRYPT/_internal/Docs dist/CRYPT/
-          Get-ChildItem dist/CRYPT/
+          ## Move CRYPT to the project root so compiled archive's root folder is CRYPT not dist/CRYPT
+          Move-Item -Path "dist\CRYPT" -Destination "."
+          Remove-Item -Path "dist" -Recurse
+          Get-ChildItem CRYPT
+
+      - name: Test
+        if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
+        shell: bash
+        run: |
+          pip install pytest pytest-qt
+          cd CRYPT
+          ./CRYPT.exe --test
+          exit_code=$?
+          echo $exit_code
+
+          if [ $exit_code -ne 0 ]; then
+            echo "Program failed with exit code $exit_code"
+            exit $exit_code
+          fi
 
       - name: Compress
         run: |
@@ -274,7 +329,7 @@ jobs:
           if ('${{ inputs.releaseType }}' -eq 'test') {
               Set-Content $output_name "test"
           } else {
-              Compress-Archive -Path './dist/*' -DestinationPath "./$output_name"
+              Compress-Archive -Path './CRYPT' -DestinationPath "./$output_name"
           }
 
           echo "output_windows=$output_name" | Out-File -FilePath $env:GITHUB_ENV -Append
@@ -313,6 +368,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      version: ${{ steps.source_assets.outputs.version }}
     env:
       version: ${{ needs.prepare.outputs.version }}
       release_body: ${{ needs.prepare.outputs.release_body }}
@@ -320,11 +377,14 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Create source assets
+        id: source_assets
         run: |
           repo_name=${{ env.repo_name }}
+          version=${{ env.version }}
           output_zip="source-${repo_name}.zip"
           output_xz="source-${repo_name}.tar.xz"
           echo $repo_name
+          echo $version
           echo $output_zip
           echo $output_xz
 
@@ -342,6 +402,7 @@ jobs:
 
           echo "output_zip=$output_zip" >> $GITHUB_ENV
           echo "output_xz=$output_xz" >> $GITHUB_ENV
+          echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Create SHA256 checksums
         id: hash_source_assets
@@ -391,8 +452,10 @@ jobs:
   finish-up:
     needs: [release]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
-      version: ${{ needs.prepare.outputs.version }}
+      version: ${{ needs.release.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -403,9 +466,15 @@ jobs:
           if [ '${{ inputs.releaseType }}' == 'test' ]; then {
             echo "No changes made to .release/old_version"
           } else {
+            git checkout -b patch
             echo "${{ env.version }}" >.release/old_version
             echo "\n">.release/old_version
             echo "Old version content:"
             cat .release/old_version
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add .release/old_version
+            git commit -m "Update old_version to ${{ env.version }}"
+            git push origin patch
           }
           fi

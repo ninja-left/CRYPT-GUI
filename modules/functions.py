@@ -282,3 +282,9 @@ Ctrl + C : Copy
 [Folder icon by Mehwish - Flaticon](https://www.flaticon.com/free-icon/folder_3307447)\n
 [Floppy disk icon by heisenberg_jr - Flaticon](https://www.flaticon.com/free-icon/floppy-disk_12629050)\n
 """
+
+
+def run_tests() -> int:
+    import pytest
+
+    return pytest.main(["-q", "--tb=short", "modules/tests/"])

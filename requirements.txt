@@ -4,7 +4,7 @@ bcrypt==4.2.1
 cffi==1.17.1
 passlib==1.7.4
 pluginlib==0.9.4
-pyperclip==1.9.0
+clipman==3.3.1
 PySide6==6.8.1
 ruamel.yaml==0.18.6
 setuptools==75.6.0

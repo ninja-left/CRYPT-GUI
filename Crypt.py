@@ -5,17 +5,22 @@ from PySide6.QtWidgets import (
     QDialog,
     QMainWindow,
     QMessageBox,
-    QDialog,
     QFileDialog,
-    QComboBox,
 )
-from PySide6 import QtGui
-import pyperclip
-import sys
-import pathlib
-from multiprocessing import Pool, TimeoutError as mpTimeoutError
+from PySide6.QtGui import QIcon
+import clipman
+from sys import argv, stdout, exit
+from pathlib import Path
 from pluginlib import PluginImportError
-import logging
+from logging import (
+    getLogger,
+    Formatter,
+    StreamHandler,
+    disable,
+    CRITICAL,
+    NOTSET,
+    shutdown,
+)
 from logging.handlers import TimedRotatingFileHandler
 
 from modules import functions, ciphers, brute
@@ -24,13 +29,13 @@ from modules.design import main_ui, config_ui, bf_ui, resources_rc
 
 brute_force_results = ""
 
-Logger = logging.getLogger(__name__)
-FORMATTER = logging.Formatter(
+Logger = getLogger(__name__)
+FORMATTER = Formatter(
     "[{asctime}] - {name}:{levelname} - {message}", "%Y-%m-%d %H:%M:%S", "{"
 )
 HANDLE_FILE = TimedRotatingFileHandler("events.log", "D", 1, 5, "utf-8", False, False)
 HANDLE_FILE.setFormatter(FORMATTER)
-HANDLE_CONS = logging.StreamHandler(sys.stdout)
+HANDLE_CONS = StreamHandler(stdout)
 HANDLE_CONS.setFormatter(FORMATTER)
 Logger.addHandler(HANDLE_CONS)
 Logger.addHandler(HANDLE_FILE)
@@ -89,9 +94,9 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
         settings["other"]["default pattern"] = self.inputOther_SaltPattern.text()
         settings["other"]["log level"] = self.inputOther_LogLevel.currentText()
         if settings['other']['log level'] == "OFF":
-            logging.disable(logging.CRITICAL)
+            disable(CRITICAL)
         else:
-            logging.disable(logging.NOTSET)
+            disable(NOTSET)
             Logger.setLevel(settings['other']['log level'])
         try:
             functions.save_settings(settings)
@@ -297,11 +302,11 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
                     detail="Enter file path or use Browse button.",
                 )
                 return 1
-            if not pathlib.Path(file_path).absolute().exists():
+            if not Path(file_path).absolute().exists():
                 MainWindow.showMessageBox(
                     self,
                     info="File doesn't exist. Use the browse button to select one.",
-                    detail=f"Path: {pathlib.Path(file_path).absolute()}",
+                    detail=f"Path: {Path(file_path).absolute()}",
                 )
                 return 1
 
@@ -429,7 +434,6 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.defaultTextDecode = "Decode/Decrypt"
         self.defaultIconDecode = QtGui.QIcon()
         self.defaultIconDecode.addPixmap(":/images/Unlocked.png")
-        self.pool = Pool()
         self.allHashes = (
             "MD5",
             "MD5 CRYPT",
@@ -480,12 +484,15 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
 
         # Error Logging
         if self.log_level == "OFF":
-            logging.disable(logging.CRITICAL)
+            disable(CRITICAL)
         else:
-            logging.disable(logging.NOTSET)
+            disable(NOTSET)
             Logger.setLevel(self.log_level)
 
         Logger.debug("Loaded settings: %s", settings)
+
+        # Initializes clipman; (Required)
+        clipman.init()
 
     def connectSignalSlots(self):
         self.actionCopy.triggered.connect(self.doCopy)
@@ -537,7 +544,8 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 raise Exception(f"There's no data in {area} area.")
             return True
         except Exception as e:
-            self.showMessageBox(info=str(e), detail=detailed)
+            if not "--test" in argv:  # Do not show message box when testing
+                self.showMessageBox(info=str(e), detail=detailed)
             Logger.error("Failed to check if text is empty: %s", str(e), exc_info=1)
             return False
 
@@ -547,31 +555,33 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             text, "output", 'Go to the "Setup" tab to do operations on the input.'
         ):
             return 0
-        pyperclip.copy(text)
-        self.showMessageBox(
-            title="Finished!",
-            text="The output data has been copied.",
-            level=1,
-            button=2,
-        )
+        clipman.copy(text)
+        if not "--test" in argv:  # Do not show message box when testing
+            self.showMessageBox(
+                title="Finished!",
+                text="The output data has been copied.",
+                level=1,
+                button=2,
+            )
 
     def doPaste(self):
         try:
-            pool_result = self.pool.apply_async(pyperclip.paste)
-            pool_result.wait(1)
-            text = pool_result.get(timeout=self.paste_timeout)
+            # The async lines were added due to pyperclip <<Attribute Error: Can't pickle local object 'init_wl_clipboard.<locals>.paste_wl'>> error and are not needed for clipman
+            text = clipman.paste()
+            Logger.debug("Clipboard data: %s", str(text))
+            if text == "":
+                raise ValueError("Clipboard is empty.")
             self.inputText.setPlainText(self.inputText.toPlainText() + text)
-        except mpTimeoutError:
-            self.showMessageBox(
-                info="Pasting took too long to finish.",
-                detail="This could happen if there's no data in Clipboard. Make sure to copy something first.",
-            )
-            Logger.error("Pasting took too long to finish.", exc_info=1)
+        except ValueError as e:
+            if not "--test" in argv:  # Do not show message box when testing
+                self.showMessageBox(info=str(e), detail="Copy something first!")
+            Logger.error(str(e), exc_info=1)
         except Exception as e:
-            self.showMessageBox(
-                info="Copied data is not text.",
-                detail="Make sure that the data you're trying to paste is Text not Image or something else.",
-            )
+            if not "--test" in argv:  # Do not show message box when testing
+                self.showMessageBox(
+                    info="Copied data is not text.",
+                    detail="Make sure that the data you're trying to paste is Text not Image or something else.",
+                )
             Logger.error(str(e), exc_info=1)
 
     def doChangeOp(self):
@@ -673,8 +683,9 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     # Loading plugin info
                     t = self.Plugins[self.operationMode.currentData()]()
                     info = t.get_info()
-                    _i = info.pop("license")
-                    Logger.debug(f"Plugin info: {_i}")
+                    info.pop("license")
+                    # remove license because they are long and pollute the log file
+                    Logger.debug(f"Plugin info: {info}")
                     # Texts set to default and buttons enabled if supported by the plugin
                     self.btnEncode.setText(self.defaultTextEncode)
                     self.btnEncode.setEnabled(info["config"]["has encoder"])
@@ -699,7 +710,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     self.inputRounds.setEnabled(info['config']['uses rounds'])
                     if info['config']['uses rounds']:
                         self.inputRounds.setText(str(info['config']['default rounds']))
-                    del info, _i, t
+                    del info, t
 
     def doDecode(self):
         input_data = self.inputText.toPlainText()
@@ -1032,7 +1043,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 Logger.critical(str(e.friendly), exc_info=1)
             else:
                 Logger.critical(str(e), exc_info=1)
-            sys.exit(1)
+            exit(1)
         self.Plugins = functions.check_plugins(self.Plugins)
         _A = self.textBrowser.toMarkdown()
         _A += "## Plugins"
@@ -1054,9 +1065,11 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    if "--test" in argv:
+        exit(functions.run_tests())
+    app = QApplication(argv)
     win = MainWindow()
     win.show()
     x = app.exec()
-    logging.shutdown()
-    sys.exit(x)
+    shutdown()
+    exit(x)
