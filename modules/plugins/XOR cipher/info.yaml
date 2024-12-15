@@ -1,6 +1,6 @@
 name: 'xor'
 version: '1.1.0'
-requirements: 'bcrypt, cffi clipman'
+requirements: ''
 source url: https://github.com/TheAlgorithms/Python/blob/master/ciphers/xor_cipher.py
 license: |-
   #### MIT License
