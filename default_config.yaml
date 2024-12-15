@@ -30,3 +30,4 @@ other:
   paste timeout: 1  # seconds
   default pattern: SALT+INPUT
   log level: WARNING
+  loaded plugins: ''  # This will stop rechecking requirements of the specified plugins on every launch thus saving time; To recheck remove plugin's name from the list

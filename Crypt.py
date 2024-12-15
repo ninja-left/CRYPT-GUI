@@ -9,37 +9,23 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QIcon
 import clipman
-from sys import argv, stdout, exit
+from sys import argv, exit
 from pathlib import Path
 from pluginlib import PluginImportError
 from logging import (
-    getLogger,
-    Formatter,
-    StreamHandler,
     disable,
     CRITICAL,
     NOTSET,
     shutdown,
 )
-from logging.handlers import TimedRotatingFileHandler
-
 from modules import functions, ciphers, brute
 from modules.design import main_ui, config_ui, bf_ui, resources_rc
+from modules.logger_config import get_logger
 
 
 brute_force_results = ""
 
-Logger = getLogger(__name__)
-FORMATTER = Formatter(
-    "[{asctime}] - {name}:{levelname} - {message}", "%Y-%m-%d %H:%M:%S", "{"
-)
-HANDLE_FILE = TimedRotatingFileHandler("events.log", "D", 1, 5, "utf-8", False, False)
-HANDLE_FILE.setFormatter(FORMATTER)
-HANDLE_CONS = StreamHandler(stdout)
-HANDLE_CONS.setFormatter(FORMATTER)
-Logger.addHandler(HANDLE_CONS)
-Logger.addHandler(HANDLE_FILE)
-
+Logger = get_logger()
 
 class BadInputError(Exception):
     def __init__(self, message: str = "Input is not valid"):
@@ -59,6 +45,7 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
         self.setupUi(self)
         self.connectSignalSlots()
         self.LoadSettings()
+        Logger.info("Opened config dialog")
 
     def connectSignalSlots(self):
         self.actionSaveSettings.triggered.connect(self.SaveSettings)
@@ -67,6 +54,8 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
     def SaveSettings(self):
         try:
             settings = functions.load_settings()
+            Logger.info("Loaded settings.")
+            Logger.debug("settings: %s", settings)
         except Exception as e:
             MainWindow.showMessageBox(
                 self, info="Could not load settings.", detail=str(e)
@@ -103,6 +92,8 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
             MainWindow.showMessageBox(
                 self, "Finished!", "Saved Settings.", level=1, button=2
             )
+            Logger.info("Saved settings from dialog.")
+            Logger.debug("new settings: %s", settings)
         except Exception as e:
             MainWindow.showMessageBox(
                 self, info="Could not save settings.", detail=str(e)
@@ -112,6 +103,8 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
     def LoadSettings(self):
         try:
             settings = functions.load_settings()
+            Logger.info("Loaded settings.")
+            Logger.debug("settings: %s", settings)
         except Exception as e:
             MainWindow.showMessageBox(
                 self, info="Could not load settings.", detail=str(e)
@@ -138,6 +131,7 @@ class ConfigDialog(QDialog, config_ui.Ui_Dialog):
         self.inputOther_PasteTimeout.setText(str(settings["other"]["paste timeout"]))
         self.inputOther_SaltPattern.setText(settings["other"]["default pattern"])
         self.inputOther_LogLevel.setCurrentText(settings["other"]["log level"])
+        Logger.info("Successfully loaded settings to dialog.")
 
 
 class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
@@ -145,39 +139,40 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
         super().__init__()
         self.setupUi(self)
         self.connectSignalSlots()
+        Logger.info("Opened brute-force dialog.")
+
         self.turnUI(False)
+
         self.input_data = input_data
         self.salt = salt
         self.salt_pattern = salt_pattern
         self.hash_type = hash_type
         self.mode = ""
+        Logger.debug(
+            "input_data(%s), salt(%s), salt_pattern(%s), hash_type(%s)",
+            input_data,
+            salt,
+            salt_pattern,
+            hash_type,
+        )
 
         # User settings
         settings = functions.load_settings()
+        Logger.info("Loaded settings")
+        Logger.debug("settings[brute]: %s", settings["brute"])
         include = settings["brute"]["include"]
 
         self.inputMaxLength.setText(settings["brute"]["max length"])
-        if settings["brute"]["ramp"]:
-            self.inputRamp.setChecked(True)
+        self.inputRamp.setChecked(True if settings["brute"]["ramp"] else False)
         self.inputStartLength.setText(settings["brute"]["start length"])
-        if include["L"]:
-            self.inputLetters.setChecked(True)
-        else:
-            self.inputLetters.setChecked(False)
-        if include["D"]:
-            self.inputNumbers.setChecked(True)
-        else:
-            self.inputNumbers.setChecked(False)
-        if include["S"]:
-            self.inputSymbols.setChecked(True)
-        else:
-            self.inputSymbols.setChecked(False)
-        if include["W"]:
-            self.inputSpaces.setChecked(True)
-        else:
-            self.inputSpaces.setChecked(False)
+        self.inputLetters.setChecked(True if include["L"] else False)
+        self.inputNumbers.setChecked(True if include["D"] else False)
+        self.inputSymbols.setChecked(True if include["S"] else False)
+        self.inputSpaces.setChecked(True if include["W"] else False)
+        Logger.info("Successfully Loaded brute options")
 
     def turnUI(self, To=True):
+        Logger.debug("Making everything %s", "hidden" if To == False else "Visible")
         self.label.setVisible(To)
         self.label_2.setVisible(To)
         self.label_3.setVisible(To)
@@ -196,40 +191,35 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
         self.inputStartLength.setVisible(To)
 
     def setUI(self, mode: str):
-        if mode != "brute":
-            self.label.setVisible(True)
-            self.inputChooseFile.setVisible(True)
-            self.inputFilePath.setVisible(True)
-        else:
-            self.label.setVisible(False)
-            self.inputChooseFile.setVisible(False)
-            self.inputFilePath.setVisible(False)
-        if mode == "brute":
-            self.label_2.setVisible(True)
-            self.label_3.setVisible(True)
-            self.label_4.setVisible(True)
-            self.label_5.setVisible(True)
-            self.inputLetters.setVisible(True)
-            self.inputNumbers.setVisible(True)
-            self.inputSpaces.setVisible(True)
-            self.inputSymbols.setVisible(True)
-            self.inputMaxLength.setVisible(True)
-            self.inputRamp.setVisible(True)
-            self.inputStartLength.setVisible(True)
-        else:
-            self.label_2.setVisible(False)
-            self.label_3.setVisible(False)
-            self.label_4.setVisible(False)
-            self.label_5.setVisible(False)
-            self.inputLetters.setVisible(False)
-            self.inputNumbers.setVisible(False)
-            self.inputSpaces.setVisible(False)
-            self.inputSymbols.setVisible(False)
-            self.inputMaxLength.setVisible(False)
-            self.inputRamp.setVisible(False)
-            self.inputStartLength.setVisible(False)
+        Logger.info("Settings labels & inputs based on mode")
+        self.label.setVisible(True if mode != "brute" else False)
+        self.inputChooseFile.setVisible(True if mode != "brute" else False)
+        self.inputFilePath.setVisible(True if mode != "brute" else False)
+        Logger.debug(
+            "Set `Filename` label, Filepath input & browse button to %s",
+            True if mode != "brute" else False,
+        )
+        self.label_2.setVisible(True if mode == "brute" else False)
+        self.label_3.setVisible(True if mode == "brute" else False)
+        self.label_4.setVisible(True if mode == "brute" else False)
+        self.label_5.setVisible(True if mode == "brute" else False)
+        self.inputLetters.setVisible(True if mode == "brute" else False)
+        self.inputNumbers.setVisible(True if mode == "brute" else False)
+        self.inputSpaces.setVisible(True if mode == "brute" else False)
+        self.inputSymbols.setVisible(True if mode == "brute" else False)
+        self.inputMaxLength.setVisible(True if mode == "brute" else False)
+        self.inputRamp.setVisible(True if mode == "brute" else False)
+        self.inputStartLength.setVisible(True if mode == "brute" else False)
+        Logger.debug(
+            "Set other labels, inputs & checkboxes to %s",
+            True if mode == "brute" else False,
+        )
         self.btnCrack.setVisible(True)
         self.progressBar.setVisible(False)
+        Logger.debug(
+            "Set `start cracking` button & progressbar to default (True, False)"
+        )
+        Logger.info("+++ Done +++")
 
     def connectSignalSlots(self):
         self.actionChooseFile.triggered.connect(self.ChooseFile)
@@ -240,6 +230,7 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
 
     def ConfigBrute(self):
         if self.inputBrute.isChecked():
+            Logger.info("Mode is brute-force")
             self.inputWordList.setChecked(False)
             self.turnUI()
             self.mode = "brute"
@@ -250,6 +241,7 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
 
     def ConfigWL(self):
         if self.inputWordList.isChecked():
+            Logger.info("Mode is word-list")
             self.inputBrute.setChecked(False)
             self.turnUI()
             self.mode = "word"
@@ -259,16 +251,17 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
             self.mode = ""
 
     def ConfigRamp(self):
-        if self.inputRamp.isChecked():
-            self.label_4.setVisible(True)
-            self.inputStartLength.setVisible(True)
-        else:
-            self.label_4.setVisible(False)
+        Logger.info("Setting Ramp option")
+        Logger.debug("Ramp checked: %s", True if self.inputRamp.isChecked() else False)
+        self.label_4.setVisible(True if self.inputRamp.isChecked() else False)
+        self.inputStartLength.setVisible(True if self.inputRamp.isChecked() else False)
+        if not self.inputRamp.isChecked():
             self.inputStartLength.setText("")
-            self.inputStartLength.setVisible(False)
+            Logger.debug("Emptied `start length` input")
 
     def startCrack(self):
         global brute_force_results
+        Logger.info("Started cracking process")
         input_data = self.input_data
         file_path = self.inputFilePath.text()
         salt = self.salt
@@ -292,6 +285,21 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
         use_Space = self.inputSpaces.isChecked()
         self.progressBar.setValue(0)
         self.progressBar.setVisible(True)
+        Logger.debug(
+            "Variables: good_data(%s), file_path(%s), salt(%s), salt_pattern(%s), hash_type(%s), length(%s), ramp(%s), start_len(%s), use_Letters(%s), use_Numbers(%s), use_Symbols(%s), use_Space(%s)",
+            good_data,
+            file_path,
+            salt,
+            salt_pattern,
+            hash_type,
+            length,
+            ramp,
+            start_len,
+            use_Letters,
+            use_Numbers,
+            use_Symbols,
+            use_Space,
+        )
 
         if self.mode == "word":
             # Checks
@@ -301,6 +309,7 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
                     info="File path is empty.",
                     detail="Enter file path or use Browse button.",
                 )
+                Logger.error("File path is empty.")
                 return 1
             if not Path(file_path).absolute().exists():
                 MainWindow.showMessageBox(
@@ -308,10 +317,15 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
                     info="File doesn't exist. Use the browse button to select one.",
                     detail=f"Path: {Path(file_path).absolute()}",
                 )
+                Logger.error(
+                    "`%s` doesn't exist. Use the browse button to select one.",
+                    Path(file_path).absolute(),
+                )
                 return 1
 
             # Main
             total_lines = functions.get_file_lines(file_path)
+            Logger.debug("Total lines: %s", total_lines)
             i = 0
             with open(file_path, "rb") as file_obj:
                 for password in file_obj:
@@ -334,6 +348,8 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
                     level=1,
                     button=2,
                 )
+                Logger.info("Results Found!")
+                Logger.debug("Results: %s", results)
                 brute_force_results = results
                 self.close()
             else:
@@ -344,6 +360,7 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
                     "Plain text not found.",
                     "Try another Word list or use brute-force.",
                 )
+                Logger.warning("No Results Found!")
 
         else:
             # Checks
@@ -372,7 +389,7 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
                 use_Space,
                 start_len,
             )
-            print(f"Total possible keys: {total_keys:,}")
+            Logger.info(f"Total possible keys: {total_keys:,}")
             i = 0
             for password in brute.brute(
                 start_len,
@@ -387,7 +404,6 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
                 self.progressBar.setValue((i + 1) * 100 / total_keys)
                 if functions.check_password(password, input_data, hash_type, "b"):
                     decrypted_data = password
-                    print("", decrypted_data)
                     break
                 else:
                     decrypted_data = ""
@@ -403,6 +419,8 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
                     button=2,
                 )
                 brute_force_results = decrypted_data
+                Logger.info("Results Found!")
+                Logger.debug("Results: ", decrypted_data)
                 self.close()
                 return
             else:
@@ -413,12 +431,13 @@ class BruteForceDialog(QDialog, bf_ui.Ui_BruteForceDialog):
                     "Plain text not found.",
                     "Tweak the options or try using Salts.",
                 )
+                Logger.warning("No Results Found!")
 
     def ChooseFile(self):
         d = QFileDialog(self)
         d.setFileMode(QFileDialog.ExistingFile)
         d.setAcceptMode(QFileDialog.AcceptOpen)
-        d.setNameFilter("Text Files (*.txt *.list *.asc)")
+        d.setNameFilters(("Text Files (*.txt *.list *.asc)", "Any File (*)"))
         if d.exec():
             filename = d.selectedFiles()[0]
             self.inputFilePath.setText(filename)
@@ -432,7 +451,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.Operation = ""
         self.defaultTextEncode = "Encode/Encrypt"
         self.defaultTextDecode = "Decode/Decrypt"
-        self.defaultIconDecode = QtGui.QIcon()
+        self.defaultIconDecode = QIcon()
         self.defaultIconDecode.addPixmap(":/images/Unlocked.png")
         self.allHashes = (
             "MD5",
@@ -651,7 +670,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     self.btnEncode.setText("Hash")
                     self.btnEncode.setEnabled(True)
                     self.btnDecode.setText("Verify")
-                    decode_icon = QtGui.QIcon()
+                    decode_icon = QIcon()
                     decode_icon.addPixmap(":/images/Verify.png")
                     self.btnDecode.setIcon(decode_icon)
                     self.btnDecode.setEnabled(True)
@@ -685,6 +704,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     info = t.get_info()
                     info.pop("license")
                     # remove license because they are long and pollute the log file
+                    Logger.info("Chose `%s` plugin", info["config"]["display name"])
                     Logger.debug(f"Plugin info: {info}")
                     # Texts set to default and buttons enabled if supported by the plugin
                     self.btnEncode.setText(self.defaultTextEncode)
@@ -726,6 +746,16 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         display_act = "Decoded"
         decoded = ""
         hashed_plain = ""
+        Logger.info("Decoding...")
+        Logger.debug(
+            "with: input_data(%s), alphabet(%s), current_key(%s), salt(%s), salt_pattern(%s), plain(%s)",
+            input_data,
+            alphabet,
+            current_key,
+            salt,
+            salt_pattern,
+            plain,
+        )
         try:
             match self.Operation:
                 case "Base16":
@@ -766,6 +796,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                             good_plain = f"{salt}+{plain}"
                     else:
                         good_plain = plain
+                    Logger.debug("good_plain(%s)", good_plain)
                     if self.Operation in self.allHashes:
                         display_act = "Verified"
                         if not plain.strip():
@@ -832,6 +863,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             self.showMessageBox(
                 title="Finished!", text=f"{display_act} the input.", level=1, button=2
             )
+            Logger.info("%s the input.", display_act)
             Logger.debug(f"{display_act}: {input_data}\n->\n{decoded}")
         except BadKeyError as e:
             self.showMessageBox(info="Provide a key.", detail=str(e))
@@ -859,6 +891,16 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         display_act = "Encoded"
         rounds = self.inputRounds.displayText()
         encoded = ""
+        Logger.info("Decoding...")
+        Logger.debug(
+            "with: input_data(%s), alphabet(%s), current_key(%s), salt(%s), salt_pattern(%s), rounds(%s)",
+            input_data,
+            alphabet,
+            current_key,
+            salt,
+            salt_pattern,
+            rounds,
+        )
         try:
             match self.Operation:
                 case "Base16":
@@ -925,7 +967,8 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     else:  # Plugins
                         t = self.Plugins[self.operationMode.currentData()]()
                         info = t.get_info()
-                        Logger.debug(info)
+                        Logger.info("Using `%s` plugin", info["config"]["display name"])
+                        Logger.debug("Plugin info: %s", info)
                         encoded = t.encode(
                             good_data, key=current_key, alphabet=alphabet, rounds=rounds
                         )
@@ -935,7 +978,8 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             self.showMessageBox(
                 title="Finished!", text=f"{display_act} the input.", level=1, button=2
             )
-            Logger.debug(f"{display_act}: {input_data}\n->\n{encoded}")
+            Logger.info("Successfully %s", display_act)
+            Logger.debug(f"{display_act} <<{input_data}>>: <<{encoded}>>")
         except BadKeyError as e:
             self.showMessageBox(info="Provide a key.", detail=str(e))
             Logger.error(str(e), exc_info=1)
@@ -954,17 +998,27 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         salt = self.inputSalt.displayText()
         salt_pattern = self.inputSaltPattern.displayText()
         rounds = self.inputRounds.displayText()
+        Logger.info("Brute-forcing...")
         match self.Operation:
             case "MD5" | "SHA256" | "SHA512":
                 hash_type = self.Operation
             case _:
                 hash_type = "other"
+        Logger.debug(
+            "with: input_data(%s), alphabet(%s), salt(%s), salt_pattern(%s), rounds(%s), hash_type(%s)",
+            input_data,
+            alphabet,
+            salt,
+            salt_pattern,
+            rounds,
+            hash_type,
+        )
 
         if self.Operation == "Caesar Cipher":
             brute_force_data = dict()
             for key in range(1, len(alphabet) + 1):
                 key = -key
-                keyMatch = ciphers.caesar_cipher(input_string, key, alphabet)
+                keyMatch = ciphers.caesar_cipher(input_data, key, alphabet)
                 brute_force_data[f"Key {abs(key)}"] = keyMatch
             results = brute_force_data
             for i in results.items():
@@ -976,12 +1030,14 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 level=1,
                 button=2,
             )
+            Logger.info("Successfully brute-forced.")
             Logger.debug(f"Brute-forced: {input_data}\n{results.items()}")
         elif self.Operation in self.allHashes:
             d = BruteForceDialog(input_data, salt, salt_pattern, hash_type)
             d.exec()
             if brute_force_results:
                 self.outputText.setPlainText(brute_force_results)
+                Logger.info("Successfully brute-forced.")
                 Logger.debug(f"Brute-forced: {input_data} -> {brute_force_results}")
         else:  # Plugins
             t = self.Plugins[self.operationMode.currentData()]()
@@ -1003,9 +1059,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                         self.outputText.setPlainText(f"{p}{i[0]}: {i[1]}\n")
                 else:
                     self.outputText.setPlainText(results)
-            Logger.debug(
-                f"{info['config']['display name']} Brute-forced: {input_data} -> {results}"
-            )
+                Logger.info("Successfully brute-forced.")
+                Logger.debug(
+                    f"{info['config']['display name']} Brute-forced: {input_data} -> {results}"
+                )
 
     def doConfig(self) -> int:
         """Executes ConfigDialog class"""
@@ -1017,27 +1074,55 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
 
     def doZoomIn(self) -> None:
         """Get the current font of the TextBoxes, Increment it by 1, Set the new font"""
+        Logger.info("Zooming-In")
         outputFont = self.outputText.font()
         inputFont = self.inputText.font()
+        Logger.debug(
+            "Current Font sizes: output(%s), input(%s)",
+            outputFont.pointSize(),
+            inputFont.pointSize(),
+        )
         outputFont.setPointSize(outputFont.pointSize() + 1)
         inputFont.setPointSize(inputFont.pointSize() + 1)
+        Logger.debug(
+            "New Font sizes: output(%s), input(%s)",
+            outputFont.pointSize(),
+            inputFont.pointSize(),
+        )
         self.outputText.setFont(outputFont)
         self.inputText.setFont(inputFont)
+        Logger.info("Done")
 
     def doZoomOut(self) -> None:
         """Get the current font of the TextBoxes, Decrement it by 1, Set the new font"""
+        Logger.info("Zooming-Out")
         outputFont = self.outputText.font()
         inputFont = self.inputText.font()
+        Logger.debug(
+            "Current Font sizes: output(%s), input(%s)",
+            outputFont.pointSize(),
+            inputFont.pointSize(),
+        )
         outputFont.setPointSize(outputFont.pointSize() - 1)
         inputFont.setPointSize(inputFont.pointSize() - 1)
+        Logger.debug(
+            "New Font sizes: output(%s), input(%s)",
+            outputFont.pointSize(),
+            inputFont.pointSize(),
+        )
         self.outputText.setFont(outputFont)
         self.inputText.setFont(inputFont)
+        Logger.info("Done")
 
     def LoadPlugins(self) -> None:
-        # Load and check plugins
-        # TODO: check plugin requirements and prompt user to install them
+        """Loads and checks plugins"""
+        # Load settings for recording loaded plugins
+        settings = functions.load_settings()
+        Loaded = settings["other"]["loaded plugins"].copy()
         try:
             self.Plugins = functions.get_loader().plugins.Cipher
+            Logger.info("Plugin loader is ready")
+            Logger.debug("self.Plugins: %s", self.Plugins)
         except PluginImportError as e:
             if e.friendly:
                 Logger.critical(str(e.friendly), exc_info=1)
@@ -1045,15 +1130,17 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 Logger.critical(str(e), exc_info=1)
             exit(1)
         self.Plugins = functions.check_plugins(self.Plugins)
+        Logger.info("Checked plugins")
+        Logger.debug("New self.Plugins: %s", self.Plugins)
         _A = self.textBrowser.toMarkdown()
         _A += "## Plugins"
 
         for i in self.Plugins:
             info = self.Plugins[i]().get_info()
+            Logger.info("Loading `%s`", info["config"]["display name"])
             # info['name'] will be set as item data and can be used to call the plugin
             self.operationMode.addItem(info["config"]["display name"], info["name"])
-
-            # add plugin source URL, author, and license to About tab
+            # add plugin source URL (if set) and license to About tab
             try:
                 _URL = f"\n\nSource: {info['source url']}"
             except KeyError:
@@ -1061,6 +1148,16 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             _LICENSE = f"\n\n{info['license']}"
             _A += f"\n### {info['config']['display name']}{_URL}{_LICENSE}"
             self.textBrowser.setMarkdown(_A)
+            if not info["name"] in Loaded:
+                Logger.info("Saving `%s` as Loaded", info["name"])
+                Loaded.append(info["name"])
+            Logger.info("Done")
+        if Loaded.copy() != settings["other"]["loaded plugins"].copy():
+            settings["other"]["loaded plugins"] = Loaded
+            functions.save_settings(settings)
+            Logger.info("Saved loaded plugins to config file")
+            Logger.debug("Loaded plugins: %s", Loaded)
+        Logger.info("Loaded all plugins")
         del _A, _URL, _LICENSE
 
 

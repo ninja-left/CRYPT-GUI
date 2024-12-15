@@ -1,9 +1,14 @@
 name: 'a1z26'  # MUST SET
 version: '1.1.0'  # MUST SET
-#  Module names should be the same as in a requirements.txt file.
-# Modules should be coma (,) separated.
-# For example: 'Numpy,cffi,passlib,Pyside6'
-requirements: ''  # MUST SET
+#  requirements can be an empty string or a list of libraries used by the plugin.
+#  Modules names should be the same as in a requirements.txt file as they will be install by running pip.
+#  Modules names should be alphanumeric (a-zA-Z0-9) and can include Underscores, Periods, and dashes (_.-)
+# and names that do not match will be removed.
+#  Modules can be coma (,), space or coma+space (, ) separated.
+# For example: 'bcrypt,cffi, clipman' works because it would be translated into 'bcrypt,cffi,clipman' .
+# Another example: 'bcrypt, cffi clipman ;bad &alsobad' would be same as above because ';bad' and '&alsobad'
+# have bad characters in their names.
+requirements: 'bcrypt, cffi clipman ;bad &alsobad'  # MUST SET
 source url: https://github.com/TheAlgorithms/Python/blob/master/ciphers/a1z26.py  # OPTIONAL; a URL to the original source code
 license: |-
   #### MIT License
