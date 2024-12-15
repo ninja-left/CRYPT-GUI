@@ -22,8 +22,9 @@ from passlib.context import CryptContext
 import mmap
 from ruamel.yaml import YAML
 from pluginlib import PluginLoader
-from subprocess import run  # Used for installing requirements
+from subprocess import run, CalledProcessError  # Used for installing requirements
 from sys import exit
+from re import compile as regComp  # Used for sanitizing requirements
 from modules.ciphers import (
     md5_b,
     sha256_b,
@@ -51,7 +52,8 @@ HASH_CONTEXT = CryptContext(
     ]
 )
 Logger = get_logger()
-
+VALID_PACKAGE = regComp(r"^[a-zA-Z0-9_.-]+$")
+# This pattern allows alphanumerics, dashes, underscores, & periods
 
 def get_file_lines(file: str) -> int:
     with open(file, "r+") as f:
@@ -191,23 +193,30 @@ def chRequirements(requirements: str) -> None:
     if requirements == "":
         Logger.info("Plugin has no value in it's requirements")
         return None
+    Logger.debug("Old Requirements: %s", requirements)
     # First, convert all ', ' to commas (,) and then convert all spaces to commas and finally separate requirements by comma
     # so 'R1, R2,R3 R4,R5' would become 'R1,R2,R3,R4,R5'
-    Logger.debug("Requirements: %s", requirements)
     requirements = ",".join(",".join(requirements.split(", ")).split(" ")).split(",")
+    # Sanitize requirements
+    requirements = [r.strip() for r in requirements if VALID_PACKAGE.match(r)]
     Logger.info("Found %d requirements", len(requirements))
     Logger.info("Requirements: %s", requirements)
     Logger.info("Installing...")
     try:
-        results = run(
-            ["pip", "install"] + requirements,
-            capture_output=True,
-            text=True,
-            check=True,
-        )
+        if len(requirements) < 1:
+            raise ValueError("No valid packages specified")
+        results = run(["pip", "install"] + requirements, capture_output=True, text=True)
+        results.check_returncode()
         Logger.info("%s", results.stdout)
         Logger.info("Done")
         return None
+    except CalledProcessError:
+        Logger.critical(
+            "Something went wrong when installing requirements:\n %s",
+            results.stderr,
+            exc_info=1,
+        )
+        exit(1)
     except Exception as e:
         Logger.critical(
             "Something went wrong when installing requirements:\n %s",
