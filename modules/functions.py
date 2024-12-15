@@ -188,10 +188,15 @@ def chKeyGood(data: dict, key, goal: object) -> None:
         raise ValueError(f"`{key}` must be of type `{goal}`; It is `{type(data[key])}`")
 
 
-def chRequirements(requirements: str) -> None:
-    Logger.info("Checking plugin's requirements")
+def chRequirements(requirements: str, plugin_name: str) -> None:
+    Logger.info("Checking `%s`'s requirements", plugin_name)
+    loaded_plugins = load_settings()["other"]["loaded plugins"]
+    Logger.debug("Loaded plugins: %s", loaded_plugins)
+    if plugin_name in loaded_plugins:
+        Logger.info("Skipping the check because this plugin was loaded in the past")
+        return None
     if requirements == "":
-        Logger.info("Plugin has no value in it's requirements")
+        Logger.info("Plugin has no requirements")
         return None
     Logger.debug("Old Requirements: %s", requirements)
     # First, convert all ', ' to commas (,) and then convert all spaces to commas and finally separate requirements by comma
@@ -236,7 +241,7 @@ def checkConfig(data: dict) -> None:
 
     chKeySet(data, "requirements")
     chKeyGood(data, "requirements", str)
-    chRequirements(data["requirements"])
+    chRequirements(data["requirements"], data["name"])
 
     chKeySet(data, "config")
     chKeyGood(data, "config", dict)
