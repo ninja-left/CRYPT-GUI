@@ -9,37 +9,23 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QIcon
 import clipman
-from sys import argv, stdout, exit
+from sys import argv, exit
 from pathlib import Path
 from pluginlib import PluginImportError
 from logging import (
-    getLogger,
-    Formatter,
-    StreamHandler,
     disable,
     CRITICAL,
     NOTSET,
     shutdown,
 )
-from logging.handlers import TimedRotatingFileHandler
-
 from modules import functions, ciphers, brute
 from modules.design import main_ui, config_ui, bf_ui, resources_rc
+from modules.logger_config import get_logger
 
 
 brute_force_results = ""
 
-Logger = getLogger(__name__)
-FORMATTER = Formatter(
-    "[{asctime}] - {name}:{levelname} - {message}", "%Y-%m-%d %H:%M:%S", "{"
-)
-HANDLE_FILE = TimedRotatingFileHandler("events.log", "D", 1, 5, "utf-8", False, False)
-HANDLE_FILE.setFormatter(FORMATTER)
-HANDLE_CONS = StreamHandler(stdout)
-HANDLE_CONS.setFormatter(FORMATTER)
-Logger.addHandler(HANDLE_CONS)
-Logger.addHandler(HANDLE_FILE)
-
+Logger = get_logger()
 
 class BadInputError(Exception):
     def __init__(self, message: str = "Input is not valid"):
@@ -981,7 +967,6 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     else:  # Plugins
                         t = self.Plugins[self.operationMode.currentData()]()
                         info = t.get_info()
-                        info.pop("license")
                         Logger.info("Using `%s` plugin", info["config"]["display name"])
                         Logger.debug("Plugin info: %s", info)
                         encoded = t.encode(
@@ -1057,7 +1042,6 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         else:  # Plugins
             t = self.Plugins[self.operationMode.currentData()]()
             info = t.get_info()
-            info.pop("license")
             Logger.debug(info)
             if info["config"]["uses salt"] and salt:
                 if salt_pattern and "SALT" in salt_pattern and "INPUT" in salt_pattern:
