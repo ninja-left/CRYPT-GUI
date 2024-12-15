@@ -1115,7 +1115,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         Logger.info("Done")
 
     def LoadPlugins(self) -> None:
-        # Load and check plugins
+        """Loads and checks plugins"""
+        # Load settings for recording loaded plugins
+        settings = functions.load_settings()
+        Loaded = settings["other"]["loaded plugins"].copy()
         try:
             self.Plugins = functions.get_loader().plugins.Cipher
             Logger.info("Plugin loader is ready")
@@ -1145,7 +1148,15 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             _LICENSE = f"\n\n{info['license']}"
             _A += f"\n### {info['config']['display name']}{_URL}{_LICENSE}"
             self.textBrowser.setMarkdown(_A)
+            if not info["name"] in Loaded:
+                Logger.info("Saving `%s` as Loaded", info["name"])
+                Loaded.append(info["name"])
             Logger.info("Done")
+        if Loaded.copy() != settings["other"]["loaded plugins"].copy():
+            settings["other"]["loaded plugins"] = Loaded
+            functions.save_settings(settings)
+            Logger.info("Saved loaded plugins to config file")
+            Logger.debug("Loaded plugins: %s", Loaded)
         Logger.info("Loaded all plugins")
         del _A, _URL, _LICENSE
 
