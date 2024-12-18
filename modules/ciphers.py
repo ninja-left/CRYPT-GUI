@@ -1,182 +1,26 @@
 # -*- coding: UTF-8 -*-
 
 """
-    CRYPT Ciphers, Encryption/Decryption Tool
+    Crypt, a set of tools
     Copyright (C) 2024  Ninja Left
 
-    CRYPT Ciphers is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    CRYPT is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
     any later version.
 
-    CRYPT Ciphers is distributed in the hope that it will be useful,
+    CRYPT is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with CRYPT Ciphers.  If not, see <https://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Affero General Public License
+    along with CRYPT.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import base64
 import hashlib
 from re import search
 import passlib.hash
-
-
-def base16_encode(txt: str) -> str:
-    return base64.b16encode(txt.encode("utf-8")).decode("utf-8")
-
-
-def base16_decode(b16encoded: str) -> str:
-    return base64.b16decode(b16encoded.encode("utf-8")).decode("utf-8")
-
-
-# Base32 code from https://github.com/TheAlgorithms/Python/blob/master/ciphers/base32.py
-def base32_encode(data: str, B32_alphabet: str) -> str:
-    """
-    Encodes data to Base32
-    >>> base32_encode("123456")
-    'GEZDGNBVGY======'
-    """
-    data = "".join(bin(ord(d))[2:].zfill(8) for d in data)
-    data = data.ljust(5 * ((len(data) // 5) + 1), "0")
-    b32_chunks = map("".join, zip(*[iter(data)] * 5))
-    b32_result = "".join(B32_alphabet[int(chunk, 2)] for chunk in b32_chunks)
-    return b32_result.ljust(8 * ((len(b32_result) // 8) + 1), "=")
-
-
-def base32_decode(data: str, B32_alphabet: str) -> str:
-    """
-    Decodes Base32 input
-    >>> base32_decode('GEZDGNBVGY======')
-    '123456'
-    """
-    chunks = "".join(bin(B32_alphabet.index(_d))[2:].zfill(5) for _d in data.strip("="))
-    data = list(map("".join, zip(*[iter(chunks)] * 8)))
-    return "".join([chr(int(_d, 2)) for _d in data])
-
-
-def base85_encode(string: str) -> str:
-    return base64.b85encode(string.encode("utf-8")).decode("utf-8")
-
-
-def base85_decode(a85encoded: str) -> str:
-    return base64.b85decode(a85encoded.encode("utf-8")).decode("utf-8")
-
-
-def base64_encode(text: str, B64_CHARSET: str) -> str:
-    """Encodes data according to RFC4648.
-    The data is first transformed to binary and appended with binary digits so that its
-    length becomes a multiple of 6, then each 6 binary digits will match a character in
-    the B64_CHARSET string. The number of appended binary digits would later determine
-    how many "=" signs should be added, the padding.
-    For every 2 binary digits added, a "=" sign is added in the output.
-    We can add any binary digits to make it a multiple of 6, for instance, consider the
-    following example:
-    "AA" -> 0010100100101001 -> 001010 010010 1001
-    As can be seen above, 2 more binary digits should be added, so there's 4
-    possibilities here: 00, 01, 10 or 11.
-    That being said, Base64 encoding can be used in Steganography to hide data in these
-    appended digits.
-    """
-    data = text.encode()
-    binary_stream = "".join(bin(byte)[2:].zfill(8) for byte in data)
-
-    padding_needed = len(binary_stream) % 6 != 0
-
-    if padding_needed:
-        # The padding that will be added later
-        padding = b"=" * ((6 - len(binary_stream) % 6) // 2)
-
-        # Append binary_stream with arbitrary binary digits (0's by default) to make its
-        # length a multiple of 6.
-        binary_stream += "0" * (6 - len(binary_stream) % 6)
-    else:
-        padding = b""
-
-    # Encode every 6 binary digits to their corresponding Base64 character
-    return (
-        "".join(
-            B64_CHARSET[int(binary_stream[index : index + 6], 2)]
-            for index in range(0, len(binary_stream), 6)
-        ).encode()
-        + padding
-    ).decode()
-
-
-def base64_decode(encoded_data: str, B64_CHARSET: str) -> str:
-    """Decodes data according to RFC4648.
-    This does the reverse operation of base64_encode.
-    We first transform the encoded data back to a binary stream, take off the
-    previously appended binary digits according to the padding, at this point we
-    would have a binary stream whose length is multiple of 8, the last step is
-    to convert every 8 bits to a byte.
-    """
-
-    # In case encoded_data is a bytes-like object, make sure it contains only
-    # ASCII characters so we convert it to a string object
-    if isinstance(encoded_data, bytes):
-        try:
-            encoded_data = encoded_data.decode("utf-8")
-        except UnicodeDecodeError:
-            raise ValueError("base64 encoded data should only contain ASCII characters")
-
-    padding = encoded_data.count("=")
-
-    if padding:  # Check if the encoded string contains non base64 characters
-        assert all(
-            char in B64_CHARSET for char in encoded_data[:-padding]
-        ), "Invalid base64 character(s) found."
-    else:
-        assert all(
-            char in B64_CHARSET for char in encoded_data
-        ), "Invalid base64 character(s) found."
-
-    # check padding
-    assert len(encoded_data) % 4 == 0 and padding < 3, "Incorrect padding"
-    if padding:  # Remove padding if there is one
-        encoded_data = encoded_data[:-padding]
-        binary_stream = "".join(
-            bin(B64_CHARSET.index(char))[2:].zfill(6) for char in encoded_data
-        )[: -padding * 2]
-    else:
-        binary_stream = "".join(
-            bin(B64_CHARSET.index(char))[2:].zfill(6) for char in encoded_data
-        )
-    data = [
-        int(binary_stream[index : index + 8], 2)
-        for index in range(0, len(binary_stream), 8)
-    ]
-    return bytes(data).decode()
-
-
-def caesar_cipher(input_string: str, key: int, alphabet: str) -> str:
-    """
-    Parameters:
-    -----------
-    *   input_string: the plain-text that needs to be encoded
-    *   key: the number of letters to shift the message by
-
-    Optional:
-    *   alphabet (str): the alphabet used to encode the cipher, if not
-        specified, the standard english alphabet with upper and lowercase
-        letters is used
-    """
-    result = ""
-
-    for character in input_string:
-        if character not in alphabet:
-            result += character
-        else:
-            # Get the index of the new key and make sure it isn't too large
-            new_key = (alphabet.index(character) + key) % len(alphabet)
-
-            # Append the encoded character to the alphabet
-            result += alphabet[new_key]
-
-    return result
-
 
 # Morse Code
 MORSE_CODE_DICT = {
