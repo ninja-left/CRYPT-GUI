@@ -3,15 +3,15 @@
 alphabets:  # Can also add default for plugins based on plugin's name
   default: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
   plugins:
-  - base32: ABCDEFGHIJKLMNOPQRSTUVWXYZ234567
-  - base64: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
-  - vigenere: ABCDEFGHIJKLMNOPQRSTUVWXYZ
+    base32: ABCDEFGHIJKLMNOPQRSTUVWXYZ234567
+    base64: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
+    vigenere: ABCDEFGHIJKLMNOPQRSTUVWXYZ
 
 default keys:  # Above rule applies here too
   default: 'change me'
   plugins:
-  - caesar cipher: '1'
-  - vigenere: changeme
+    caesar cipher: '1'
+    vigenere: 'changeme'
 
 rounds:
   bcrypt: "14"
@@ -30,7 +30,6 @@ brute:
 
 other:
   font size: 10
-  paste timeout: 1  # seconds
   default pattern: SALT+INPUT
-  log level: WARNING
+  log level: INFO
   loaded plugins: ''  # This will stop rechecking requirements of the specified plugins on every launch thus saving time; To recheck remove plugin's name from the list
