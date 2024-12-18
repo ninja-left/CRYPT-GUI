@@ -3,25 +3,29 @@
 alphabets:  # Can also add default for plugins based on plugin's name
   default: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
   plugins:
+    affine: ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~'
     base32: ABCDEFGHIJKLMNOPQRSTUVWXYZ234567
     base64: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
+    caesar cipher: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
     vigenere: ABCDEFGHIJKLMNOPQRSTUVWXYZ
 
 default keys:  # Above rule applies here too
   default: 'change me'
   plugins:
-    caesar cipher: '1'
+    affine: 6478
+    caesar cipher: 1
     vigenere: 'changeme'
+    xor: 128
 
 rounds:
-  bcrypt: "14"
-  argon2: "4"
-  pbkdf2: "30000"
+  bcrypt: 14
+  argon2: 4
+  pbkdf2: 30000
 
 brute:
-  max length: "8"
+  max length: 8
   ramp: true
-  start length: "1"
+  start length: 1
   include:
     L: true
     D: true
