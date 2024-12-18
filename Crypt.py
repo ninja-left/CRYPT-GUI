@@ -449,10 +449,12 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.setupUi(self)
         self.connectSignalSlots()
         self.Operation = ""
-        self.defaultTextEncode = "Encode/Encrypt"
-        self.defaultTextDecode = "Decode/Decrypt"
-        self.defaultIconDecode = QIcon()
-        self.defaultIconDecode.addPixmap(":/images/Unlocked.png")
+        self.textEncodeDefault = "Encode/Encrypt"
+        self.textDecodeDefault = "Decode/Decrypt"
+        self.iconDecodeDefault = QIcon()
+        self.iconDecodeDefault.addPixmap(":/images/Unlocked.png")
+        self.iconDecodeVerify = QIcon()
+        self.iconDecodeVerify.addPixmap(":/images/Verify.png")
         self.allHashes = (
             "MD5",
             "MD5 CRYPT",
@@ -609,10 +611,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         match self.Operation:
             case "None":
                 # Set everything to default
-                self.btnEncode.setText(self.defaultTextEncode)
+                self.btnEncode.setText(self.textEncodeDefault)
                 self.btnEncode.setEnabled(False)
-                self.btnDecode.setText(self.defaultTextDecode)
-                self.btnDecode.setIcon(self.defaultIconDecode)
+                self.btnDecode.setText(self.textEncodeDefault)
+                self.btnDecode.setIcon(self.iconDecodeDefault)
                 self.btnDecode.setEnabled(False)
                 self.btnBruteForce.setEnabled(False)
                 self.inputAlphabet.setEnabled(False)
@@ -624,7 +626,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             case "Base16" | "Base32" | "Base85" | "Base64":
                 self.btnEncode.setText("Encode")
                 self.btnEncode.setEnabled(True)
-                self.btnDecode.setIcon(self.defaultIconDecode)
+                self.btnDecode.setIcon(self.iconDecodeDefault)
                 self.btnDecode.setText("Decode")
                 self.btnDecode.setEnabled(True)
                 self.btnBruteForce.setEnabled(False)
@@ -644,7 +646,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             case "Caesar Cipher" | "Morse Code" | "Baconian Cipher" | "Vigenere Cipher":
                 self.btnEncode.setText("Encrypt")
                 self.btnEncode.setEnabled(True)
-                self.btnDecode.setIcon(self.defaultIconDecode)
+                self.btnDecode.setIcon(self.iconDecodeDefault)
                 self.btnDecode.setText("Decrypt")
                 self.btnDecode.setEnabled(True)
                 self.btnBruteForce.setEnabled(False)
@@ -670,9 +672,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     self.btnEncode.setText("Hash")
                     self.btnEncode.setEnabled(True)
                     self.btnDecode.setText("Verify")
-                    decode_icon = QIcon()
-                    decode_icon.addPixmap(":/images/Verify.png")
-                    self.btnDecode.setIcon(decode_icon)
+                    self.btnDecode.setIcon(self.iconDecodeVerify)
                     self.btnDecode.setEnabled(True)
                     self.btnBruteForce.setEnabled(True)
                     self.inputAlphabet.setEnabled(False)
@@ -707,10 +707,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     Logger.info("Chose `%s` plugin", info["config"]["display name"])
                     Logger.debug(f"Plugin info: {info}")
                     # Texts set to default and buttons enabled if supported by the plugin
-                    self.btnEncode.setText(self.defaultTextEncode)
+                    self.btnEncode.setText(self.textEncodeDefault)
                     self.btnEncode.setEnabled(info["config"]["has encoder"])
-                    self.btnDecode.setText(self.defaultTextDecode)
-                    self.btnDecode.setIcon(self.defaultIconDecode)
+                    self.btnDecode.setText(self.textDecodeDefault)
+                    self.btnDecode.setIcon(self.iconDecodeDefault)
                     self.btnDecode.setEnabled(info["config"]["has decoder"])
                     self.btnBruteForce.setEnabled(info["config"]["has brute"])
                     self.inputAlphabet.setEnabled(info["config"]["can change alphabet"])
@@ -1118,7 +1118,12 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         """Loads and checks plugins"""
         # Load settings for recording loaded plugins
         settings = functions.load_settings()
-        Loaded = settings["other"]["loaded plugins"].copy()
+        if type(Loaded := settings["other"]["loaded plugins"]) == list:
+            flag_NO_LOADED = False
+            Loaded = Loaded.copy()
+        else:
+            flag_NO_LOADED = True
+            Loaded = list()
         try:
             self.Plugins = functions.get_loader().plugins.Cipher
             Logger.info("Plugin loader is ready")
@@ -1152,7 +1157,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 Logger.info("Saving `%s` as Loaded", info["name"])
                 Loaded.append(info["name"])
             Logger.info("Done")
-        if Loaded.copy() != settings["other"]["loaded plugins"].copy():
+        if (
+            not flag_NO_LOADED
+            and Loaded.copy() != settings["other"]["loaded plugins"].copy()
+        ) or flag_NO_LOADED:
             settings["other"]["loaded plugins"] = Loaded
             functions.save_settings(settings)
             Logger.info("Saved loaded plugins to config file")
