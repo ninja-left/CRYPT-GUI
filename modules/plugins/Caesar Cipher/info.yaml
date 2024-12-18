@@ -30,6 +30,7 @@ config:
   alt key: 12  # used and saved as default if no default exists; MUST SET
   can change alphabet: true
   alphabet: '$default$'  # Use `default` or `caesar cipher` alphabets specified in config.yaml
+  alt alphabet: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
   display name: 'Caesar Cipher'
   has encoder: true
   has decoder: true
