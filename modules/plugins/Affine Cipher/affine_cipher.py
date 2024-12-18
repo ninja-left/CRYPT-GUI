@@ -78,7 +78,7 @@ class AffineCipher(Cipher):
         >>> encode(6478, 'This is an example output of affine cipher.')
         'GeJY2JY2d"2W1d=KXW2f#>K#>2f<2d<<J"W2.JKeWt4'
         """
-        key = kwargs["key"]
+        key = int(kwargs["key"])
         alphabet = kwargs["alphabet"]
         key_a, key_b = divmod(key, len(alphabet))
         self.check_keys(key_a, key_b, "encrypt", alphabet)
@@ -100,6 +100,8 @@ class AffineCipher(Cipher):
         >>> decode('GeJY2JY2d"2W1d=KXW2f#>K#>2f<2d<<J"W2.JKeWt4', key=6478)
         'This is an example output of affine cipher.'
         """
+        key = int(kwargs["key"])
+        alphabet = kwargs["alphabet"]
         key_a, key_b = divmod(key, len(alphabet))
         self.check_keys(key_a, key_b, "decrypt", alphabet)
         plain_text = ""
