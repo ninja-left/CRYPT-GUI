@@ -241,11 +241,15 @@ def checkConfig(data: dict) -> None:
     chKeyGood(data["config"], "uses keys", bool)
     if data["config"]["uses keys"]:
         chKeySet(data["config"], "default key")
+        if data["config"]["default key"] == "$default$":
+            chKeySet(data["config"], "alt key")
 
     chKeySet(data["config"], "can change alphabet")
     chKeyGood(data["config"], "can change alphabet", bool)
     if data["config"]["can change alphabet"]:
         chKeySet(data["config"], "alphabet")
+        if data["config"]["alphabet"] == "$default$":
+            chKeySet(data["config"], "alt alphabet")
 
     chKeySet(data["config"], "has encoder")
     chKeyGood(data["config"], "has encoder", bool)
@@ -266,6 +270,8 @@ def checkConfig(data: dict) -> None:
     chKeyGood(data["config"], "uses rounds", bool)
     if data["config"]["uses rounds"]:
         chKeySet(data["config"], "default rounds")
+        if data["config"]["default rounds"] == "$default$":
+            chKeySet(data["config"], "alt rounds")
 
     chKeySet(data, "license")
     chKeyGood(data, "license", str)
