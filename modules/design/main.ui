@@ -701,10 +701,10 @@
           <enum>Qt::LayoutDirection::LeftToRight</enum>
          </property>
          <property name="currentText">
-          <string>None</string>
+          <string/>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>-1</number>
          </property>
          <property name="placeholderText">
           <string>No Operation Chosen</string>
@@ -712,101 +712,6 @@
          <item>
           <property name="text">
            <string>None</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Base16</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Base32</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Base85</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Base64</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Caesar Cipher</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Morse Code</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Baconian Cipher</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Vigenere Cipher</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>MD5</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>MD5 CRYPT</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>SHA256</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>SHA256 CRYPT</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>SHA512</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>SHA512 CRYPT</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>bCrypt</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Argon2</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>NT Hash</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>PBKDF2 SHA256</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>PBKDF2 SHA512</string>
           </property>
          </item>
         </widget>
@@ -1179,40 +1084,17 @@
        <item>
         <widget class="QTextBrowser" name="textBrowser">
          <property name="documentTitle">
-          <string>GNU General Public License v3.0</string>
+          <string/>
          </property>
          <property name="html">
           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;title&gt;GNU General Public License v3.0&lt;/title&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;CRYPT GUI is licensed under GPL v3.0 Copyright (c) 2024 Ninja Left&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;CRYPT was built using Python 3, Qt Designer &amp;amp; Pyside6.&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Some functions used in this software are from &lt;a href=&quot;https://github.com/TheAlgorithms/Python&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;This Repository &lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;and are licensed under MIT Copyright (c) 2016-2024 TheAlgorithms and contributors.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'monospace'; color:#ffffff;&quot;&gt;Icons:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/configuration_9780271&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Configure icon by afif fudin - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/login_5729989&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Login icon by FR_Media - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/logout_5729988&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Logout icon by FR_Media - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/lock_2549910&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Locked icon by Aswell Studio - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/unlock_2549951&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Unlocked icon by Aswell Studio - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/unsecure_5690981&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Unsecure icon by juicy_fish - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/search_1828057&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Search icon by Pixel Perfect - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/folder_3307447&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Folder icon by Mehwish - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:1px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.flaticon.com/free-icon/floppy-disk_12629050&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#b85b6a;&quot;&gt;Floppy disk icon by heisenberg_jr - Flaticon&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; text-decoration: underline; color:#b85b6a;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Shortcuts:&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + V : Paste&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + = : Zoom In&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + - : Zoom Out&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + , : Settings&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + B : Brute Force&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + D : Decode&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + E : Encode&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ctrl + C : Copy&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="openLinks">
           <bool>false</bool>
