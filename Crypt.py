@@ -449,12 +449,17 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.setupUi(self)
         self.connectSignalSlots()
         self.Operation = ""
-        self.textEncodeDefault = "Encode/Encrypt"
-        self.textDecodeDefault = "Decode/Decrypt"
-        self.iconDecodeDefault = QIcon()
-        self.iconDecodeDefault.addPixmap(":/images/Unlocked.png")
-        self.iconDecodeVerify = QIcon()
-        self.iconDecodeVerify.addPixmap(":/images/Verify.png")
+        self.default_texts = {
+            "encode": "Encode/Encrypt",
+            "decode": "Decode/Decrypt",
+            "brute": "Brute Force",
+            "alphabet tip": "",
+            "key tip": "Key to be used for Encryption/Decryption",
+            "arguments tip": "Extra values to be used by plugin",
+        }
+        self.icons = {"decode": QIcon(), "verify": QIcon()}
+        self.icons["decode"].addPixmap(":/images/Unlocked.png")
+        self.icons["verify"].addPixmap(":/images/Verify.png")
         self.allHashes = (
             "MD5",
             "MD5 CRYPT",
@@ -473,17 +478,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
 
         # User settings
         settings = functions.load_settings()
-        self.paste_timeout = settings["other"]["paste timeout"]
         self.default_font_size = settings["other"]["font size"]
-        self.rounds_bcrypt = settings["rounds"]["bcrypt"]
-        self.rounds_argon2 = settings["rounds"]["argon2"]
-        self.rounds_pbkdf2 = settings["rounds"]["pbkdf2"]
-        self.default_alphabet = settings["alphabets"]["default"]
-        self.b32_alphabet = settings["alphabets"]["base32"]
-        self.b64_alphabet = settings["alphabets"]["base64"]
-        self.vigenere_alphabet = settings["alphabets"]["vigenere"]
-        self.caesar_key = settings["default keys"]["caesar cipher"]
-        self.vigenere_key = settings["default keys"]["vigenere"]
+        self.default_rounds = settings["rounds"]
+        self.default_alphabets = settings["alphabets"]
+        self.default_keys = settings["default keys"]
         self.default_pattern = settings["other"]["default pattern"]
         try:
             self.log_level = settings["other"]["log level"]
@@ -608,129 +606,203 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
     def doChangeOp(self):
         chosenMode = self.operationMode.currentText()
         self.Operation = chosenMode
-        match self.Operation:
-            case "None":
-                # Set everything to default
-                self.btnEncode.setText(self.textEncodeDefault)
-                self.btnEncode.setEnabled(False)
-                self.btnDecode.setText(self.textEncodeDefault)
-                self.btnDecode.setIcon(self.iconDecodeDefault)
-                self.btnDecode.setEnabled(False)
-                self.btnBruteForce.setEnabled(False)
-                self.inputAlphabet.setEnabled(False)
-                self.inputKey.setEnabled(False)
-                self.inputSalt.setEnabled(False)
-                self.inputSaltPattern.setEnabled(False)
-                self.inputPlainText.setEnabled(False)
-                self.inputRounds.setEnabled(False)
-            case "Base16" | "Base32" | "Base85" | "Base64":
-                self.btnEncode.setText("Encode")
-                self.btnEncode.setEnabled(True)
-                self.btnDecode.setIcon(self.iconDecodeDefault)
-                self.btnDecode.setText("Decode")
-                self.btnDecode.setEnabled(True)
-                self.btnBruteForce.setEnabled(False)
-                self.inputAlphabet.setEnabled(True)
-                self.inputKey.setEnabled(False)
-                self.inputSalt.setEnabled(False)
-                self.inputSaltPattern.setEnabled(False)
-                self.inputPlainText.setEnabled(False)
-                match self.Operation:
-                    case "Base16" | "Base85":
-                        self.inputAlphabet.setText("")
-                        self.inputAlphabet.setEnabled(False)
-                    case "Base32":
-                        self.inputAlphabet.setText(self.b32_alphabet)
-                    case "Base64":
-                        self.inputAlphabet.setText(self.b64_alphabet)
-            case "Caesar Cipher" | "Morse Code" | "Baconian Cipher" | "Vigenere Cipher":
-                self.btnEncode.setText("Encrypt")
-                self.btnEncode.setEnabled(True)
-                self.btnDecode.setIcon(self.iconDecodeDefault)
-                self.btnDecode.setText("Decrypt")
-                self.btnDecode.setEnabled(True)
-                self.btnBruteForce.setEnabled(False)
-                self.inputAlphabet.setText(self.default_alphabet)
-                self.inputAlphabet.setEnabled(True)
-                self.inputKey.setEnabled(True)
-                self.inputSalt.setEnabled(False)
-                self.inputSaltPattern.setEnabled(False)
-                self.inputPlainText.setText("")
-                self.inputPlainText.setEnabled(False)
-                match self.Operation:
-                    case "Morse Code" | "Baconian Cipher":
-                        self.inputAlphabet.setEnabled(False)
-                        self.inputKey.setEnabled(False)
-                    case "Vigenere Cipher":
-                        self.inputAlphabet.setText(self.vigenere_alphabet)
-                        self.inputKey.setText(self.vigenere_key)
-                    case "Caesar Cipher":
-                        self.btnBruteForce.setEnabled(True)
-                        self.inputKey.setText(self.caesar_key)
-            case _:
-                if self.Operation in self.allHashes:
-                    self.btnEncode.setText("Hash")
-                    self.btnEncode.setEnabled(True)
-                    self.btnDecode.setText("Verify")
-                    self.btnDecode.setIcon(self.iconDecodeVerify)
-                    self.btnDecode.setEnabled(True)
-                    self.btnBruteForce.setEnabled(True)
-                    self.inputAlphabet.setEnabled(False)
-                    self.inputKey.setEnabled(False)
-                    self.inputSalt.setEnabled(True)
-                    self.inputRounds.setEnabled(False)
-                    self.inputSaltPattern.setEnabled(True)
-                    self.inputSaltPattern.setText(self.default_pattern)
-                    self.inputPlainText.setEnabled(True)
-                    if self.Operation in [
-                        "bCrypt",
-                        "Argon2",
-                        "PBKDF2 SHA256",
-                        "PBKDF2 SHA512",
-                    ]:
-                        self.inputSalt.setEnabled(False)
-                        self.inputSaltPattern.setEnabled(False)
-                        self.inputRounds.setEnabled(True)
-                        match self.Operation:
-                            case "bCrypt":
-                                self.inputRounds.setText(self.rounds_bcrypt)
-                            case "Argon2":
-                                self.inputRounds.setText(self.rounds_argon2)
-                            case "PBKDF2 SHA256" | "PBKDF2 SHA512":
-                                self.inputRounds.setText(self.rounds_pbkdf2)
-                else:  # Plugins
-                    # Loading plugin info
-                    t = self.Plugins[self.operationMode.currentData()]()
-                    info = t.get_info()
-                    info.pop("license")
-                    # remove license because they are long and pollute the log file
-                    Logger.info("Chose `%s` plugin", info["config"]["display name"])
-                    Logger.debug(f"Plugin info: {info}")
-                    # Texts set to default and buttons enabled if supported by the plugin
-                    self.btnEncode.setText(self.textEncodeDefault)
-                    self.btnEncode.setEnabled(info["config"]["has encoder"])
-                    self.btnDecode.setText(self.textDecodeDefault)
-                    self.btnDecode.setIcon(self.iconDecodeDefault)
-                    self.btnDecode.setEnabled(info["config"]["has decoder"])
-                    self.btnBruteForce.setEnabled(info["config"]["has brute"])
-                    self.inputAlphabet.setEnabled(info["config"]["can change alphabet"])
-                    if info["config"]["can change alphabet"]:
-                        self.inputAlphabet.setText(info["config"]["alphabet"])
-                    self.inputKey.setEnabled(info["config"]["uses keys"])
-                    if info["config"]["uses keys"]:
-                        self.inputKey.setText(str(info["config"]["default key"]))
-                    self.inputSalt.setEnabled(info["config"]["uses salt"])
-                    self.inputSaltPattern.setEnabled(info["config"]["uses salt"])
-                    if info['config']['uses salt']:
-                        if functions.hasKey(info["config"], "default pattern"):
-                            self.inputSaltPattern.setText(info["config"]["default pattern"])
-                        else:
-                            self.inputSaltPattern.setText(self.default_pattern)
-                    self.inputPlainText.setEnabled(info['config']['uses plaintext'])
-                    self.inputRounds.setEnabled(info['config']['uses rounds'])
-                    if info['config']['uses rounds']:
-                        self.inputRounds.setText(str(info['config']['default rounds']))
-                    del info, t
+        if self.Operation == "None":
+            # Set everything to default
+            self.btnEncode.setText(self.textEncodeDefault)
+            self.btnEncode.setEnabled(False)
+            self.btnDecode.setText(self.textEncodeDefault)
+            self.btnDecode.setIcon(self.iconDecodeDefault)
+            self.btnDecode.setEnabled(False)
+            self.btnBruteForce.setEnabled(False)
+            self.inputAlphabet.setEnabled(False)
+            self.inputAlphabet.setText("")
+            self.inputKey.setEnabled(False)
+            self.inputKey.setText("")
+            self.inputSalt.setEnabled(False)
+            self.inputSalt.setText("")
+            self.inputSaltPattern.setEnabled(False)
+            self.inputSaltPattern.setText("")
+            self.inputPlainText.setEnabled(False)
+            self.inputPlainText.setText("")
+            self.inputRounds.setEnabled(False)
+            self.inputRounds.setText("")
+            return None
+        # Loading plugin info
+        t = self.Plugins[self.operationMode.currentData()]()
+        info = t.get_info()
+        info.pop("license")
+        # remove license because they are long and pollute the log file
+        Logger.info("Chose `%s` plugin", info["config"]["display name"])
+        Logger.debug(f"Plugin info: {info}")
+        # Configure labels & buttons as specified by the plugin
+        # TODO: Document and add variables (for encode, decode, brute, alphabet, & key) to change default labels
+        self.btnEncode.setEnabled(x := info["config"]["has encoder"])
+        if x and functions.hasKey(info["config"], "encode label"):
+            self.btnEncode.setText(info["config"]["encode label"])
+        else:
+            self.btnEncode.setText(self.default_texts["encode"])
+        self.btnDecode.setEnabled(x := info["config"]["has decoder"])
+        if x and functions.hasKey(info["config"], "decode label"):
+            self.btnDecode.setText(info["config"]["decode label"])
+        else:
+            self.btnDecode.setText(self.default_texts["decode"])
+        # TODO: add variable to change icon to info.yaml
+        if x and functions.hasKey(info["config"], "decode icon"):
+            try:
+                Logger.debug(
+                    "Setting decode icon to `%s`",
+                    x := str(info["config"]["decode icon"]),
+                )
+                self.btnDecode.setIcon(self.icons[x])
+            except KeyError:
+                # Set to default if icon is not found
+                Logger.warning("Icon `%s` is not found; Setting to `decode`", x)
+                self.btnDecode.setIcon(self.icons["decode"])
+        else:
+            self.btnDecode.setIcon(self.icons["decode"])
+        self.btnBruteForce.setEnabled(x := info["config"]["has brute"])
+        if x and functions.hasKey(info["config"], "brute label"):
+            self.btnBruteForce.setText(str(info["config"]["brute label"]))
+        else:
+            self.btnBruteForce.setText(self.default_texts["brute"])
+        self.inputAlphabet.setEnabled(x := info["config"]["can change alphabet"])
+        # Set alphabet input placeholder text if specified by plugin
+        if x and functions.hasKey(info["config"], "alphabet tip"):
+            self.inputAlphabet.setPlaceholderText(str(info["config"]["alphabet tip"]))
+        else:
+            self.inputAlphabet.setPlaceholderText(self.default_texts["alphabet tip"])
+        # TODO: should change alphabet label
+        # if x and functions.hasKey(info["config"], "alphabet label"):
+        #     self.*.setText(str(info["config"]["alphabet label"]))
+        # else:
+        #     self.*.setText("Alphabet")
+        # Set alphabet input box value if plugin uses alphabets
+        if x:
+            if (alph := info["config"]["alphabet"]) == "$default$":
+                Logger.debug("Tried to set plugin's default alphabet...")
+                # Try to set the default
+                if functions.hasKey(self.default_alphabets["plugins"], info["name"]):
+                    # Check if a default alphabet exists for the plugin (specified in config.yaml)
+                    self.inputAlphabet.setText(
+                        self.default_alphabets["plugins"][info["name"]]
+                    )
+                    Logger.debug("and did it.")
+                else:
+                    Logger.debug("and failed. Tried to use `alt alphabet`...")
+                    # If not, try to set the `alt alphabet` if it is set (in plugin's info.yaml)
+                    if (
+                        functions.hasKey(info["config"], "alt alphabet")
+                        and info["config"]["alt alphabet"] != ""
+                    ):
+                        alph = info["config"]["alt alphabet"]
+                        Logger.debug("and did it.")
+                    else:
+                        Logger.debug("and failed. Switched to user's default alphabet")
+                        # If it's not set, use user's default (which is specified in config.yaml)
+                        alph = self.default_alphabets["default"]
+                    self.inputAlphabet.setText(alph)
+                    Logger.debug("Set alphabet to %s", alph)
+                    # Save the alphabet as plugin's default
+                    d = functions.load_settings()
+                    d["alphabets"]["plugins"][info["name"]] = alph
+                    Logger.debug(d)
+                    functions.save_settings(d)
+                    del d
+            else:  # set the alphabet specified in plugin's info.yaml
+                self.inputAlphabet.setText(alph)
+            del alph
+        self.inputKey.setEnabled(x := info["config"]["uses keys"])
+        # TODO: should change key label
+        # if x and functions.hasKey(info["config"], "key label"):
+        #     self.*.setText(str(info["config"]["key label"]))
+        # else:
+        #     self.*.setText("Key")
+        # Set key input placeholder text if specified by plugin
+        if x and functions.hasKey(info["config"], "key tip"):
+            self.inputKey.setPlaceholderText(str(info["config"]["key tip"]))
+        else:
+            self.inputKey.setPlaceholderText(self.default_texts["key tip"])
+        # Set key input value if plugin uses keys
+        if x:
+            if (k := info["config"]["default key"]) == "$default$":
+                Logger.debug("Tried to set plugin's default key...")
+                # Try to set the default
+                if functions.hasKey(self.default_keys["plugins"], info["name"]):
+                    # Check if a default key exists for the plugin (specified in config.yaml)
+                    self.inputKey.setText(
+                        str(self.default_keys["plugins"][info["name"]])
+                    )
+                    Logger.debug("and did it.")
+                else:
+                    Logger.debug("and failed. Tried to use `alt key`...")
+                    # If not, try to set the `alt key` if it is set (in plugin's info.yaml) and not empty
+                    if (
+                        functions.hasKey(info["config"], "alt key")
+                        and info["config"]["alt key"] != ""
+                    ):
+                        k = info["config"]["alt key"]
+                        Logger.debug("and did it.")
+                    else:
+                        Logger.debug("and failed. Switched to user's default key")
+                        # If it's not set, use user's default (which is specified in config.yaml)
+                        k = self.default_keys["default"]
+                    self.inputKey.setText(str(k))
+                    Logger.debug("Set key to %s", k)
+                    # Save the key as plugin's default
+                    d = functions.load_settings()
+                    d["default keys"]["plugins"][info["name"]] = k
+                    Logger.debug(d)
+                    functions.save_settings(d)
+                    del d
+            else:  # set the key specified in plugin's info.yaml
+                self.inputKey.setText(str(k))
+            del k
+        self.inputSalt.setEnabled(info["config"]["uses salt"])
+        self.inputSaltPattern.setEnabled(info["config"]["uses salt"])
+        if info["config"]["uses salt"]:
+            if functions.hasKey(info["config"], "default pattern"):
+                self.inputSaltPattern.setText(info["config"]["default pattern"])
+            else:
+                self.inputSaltPattern.setText(self.default_pattern)
+        self.inputPlainText.setEnabled(info["config"]["uses plaintext"])
+        self.inputRounds.setEnabled(x := info["config"]["uses rounds"])
+        # Set rounds if plugin uses them
+        if x:
+            if (R := info["config"]["default rounds"]) == "$default$":
+                Logger.debug("Tried to set plugin's default rounds...")
+                # Try to set the default
+                if functions.hasKey(self.default_rounds["plugins"], info["name"]):
+                    # Check if a default rounds exists for the plugin (specified in config.yaml)
+                    self.inputKey.setText(
+                        str(self.default_rounds["plugins"][info["name"]])
+                    )
+                    Logger.debug("and did it.")
+                else:
+                    Logger.debug("and failed. Tried to use `alt rounds`...")
+                    # If not, try to set the `alt rounds` if it is set (in plugin's info.yaml) and not empty
+                    if (
+                        functions.hasKey(info["config"], "alt rounds")
+                        and info["config"]["alt rounds"] != ""
+                    ):
+                        R = info["config"]["alt rounds"]
+                        Logger.debug("and did it.")
+                    else:
+                        Logger.debug("and failed. Aborting.")
+                        Logger.warning("`%s` has no `alt rounds`", info["name"])
+                        R = ""
+                    self.inputKey.setText(str(R))
+                    Logger.debug("Set rounds to %s", R)
+                    if R:
+                        # Save the rounds as plugin's default if not empty
+                        d = functions.load_settings()
+                        d["default rounds"][info["name"]] = R
+                        Logger.debug(d)
+                        functions.save_settings(d)
+                        del d
+            else:  # set the rounds specified in plugin's info.yaml
+                self.inputKey.setText(str(R))
+            del R
+        del info, t, x
 
     def doDecode(self):
         input_data = self.inputText.toPlainText()
@@ -757,108 +829,28 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             plain,
         )
         try:
-            match self.Operation:
-                case "Base16":
-                    decoded = ciphers.base16_decode(input_data)
-                case "Base32":
-                    decoded = ciphers.base32_decode(input_data, alphabet)
-                case "Base64":
-                    decoded = ciphers.base64_decode(input_data, alphabet)
-                case "Base85":
-                    decoded = ciphers.base85_decode(input_data)
-                case "Caesar Cipher":
-                    if current_key:
-                        current_key = -int(current_key)
-                    else:
-                        raise BadKeyError("No key specified.")
-                    decoded = ciphers.caesar_cipher(input_data, current_key, alphabet)
-                    display_act = "Decrypted"
-                case "Morse Code":
-                    decoded = ciphers.mc_decrypt(input_data)
-                    if decoded.lower() == input_data:
-                        raise BadInputError("Input is not Morse Code.")
-                case "Baconian Cipher":
-                    decoded = ciphers.bacon_decode(input_data)
-                case "Vigenere Cipher":
-                    decoded = ciphers.vig_cipher(input_data, current_key, alphabet, "d")
-                    display_act = "Decrypted"
-                case _:
-                    if salt:
-                        if (
-                            salt_pattern
-                            and "SALT" in salt_pattern
-                            and "INPUT" in salt_pattern
-                        ):
-                            good_plain = salt_pattern.replace("SALT", salt).replace(
-                                "INPUT", plain
-                            )
-                        else:
-                            good_plain = f"{salt}+{plain}"
-                    else:
-                        good_plain = plain
-                    Logger.debug("good_plain(%s)", good_plain)
-                    if self.Operation in self.allHashes:
-                        display_act = "Verified"
-                        if not plain.strip():
-                            raise BadInputError("No plain text specified.")
-                        match self.Operation:
-                            case "MD5":
-                                hashed_plain = ciphers.md5(good_plain)
-                            case "MD5 CRYPT":
-                                hashed_plain = ciphers.md5_crypt(good_plain)
-                            case "SHA256":
-                                hashed_plain = ciphers.sha256(good_plain)
-                            case "SHA256 CRYPT":
-                                hashed_plain = ciphers.sha256_crypt(good_plain)
-                            case "SHA512":
-                                hashed_plain = ciphers.sha512(good_plain)
-                            case "SHA512 CRYPT":
-                                hashed_plain = ciphers.sha512_crypt(good_plain)
-                            case "bCrypt":
-                                hashed_plain = ciphers.bcrypt_verify(plain, input_data)
-                            case "Argon2":
-                                hashed_plain = ciphers.argon2_verify(plain, input_data)
-                            case "NT Hash":
-                                hashed_plain = ciphers.nthash(good_plain)
-                            case "PBKDF2 SHA256":
-                                hashed_plain = ciphers.pbkdf2_256_verify(
-                                    good_plain, input_data
-                                )
-                            case "PBKDF2 SHA512":
-                                hashed_plain = ciphers.pbkdf2_512_verify(
-                                    good_plain, input_data
-                                )
-                            case _:
-                                hashed_plain = ""
-
-                        if self.Operation in [
-                            "bCrypt",
-                            "Argon2",
-                            "PBKDF2 SHA256",
-                            "PBKDF2 SHA512",
-                        ]:
-                            if hashed_plain:
-                                decoded = f"The Hash matches the plain text."
-                            else:
-                                decoded = f"The Hash does not match the plain text."
-                        else:
-                            if hashed_plain == input_data:
-                                decoded = f"The Hash matches the plain text:\n{input_data} = {hashed_plain}"
-                            else:
-                                decoded = f"The Hash does not match the plain text:\n{input_data} != {hashed_plain}"
-                    else:  # Plugins
-                        t = self.Plugins[self.operationMode.currentData()]()
-                        info = t.get_info()
-                        Logger.debug(info)
-                        if info["config"]["uses plaintext"] and not plain.strip():
-                            raise BadInputError("No plain text specified.")
-                        decoded = t.decode(
-                            input_data,
-                            key=current_key,
-                            alphabet=alphabet,
-                            plaintext=good_plain,
-                        )
-                        display_act = f"{info['config']['display name']}: decoded"
+            if salt:
+                if salt_pattern and "SALT" in salt_pattern and "INPUT" in salt_pattern:
+                    good_plain = salt_pattern.replace("SALT", salt).replace(
+                        "INPUT", plain
+                    )
+                else:
+                    good_plain = f"{salt}+{plain}"
+            else:
+                good_plain = plain
+            Logger.debug("good_plain(%s)", good_plain)
+            t = self.Plugins[self.operationMode.currentData()]()
+            info = t.get_info()
+            Logger.debug(info)
+            if info["config"]["uses plaintext"] and not plain.strip():
+                raise BadInputError("No plain text specified.")
+            decoded = t.decode(
+                input_data,
+                key=current_key,
+                alphabet=alphabet,
+                plaintext=good_plain,
+            )
+            display_act = f"{info['config']['display name']}: decoded"
             self.outputText.setPlainText(decoded)
             self.showMessageBox(
                 title="Finished!", text=f"{display_act} the input.", level=1, button=2
@@ -902,77 +894,23 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             rounds,
         )
         try:
-            match self.Operation:
-                case "Base16":
-                    encoded = ciphers.base16_encode(input_data)
-                case "Base32":
-                    encoded = ciphers.base32_encode(input_data, alphabet)
-                case "Base64":
-                    encoded = ciphers.base64_encode(input_data, alphabet)
-                case "Base85":
-                    encoded = ciphers.base85_encode(input_data)
-                case "Caesar Cipher":
-                    if current_key:
-                        current_key = int(current_key)
-                    else:
-                        raise BadKeyError("No key specified.")
-                    encoded = ciphers.caesar_cipher(input_data, current_key, alphabet)
-                    display_act = "Encrypted"
-                case "Morse Code":
-                    encoded = ciphers.mc_encrypt(input_data)
-                case "Baconian Cipher":
-                    encoded = ciphers.bacon_encode(input_data)
-                case "Vigenere Cipher":
-                    encoded = ciphers.vig_cipher(input_data, current_key, alphabet, "e")
-                    display_act = "Encrypted"
-                case _:
-                    if salt:
-                        if (
-                            salt_pattern
-                            and "SALT" in salt_pattern
-                            and "INPUT" in salt_pattern
-                        ):
-                            good_data = salt_pattern.replace("SALT", salt).replace(
-                                "INPUT", input_data
-                            )
-                        else:
-                            good_data = f"{salt}+{input_data}"
-                    else:
-                        good_data = input_data
-                    if self.Operation in self.allHashes:
-                        display_act = "Hashed"
-                        match self.Operation:
-                            case "MD5":
-                                encoded = ciphers.md5(good_data)
-                            case "MD5 CRYPT":
-                                encoded = ciphers.md5_crypt(good_data)
-                            case "SHA256":
-                                encoded = ciphers.sha256(good_data)
-                            case "SHA256 CRYPT":
-                                encoded = ciphers.sha256_crypt(good_data)
-                            case "SHA512":
-                                encoded = ciphers.sha512(good_data)
-                            case "SHA512 CRYPT":
-                                encoded = ciphers.sha512_crypt(good_data)
-                            case "bCrypt":
-                                encoded = ciphers.bcrypt_hash(input_data, rounds)
-                            case "Argon2":
-                                encoded = ciphers.argon2_hash(input_data, rounds)
-                            case "NT Hash":
-                                encoded = ciphers.nthash(good_data)
-                            case "PBKDF2 SHA256":
-                                encoded = ciphers.pbkdf2_256_hash(input_data, rounds)
-                            case "PBKDF2 SHA512":
-                                encoded = ciphers.pbkdf2_512_hash(input_data, rounds)
-                    else:  # Plugins
-                        t = self.Plugins[self.operationMode.currentData()]()
-                        info = t.get_info()
-                        Logger.info("Using `%s` plugin", info["config"]["display name"])
-                        Logger.debug("Plugin info: %s", info)
-                        encoded = t.encode(
-                            good_data, key=current_key, alphabet=alphabet, rounds=rounds
-                        )
-                        display_act = f"{info['config']['display name']}: encoded"
+            if salt:
+                if salt_pattern and "SALT" in salt_pattern and "INPUT" in salt_pattern:
+                    good_data = salt_pattern.replace("SALT", salt).replace(
+                        "INPUT", input_data
+                    )
+                else:
+                    good_data = f"{salt}+{input_data}"
+            else:
+                good_data = input_data
+            t = self.Plugins[self.operationMode.currentData()]()
+            info = t.get_info()
+            Logger.info("Using `%s` plugin", info["config"]["display name"])
+            Logger.debug("Plugin info: %s", info)
+            encoded = t.encode(
+                good_data, key=current_key, alphabet=alphabet, rounds=rounds
+            )
+            display_act = f"{info['config']['display name']}: encoded"
 
             self.outputText.setPlainText(encoded)
             self.showMessageBox(
@@ -1014,25 +952,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             hash_type,
         )
 
-        if self.Operation == "Caesar Cipher":
-            brute_force_data = dict()
-            for key in range(1, len(alphabet) + 1):
-                key = -key
-                keyMatch = ciphers.caesar_cipher(input_data, key, alphabet)
-                brute_force_data[f"Key {abs(key)}"] = keyMatch
-            results = brute_force_data
-            for i in results.items():
-                p = self.outputText.toPlainText()
-                self.outputText.setPlainText(f"{p}{i[0]}: {i[1]}\n")
-            self.showMessageBox(
-                title="Finished",
-                text="Decrypted the input.",
-                level=1,
-                button=2,
-            )
-            Logger.info("Successfully brute-forced.")
-            Logger.debug(f"Brute-forced: {input_data}\n{results.items()}")
-        elif self.Operation in self.allHashes:
+        if self.Operation in self.allHashes:
             d = BruteForceDialog(input_data, salt, salt_pattern, hash_type)
             d.exec()
             if brute_force_results:
@@ -1172,9 +1092,11 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
 if __name__ == "__main__":
     if "--test" in argv:
         exit(functions.run_tests())
+    Logger.info("---- Crypt Launched ----")
     app = QApplication(argv)
     win = MainWindow()
     win.show()
     x = app.exec()
+    Logger.info("---- Crypt Shutdown ----")
     shutdown()
     exit(x)
