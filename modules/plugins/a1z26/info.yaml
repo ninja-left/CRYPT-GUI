@@ -35,9 +35,11 @@ license: |-
 # ^^^^^^ MUST SET; a short copyright notice; This will be displayed in About tab under Plugins; Accepts Markdown
 config:
   uses keys: false  # MUST SET; If true, should also set a `default key` variable
-  # default key: 0  # MUST SET (If above is set)
+  # default key: '0'  # MUST SET (If above is set); Must be always quoted; Can also be set to "$default$" to read from user config.yaml
+  # alt key: '0'  # MUST SET (If above is set); Used and saved as default if no default found for plugin.
   can change alphabet: false  # MUST SET; If, true, should also set an `alphabet` variable
-  # alphabet: abc  # MUST SET (If above is set)
+  # alphabet: 'abc'  # MUST SET (If above is set); Can also be set to "$default$" to read from user config.yaml
+  # alt alphabet: abc  # MUST SET (If above is set); Used and saved as default if no default found for plugin.
   display name: a1z26 cipher  # OPTIONAL; This will be shown to users. If not set, will use `name` instead.
   # The following 4 variables are MUST SET:
   has encoder: true  # true if plugin has encode function
@@ -47,4 +49,5 @@ config:
   # default pattern: 'SALT+PATTERN' # OPTIONAL; If not set, will read from user config
   uses plaintext: false  # MUST SET
   uses rounds: false  # MUST SET; If true, also set a `default rounds` variable
-  # default rounds: 0  # MUST SET (if above is set)
+  # default rounds: 0  # MUST SET (if above is set); Can also be set to "$default$" to read from user config.yaml
+  # alt rounds: 0  # MUST SET (If above is set); Used and saved as default if no default found for plugin.

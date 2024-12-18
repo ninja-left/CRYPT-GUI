@@ -26,7 +26,8 @@ license: |-
   SOFTWARE.
 config:
   can change alphabet: true
-  alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
+  alphabet: '$default$'
+  alt alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
   uses keys: false
   display name: Base 64
   has encoder: true

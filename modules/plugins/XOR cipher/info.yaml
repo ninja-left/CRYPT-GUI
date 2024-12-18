@@ -27,7 +27,8 @@ license: |-
 config:
   can change alphabet: false
   uses keys: true
-  default key: 128
+  default key: '$default$'
+  alt key: 128
   display name: XOR Cipher
   has encoder: true
   has decoder: false

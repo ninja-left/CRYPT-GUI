@@ -27,8 +27,10 @@ license: |-
 config:
   uses keys: true
   can change alphabet: true
-  default key: 6478
-  alphabet: " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+  default key: '$default$'
+  alt key: 6478
+  alphabet: '$default$'
+  alt alphabet: " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
   display name: Affine Cipher
   has encoder: true
   has decoder: true
