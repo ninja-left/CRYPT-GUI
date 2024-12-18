@@ -1,19 +1,19 @@
 # -*- coding: UTF-8 -*-
 """
-    CRYPT, a set of tools
+    Crypt, a set of tools
     Copyright (C) 2024  Ninja Left
 
     CRYPT is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
     any later version.
 
     CRYPT is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+    You should have received a copy of the GNU Affero General Public License
     along with CRYPT.  If not, see <https://www.gnu.org/licenses/>.
 """
 
