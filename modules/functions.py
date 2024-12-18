@@ -25,15 +25,7 @@ from pluginlib import PluginLoader
 from subprocess import run, CalledProcessError  # Used for installing requirements
 from sys import exit
 from re import compile as regComp  # Used for sanitizing requirements
-from modules.ciphers import (
-    md5_b,
-    sha256_b,
-    sha512_b,
-    md5,
-    sha256,
-    sha512,
-    caesar_cipher,
-)
+from modules.ciphers import md5_b, sha256_b, sha512_b, md5, sha256, sha512
 from modules.brute import brute
 import modules.parent
 from modules.logger_config import get_logger
@@ -138,13 +130,12 @@ def save_settings(data: dict | None = None) -> None:
     if `data` is not specified, it will try to load
     """
     config_file = Path("config.yaml").absolute()
-    default_config_file = Path("default_config.yaml").absolute()
     yaml = YAML(typ="safe")
     yaml.indent(4)
     yaml.allow_unicode = True
     yaml.default_flow_style = False
     if not data:
-        with open(default_config_file, "r") as f:
+        with open(config_file, "r") as f:
             data = yaml.load(f)
     with open(config_file, "w") as f:
         yaml.dump(data, f)
