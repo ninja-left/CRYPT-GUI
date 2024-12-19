@@ -25,7 +25,7 @@ from pluginlib import PluginLoader
 from subprocess import run, CalledProcessError  # Used for installing requirements
 from sys import exit
 from re import compile as regComp  # Used for sanitizing requirements
-from modules.ciphers import md5_b, sha256_b, sha512_b, md5, sha256, sha512
+from hashlib import md5, sha256, sha512
 from modules.brute import brute
 import modules.parent
 from modules.logger_config import get_logger
@@ -33,7 +33,6 @@ from modules.logger_config import get_logger
 
 HASH_CONTEXT = CryptContext(
     [
-        "md5_crypt",
         "sha256_crypt",
         "sha512_crypt",
         "bcrypt",
@@ -65,15 +64,40 @@ def get_progress(c: int, t: int) -> int:
     return c // t * 100
 
 
+# NOTE: moved to here from ciphers.py for check_password()
+def md5(text: str) -> str:
+    return hashlib.md5(text.encode()).hexdigest()
+
+
+def md5_bytes(text: bytes) -> str:
+    return hashlib.md5(text).hexdigest()
+
+
+def sha256(text: str) -> str:
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def sha256_bytes(text: bytes) -> str:
+    return hashlib.sha256(text).hexdigest()
+
+
+def sha512(text: str) -> str:
+    return hashlib.sha512(text.encode()).hexdigest()
+
+
+def sha512_bytes(text: bytes) -> str:
+    return hashlib.sha512(text).hexdigest()
+
+
 def check_password(
     password: str | bytes, hash_input: str, hash_type: str, action: str = "w"
 ) -> str:
     if hash_type == "MD5":
-        check = md5(password) if action == "b" else md5_b(password)
+        check = md5(password) if action == "b" else md5_bytes(password)
     elif hash_type == "SHA256":
-        check = sha256(password) if action == "b" else sha256_b(password)
+        check = sha256(password) if action == "b" else sha256_bytes(password)
     elif hash_type == "SHA512":
-        check = sha512(password) if action == "b" else sha512_b(password)
+        check = sha512(password) if action == "b" else sha512_bytes(password)
     else:
         check = HASH_CONTEXT.verify(password, hash_input)
 
