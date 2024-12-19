@@ -18,30 +18,27 @@ Because I wanted to learn creating GUI programs. Also, the GUI uses tabs which i
 
 ## What functions are implemented?
 1. Encodings:
-   - Base16
-   - Base32
-   - Base64
-   - Base85
+   - Base 16
+   - Base 32
+   - Base 64
+   - Base 85 (Ascii 85)
 
 2. Ciphers:
    - Caesar Cipher
    - Morse Code
    - Baconian Cipher
    - Vigenère Cipher
+   - a1z26
+   - Affine Cipher
+   - XOR
 
 3. Hashes:
-   - MD5 & MD5 Crypt
    - SHA256 & SHA512
    - SHA256 & SHA512 Crypt
-   - NThash
-   - BCrypt
+   - BCrypt & BCrypt SHA256
    - Argon2
    - PBKDF2+SHA256 & PBKDF2+SHA512
    - Hash Cracking with a wordlist or by Bruteforcing
-4. Plugins:
-   - XOR
-   - Affine Cipher
-   - a1z26
 
 ## Installation & Usage
 ### Using compiled binary
