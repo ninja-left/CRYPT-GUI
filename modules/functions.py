@@ -328,7 +328,7 @@ def getMarkdownAbout() -> str:
     return """# About
 CRYPT GUI is licensed under GPL v3.0 Copyright (c) 2024 Ninja Left\n
 CRYPT was built using Python 3, Qt Designer & Pyside6.\n
-Some functions used in ciphers.py are from [This Repository](https://github.com/TheAlgorithms/Python) and are\n
+Some plugins used in this app are from [This Repository](https://github.com/TheAlgorithms/Python) and are\n
 licensed under MIT Copyright (c) 2016-2024 TheAlgorithms and contributors.\n
 brute.py is a modified version of [brute](https://github.com/rdegges/brute)
 
