@@ -462,6 +462,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             "key tip": "Key to be used for Encryption/Decryption",
             "key label": "Key",
             "arguments tip": "Extra values to be used by plugin",
+            "rounds tip": "Usually a number used by hashing algorithm for improved security",
         }
         self.icons = {"decode": QIcon(), "verify": QIcon()}
         self.icons["decode"].addPixmap(":/images/Unlocked.png")
@@ -637,6 +638,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             self.inputPlainText.setText("")
             self.inputRounds.setEnabled(False)
             self.inputRounds.setText("")
+            self.inputRounds.setPlaceholderText(self.default_texts["rounds tip"])
             return None
         # Loading plugin info
         t = self.Plugins[self.operationMode.currentData()]()
@@ -779,16 +781,19 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 self.inputSaltPattern.setText(self.default_pattern)
         self.inputPlainText.setEnabled(info["config"]["uses plaintext"])
         self.inputRounds.setEnabled(x := info["config"]["uses rounds"])
+        # Set rounds input placeholder if set py plugin
+        if x and functions.hasKey(info["config"], "rounds tip"):
+            self.inputRounds.setPlaceholderText(str(info["config"]["rounds tip"]))
+        else:
+            self.inputRounds.setPlaceholderText(self.default_texts["rounds tip"])
         # Set rounds if plugin uses them
         if x:
             if (R := info["config"]["default rounds"]) == "$default$":
                 Logger.debug("Tried to set plugin's default rounds...")
                 # Try to set the default
-                if functions.hasKey(self.default_rounds["plugins"], info["name"]):
+                if functions.hasKey(self.default_rounds, info["name"]):
                     # Check if a default rounds exists for the plugin (specified in config.yaml)
-                    self.inputRounds.setText(
-                        str(self.default_rounds["plugins"][info["name"]])
-                    )
+                    self.inputRounds.setText(str(self.default_rounds[info["name"]]))
                     Logger.debug("and did it.")
                 else:
                     Logger.debug("and failed. Tried to use `alt rounds`...")
@@ -808,7 +813,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     if R:
                         # Save the rounds as plugin's default if not empty
                         d = functions.load_settings()
-                        d["default rounds"][info["name"]] = R
+                        d["rounds"][info["name"]] = R
                         Logger.debug(d)
                         functions.save_settings(d)
                         del d
