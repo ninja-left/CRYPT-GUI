@@ -16,6 +16,26 @@ on:
         options:
           - test
           - release
+      releaseDesc:
+        description: Release Description
+        required: false
+        default: ""
+        type: string
+      releaseVers:
+        description: Release version
+        required: false
+        default: ""
+        type: string
+      releaseOldVers:
+        description: Old Release version
+        required: false
+        default: ""
+        type: string
+      releasePre:
+        description: Is this a prerelease?
+        required: false
+        default: false
+        type: boolean
 
 env:
   repo_name: CRYPT-GUI
@@ -34,6 +54,18 @@ jobs:
         id: get_version
         shell: bash
         run: |
+          releaseVers="${{ inputs.releaseVers }}"
+          releaseOldVers="${{ inputs.releaseOldVers }}"
+          if [ "$releaseVers" != "" ]; then
+            echo "Vers specified: $releaseVers"
+            echo "version=$releaseVers" >> GITHUB_ENV
+            echo "version=$releaseVers" >> GITHUB_OUTPUT
+            if [ "$releaseOldVers" != "" ]; then
+              echo "$releaseOldVers"
+              echo "old_version=$releaseOldVers" >> GITHUB_ENV
+            fi
+            exit 0
+          fi
           # Read the first 2 lines from CHANGELOG.md and remove '## ' & '# Changelog' from the output and return only the version
           version=v$(grep -m 2 '^' Docs/CHANGELOG.md | sed 's/^## //' | sed 's/# Changelog//' | grep -m 1 '[0-9]*\.[0-9]*\.[0-9]*')
           # Read old_version file until a blankline is reached and return the output
@@ -50,6 +82,15 @@ jobs:
         id: get_desc
         shell: bash
         run: |
+          releaseDesc="${{ inputs.releaseDesc }}"
+          if [ "$releaseDesc" != "" ]; then
+              echo "Desc is:"
+              echo $releaseDesc
+              echo "release_body<<EOF" >> $GITHUB_OUTPUT
+              echo "$releaseDesc" >> $GITHUB_OUTPUT
+              echo "EOF" >> $GITHUB_OUTPUT
+              exit 0
+          fi
           description=""
           while IFS= read -r line; do
             [[ -z "$line" ]] && break
@@ -434,6 +475,16 @@ jobs:
           mv --verbose ${{ env.output_zip }} ${{ env.output_xz }} Compiled-Lin/* Compiled-Win/* Compiled-Mac/* deploy
           ls -lhAX deploy/
 
+      - name: check prerelease status
+        run: |
+          releasePre=${{ inputs.releasePre }}
+          echo $releasePre
+          if [ $releaseDesc -eq 1 ]; then
+            echo "prerelease=true" >> GITHUB_ENV
+          else
+            echo "prerelease=false" >> GITHUB_ENV
+          fi
+
       - name: Create release & upload files
         if: ${{ contains(inputs.releaseType, 'release') || github.event_name == 'push' }}
         uses: svenstaro/upload-release-action@v2
@@ -442,6 +493,7 @@ jobs:
           file: deploy/*
           tag: ${{ env.version }}
           file_glob: true
+          prerelease: ${{ env.prerelease }}
           body: |
             ${{ needs.prepare.outputs.release_body }}
 
