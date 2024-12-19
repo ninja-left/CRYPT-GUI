@@ -39,4 +39,4 @@ config:
   uses rounds: true
   default rounds: "$default$"
   alt rounds: 12
-  rounds tip: "Can be from 1 to 31"
+  rounds tip: "Can be from 4 to 31"
