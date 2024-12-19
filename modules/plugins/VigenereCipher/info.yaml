@@ -1,7 +1,7 @@
-name: 'xor'
-version: '1.1.0'
+name: 'vigenere'
+version: '1.0.0'
 requirements: ''
-source url: https://github.com/TheAlgorithms/Python/blob/master/ciphers/xor_cipher.py
+source url: https://github.com/TheAlgorithms/Python/blob/master/ciphers/vigenere_cipher.py
 license: |-
   #### MIT License
 
@@ -25,15 +25,18 @@ license: |-
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 config:
-  can change alphabet: false
   uses keys: true
   default key: '$default$'
-  alt key: 128
-  display name: XOR Cipher
+  alt key: changeme
+  can change alphabet: true
+  alphabet: '$default$'
+  alt alphabet: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  display name: 'Vigenere Cipher'
   has encoder: true
-  has decoder: false
-  has brute: true
+  has decoder: true
+  has brute: false
   uses salt: false
+  default pattern: 'SALT+PATTERN'
   uses plaintext: false
   uses rounds: false
-
+  default rounds: 0

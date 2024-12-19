@@ -1,7 +1,7 @@
-name: 'xor'
-version: '1.1.0'
+name: 'base85'
+version: '1.0.0'
 requirements: ''
-source url: https://github.com/TheAlgorithms/Python/blob/master/ciphers/xor_cipher.py
+source url: https://github.com/TheAlgorithms/Python/blob/master/ciphers/base85.py
 license: |-
   #### MIT License
 
@@ -26,13 +26,11 @@ license: |-
   SOFTWARE.
 config:
   can change alphabet: false
-  uses keys: true
-  default key: '$default$'
-  alt key: 128
-  display name: XOR Cipher
+  uses keys: false
+  display name: Base 85
   has encoder: true
-  has decoder: false
-  has brute: true
+  has decoder: true
+  has brute: false
   uses salt: false
   uses plaintext: false
   uses rounds: false

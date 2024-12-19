@@ -1,7 +1,7 @@
-name: 'xor'
-version: '1.1.0'
+name: 'baconian cipher'
+version: '1.0.0'
 requirements: ''
-source url: https://github.com/TheAlgorithms/Python/blob/master/ciphers/xor_cipher.py
+source url: https://github.com/TheAlgorithms/Python/blob/master/ciphers/baconian_cipher.py
 license: |-
   #### MIT License
 
@@ -25,15 +25,12 @@ license: |-
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 config:
+  uses keys: false
   can change alphabet: false
-  uses keys: true
-  default key: '$default$'
-  alt key: 128
-  display name: XOR Cipher
+  display name: 'Baconian Cipher'
   has encoder: true
-  has decoder: false
-  has brute: true
+  has decoder: true
+  has brute: false
   uses salt: false
   uses plaintext: false
   uses rounds: false
-

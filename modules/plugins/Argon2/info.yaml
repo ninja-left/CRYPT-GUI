@@ -1,11 +1,10 @@
-name: 'xor'
-version: '1.1.0'
-requirements: ''
-source url: https://github.com/TheAlgorithms/Python/blob/master/ciphers/xor_cipher.py
+name: 'argon2'
+version: '1.0.0'
+r2equirements: 'passlib, argon2_cffi'
 license: |-
   #### MIT License
 
-  Copyright (c) 2016-2022 TheAlgorithms and contributors
+  Copyright (c) 2024 Ninja Left
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -25,15 +24,18 @@ license: |-
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 config:
+  uses keys: false
   can change alphabet: false
-  uses keys: true
-  default key: '$default$'
-  alt key: 128
-  display name: XOR Cipher
+  display name: 'Argon2'
   has encoder: true
-  has decoder: false
-  has brute: true
-  uses salt: false
-  uses plaintext: false
-  uses rounds: false
-
+  encode label: Hash
+  has decoder: true
+  decode label: Verify
+  decode icon: verify
+  has brute: false
+  uses salt: true
+  default pattern: 'SALT+PATTERN'
+  uses plaintext: true
+  uses rounds: true
+  default rounds: "$default$"
+  # TODO: Should use `arguments` for variables in https://passlib.readthedocs.io/en/stable/lib/passlib.hash.argon2.html#format-algorithm

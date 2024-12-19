@@ -1,19 +1,19 @@
 # -*- coding: UTF-8 -*-
 """
-    CRYPT, a set of tools
+    Crypt, a set of tools
     Copyright (C) 2024  Ninja Left
 
     CRYPT is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
     any later version.
 
     CRYPT is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+    You should have received a copy of the GNU Affero General Public License
     along with CRYPT.  If not, see <https://www.gnu.org/licenses/>.
 """
 
@@ -25,15 +25,7 @@ from pluginlib import PluginLoader
 from subprocess import run, CalledProcessError  # Used for installing requirements
 from sys import exit
 from re import compile as regComp  # Used for sanitizing requirements
-from modules.ciphers import (
-    md5_b,
-    sha256_b,
-    sha512_b,
-    md5,
-    sha256,
-    sha512,
-    caesar_cipher,
-)
+from hashlib import md5, sha256, sha512
 from modules.brute import brute
 import modules.parent
 from modules.logger_config import get_logger
@@ -41,7 +33,6 @@ from modules.logger_config import get_logger
 
 HASH_CONTEXT = CryptContext(
     [
-        "md5_crypt",
         "sha256_crypt",
         "sha512_crypt",
         "bcrypt",
@@ -73,15 +64,40 @@ def get_progress(c: int, t: int) -> int:
     return c // t * 100
 
 
+# NOTE: moved to here from ciphers.py for check_password()
+def md5(text: str) -> str:
+    return hashlib.md5(text.encode()).hexdigest()
+
+
+def md5_bytes(text: bytes) -> str:
+    return hashlib.md5(text).hexdigest()
+
+
+def sha256(text: str) -> str:
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def sha256_bytes(text: bytes) -> str:
+    return hashlib.sha256(text).hexdigest()
+
+
+def sha512(text: str) -> str:
+    return hashlib.sha512(text.encode()).hexdigest()
+
+
+def sha512_bytes(text: bytes) -> str:
+    return hashlib.sha512(text).hexdigest()
+
+
 def check_password(
     password: str | bytes, hash_input: str, hash_type: str, action: str = "w"
 ) -> str:
     if hash_type == "MD5":
-        check = md5(password) if action == "b" else md5_b(password)
+        check = md5(password) if action == "b" else md5_bytes(password)
     elif hash_type == "SHA256":
-        check = sha256(password) if action == "b" else sha256_b(password)
+        check = sha256(password) if action == "b" else sha256_bytes(password)
     elif hash_type == "SHA512":
-        check = sha512(password) if action == "b" else sha512_b(password)
+        check = sha512(password) if action == "b" else sha512_bytes(password)
     else:
         check = HASH_CONTEXT.verify(password, hash_input)
 
@@ -138,13 +154,12 @@ def save_settings(data: dict | None = None) -> None:
     if `data` is not specified, it will try to load
     """
     config_file = Path("config.yaml").absolute()
-    default_config_file = Path("default_config.yaml").absolute()
     yaml = YAML(typ="safe")
     yaml.indent(4)
     yaml.allow_unicode = True
     yaml.default_flow_style = False
     if not data:
-        with open(default_config_file, "r") as f:
+        with open(config_file, "r") as f:
             data = yaml.load(f)
     with open(config_file, "w") as f:
         yaml.dump(data, f)
@@ -250,11 +265,15 @@ def checkConfig(data: dict) -> None:
     chKeyGood(data["config"], "uses keys", bool)
     if data["config"]["uses keys"]:
         chKeySet(data["config"], "default key")
+        if data["config"]["default key"] == "$default$":
+            chKeySet(data["config"], "alt key")
 
     chKeySet(data["config"], "can change alphabet")
     chKeyGood(data["config"], "can change alphabet", bool)
     if data["config"]["can change alphabet"]:
         chKeySet(data["config"], "alphabet")
+        if data["config"]["alphabet"] == "$default$":
+            chKeySet(data["config"], "alt alphabet")
 
     chKeySet(data["config"], "has encoder")
     chKeyGood(data["config"], "has encoder", bool)
@@ -275,6 +294,8 @@ def checkConfig(data: dict) -> None:
     chKeyGood(data["config"], "uses rounds", bool)
     if data["config"]["uses rounds"]:
         chKeySet(data["config"], "default rounds")
+        if data["config"]["default rounds"] == "$default$":
+            chKeySet(data["config"], "alt rounds")
 
     chKeySet(data, "license")
     chKeyGood(data, "license", str)
@@ -307,7 +328,7 @@ def getMarkdownAbout() -> str:
     return """# About
 CRYPT GUI is licensed under GPL v3.0 Copyright (c) 2024 Ninja Left\n
 CRYPT was built using Python 3, Qt Designer & Pyside6.\n
-Some functions used in ciphers.py are from [This Repository](https://github.com/TheAlgorithms/Python) and are\n
+Some plugins used in this app are from [This Repository](https://github.com/TheAlgorithms/Python) and are\n
 licensed under MIT Copyright (c) 2016-2024 TheAlgorithms and contributors.\n
 brute.py is a modified version of [brute](https://github.com/rdegges/brute)
 
