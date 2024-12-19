@@ -314,7 +314,7 @@
       </property>
       <layout class="QGridLayout" name="gridLayout">
        <item row="6" column="0">
-        <widget class="QLabel" name="label_7">
+        <widget class="QLabel" name="labelSP">
          <property name="toolTip">
           <string>Keywords: SALT, INPUT | &quot;SALT+INPUT&quot; means there would be a plus sign between salt and input before hashing.</string>
          </property>
@@ -333,7 +333,7 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="label_9">
+        <widget class="QLabel" name="labelRounds">
          <property name="text">
           <string>Rounds</string>
          </property>
@@ -343,7 +343,7 @@
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="label_8">
+        <widget class="QLabel" name="labelPlaintext">
          <property name="text">
           <string>Plain Text</string>
          </property>
@@ -467,7 +467,7 @@
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QLabel" name="label_6">
+        <widget class="QLabel" name="labelSalt">
          <property name="toolTip">
           <string>It is optional.</string>
          </property>
@@ -486,7 +486,7 @@
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelAlphabet">
          <property name="toolTip">
           <string>Alphabet to be used.</string>
          </property>
@@ -598,7 +598,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel" name="labelKey">
          <property name="toolTip">
           <string>Key to be used for Encryption/Decryption.</string>
          </property>
@@ -645,7 +645,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelSetupHeader">
          <property name="minimumSize">
           <size>
            <width>131</width>
@@ -1067,7 +1067,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="labelAboutHeader">
          <property name="font">
           <font>
            <pointsize>26</pointsize>
@@ -1082,7 +1082,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QTextBrowser" name="textBrowser">
+        <widget class="QTextBrowser" name="boxAboutContent">
          <property name="documentTitle">
           <string/>
          </property>
