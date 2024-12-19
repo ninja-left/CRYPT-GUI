@@ -1085,6 +1085,10 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         Logger.debug("New self.Plugins: %s", self.Plugins)
         _A = self.boxAboutContent.toMarkdown()
         _A += "## Plugins"
+        # NOTE: Added the 3 variables below to avoid error when deleting variables at the end
+        _URL = ""
+        _LICENSE = ""
+        info = dict()
 
         for i in self.Plugins:
             info = self.Plugins[i]().get_info()
