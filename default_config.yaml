@@ -21,6 +21,7 @@ rounds:
   bcrypt: 14
   argon2: 4
   pbkdf2: 30000
+  sha256 crypt: 535000
 
 brute:
   max length: 8
