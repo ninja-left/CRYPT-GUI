@@ -843,6 +843,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         )
         try:
             if salt:
+                Logger.debug("Adding salt")
                 if salt_pattern and "SALT" in salt_pattern and "INPUT" in salt_pattern:
                     good_plain = salt_pattern.replace("SALT", salt).replace(
                         "INPUT", plain
@@ -910,6 +911,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         )
         try:
             if salt:
+                Logger.debug("Adding salt...")
                 if salt_pattern and "SALT" in salt_pattern and "INPUT" in salt_pattern:
                     good_data = salt_pattern.replace("SALT", salt).replace(
                         "INPUT", input_data
@@ -918,6 +920,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                     good_data = f"{salt}+{input_data}"
             else:
                 good_data = input_data
+            Logger.debug("good_data(%s)", good_data)
             t = self.Plugins[self.operationMode.currentData()]()
             info = t.get_info()
             Logger.info("Using `%s` plugin", info["config"]["display name"])
