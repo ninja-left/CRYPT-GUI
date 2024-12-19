@@ -614,16 +614,21 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.Operation = chosenMode
         if self.Operation == "None":
             # Set everything to default
-            self.btnEncode.setText(self.textEncodeDefault)
+            self.btnEncode.setText(self.default_texts["encode"])
             self.btnEncode.setEnabled(False)
-            self.btnDecode.setText(self.textEncodeDefault)
-            self.btnDecode.setIcon(self.iconDecodeDefault)
+            self.btnDecode.setText(self.default_texts["decode"])
+            self.btnDecode.setIcon(self.icons["decode"])
             self.btnDecode.setEnabled(False)
+            self.btnBruteForce.setText(self.default_texts["brute"])
             self.btnBruteForce.setEnabled(False)
             self.inputAlphabet.setEnabled(False)
             self.inputAlphabet.setText("")
+            self.inputAlphabet.setPlaceholderText(self.default_texts["alphabet tip"])
+            self.labelAlphabet.setText(self.default_texts["alphabet label"])
             self.inputKey.setEnabled(False)
             self.inputKey.setText("")
+            self.inputKey.setPlaceholderText(self.default_texts["key tip"])
+            self.labelKey.setText(self.default_texts["key label"])
             self.inputSalt.setEnabled(False)
             self.inputSalt.setText("")
             self.inputSaltPattern.setEnabled(False)
@@ -781,7 +786,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 # Try to set the default
                 if functions.hasKey(self.default_rounds["plugins"], info["name"]):
                     # Check if a default rounds exists for the plugin (specified in config.yaml)
-                    self.inputKey.setText(
+                    self.inputRounds.setText(
                         str(self.default_rounds["plugins"][info["name"]])
                     )
                     Logger.debug("and did it.")
@@ -798,7 +803,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                         Logger.debug("and failed. Aborting.")
                         Logger.warning("`%s` has no `alt rounds`", info["name"])
                         R = ""
-                    self.inputKey.setText(str(R))
+                    self.inputRounds.setText(str(R))
                     Logger.debug("Set rounds to %s", R)
                     if R:
                         # Save the rounds as plugin's default if not empty
@@ -808,7 +813,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                         functions.save_settings(d)
                         del d
             else:  # set the rounds specified in plugin's info.yaml
-                self.inputKey.setText(str(R))
+                self.inputRounds.setText(str(R))
             del R
         del info, t, x
 
