@@ -18,7 +18,7 @@ from logging import (
     NOTSET,
     shutdown,
 )
-from modules import functions, ciphers, brute
+from modules import functions, brute
 from modules.design import main_ui, config_ui, bf_ui, resources_rc
 from modules.logger_config import get_logger
 
