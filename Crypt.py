@@ -39,6 +39,10 @@ class BadKeyError(Exception):
         super().__init__(self.message)
 
 
+# TODO: Update config dialog to match config.yaml and add a new tab for selected plugin's info.yaml configuration
+# NOTE 1: new tab should be inactive if no plugin is selected
+# NOTE 2: new tab should not include lines for editing license, source, url, version, has decoder, has encoder,
+# & has brute variables
 class ConfigDialog(QDialog, config_ui.Ui_Dialog):
     def __init__(self):
         super().__init__()
@@ -454,7 +458,9 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             "decode": "Decode/Decrypt",
             "brute": "Brute Force",
             "alphabet tip": "",
+            "alphabet label": "Alphabet",
             "key tip": "Key to be used for Encryption/Decryption",
+            "key label": "Key",
             "arguments tip": "Extra values to be used by plugin",
         }
         self.icons = {"decode": QIcon(), "verify": QIcon()}
@@ -473,8 +479,8 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             "PBKDF2 SHA256",
             "PBKDF2 SHA512",
         )
-        # Replaces HTML about with Markdown version
-        self.textBrowser.setMarkdown(functions.getMarkdownAbout())
+        # Set content of About Tab textbox
+        self.boxAboutContent.setMarkdown(functions.getMarkdownAbout())
 
         # User settings
         settings = functions.load_settings()
@@ -630,8 +636,6 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         # Loading plugin info
         t = self.Plugins[self.operationMode.currentData()]()
         info = t.get_info()
-        info.pop("license")
-        # remove license because they are long and pollute the log file
         Logger.info("Chose `%s` plugin", info["config"]["display name"])
         Logger.debug(f"Plugin info: {info}")
         # Configure labels & buttons as specified by the plugin
@@ -671,11 +675,11 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             self.inputAlphabet.setPlaceholderText(str(info["config"]["alphabet tip"]))
         else:
             self.inputAlphabet.setPlaceholderText(self.default_texts["alphabet tip"])
-        # TODO: should change alphabet label
-        # if x and functions.hasKey(info["config"], "alphabet label"):
-        #     self.*.setText(str(info["config"]["alphabet label"]))
-        # else:
-        #     self.*.setText("Alphabet")
+        # Set alphabet label text if specified by plugin
+        if x and functions.hasKey(info["config"], "alphabet label"):
+            self.labelAlphabet.setText(str(info["config"]["alphabet label"]))
+        else:
+            self.labelAlphabet.setText(self.default_texts["alphabet label"])
         # Set alphabet input box value if plugin uses alphabets
         if x:
             if (alph := info["config"]["alphabet"]) == "$default$":
@@ -711,12 +715,14 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             else:  # set the alphabet specified in plugin's info.yaml
                 self.inputAlphabet.setText(alph)
             del alph
+        else:
+            self.inputAlphabet.setText("")
         self.inputKey.setEnabled(x := info["config"]["uses keys"])
-        # TODO: should change key label
-        # if x and functions.hasKey(info["config"], "key label"):
-        #     self.*.setText(str(info["config"]["key label"]))
-        # else:
-        #     self.*.setText("Key")
+        # Set key label text if specified by plugin
+        if x and functions.hasKey(info["config"], "key label"):
+            self.labelKey.setText(str(info["config"]["key label"]))
+        else:
+            self.labelKey.setText(self.default_texts["key label"])
         # Set key input placeholder text if specified by plugin
         if x and functions.hasKey(info["config"], "key tip"):
             self.inputKey.setPlaceholderText(str(info["config"]["key tip"]))
@@ -757,6 +763,8 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             else:  # set the key specified in plugin's info.yaml
                 self.inputKey.setText(str(k))
             del k
+        else:
+            self.inputKey.setText("")
         self.inputSalt.setEnabled(info["config"]["uses salt"])
         self.inputSaltPattern.setEnabled(info["config"]["uses salt"])
         if info["config"]["uses salt"]:
@@ -869,6 +877,8 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 detail=str(e),
             )
             Logger.error("Could not decode input: %s", str(e), exc_info=1)
+        finally:
+            del info, decoded
 
     def doEncode(self):
         input_data = self.inputText.toPlainText()
@@ -924,6 +934,8 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         except Exception as e:
             self.showMessageBox(detail=str(e))
             Logger.error(str(e), exc_info=1)
+        finally:
+            del info, encoded
 
     def doBrute(self):
         global brute_force_results
@@ -983,6 +995,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
                 Logger.debug(
                     f"{info['config']['display name']} Brute-forced: {input_data} -> {results}"
                 )
+            del info, results
 
     def doConfig(self) -> int:
         """Executes ConfigDialog class"""
@@ -1057,7 +1070,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
         self.Plugins = functions.check_plugins(self.Plugins)
         Logger.info("Checked plugins")
         Logger.debug("New self.Plugins: %s", self.Plugins)
-        _A = self.textBrowser.toMarkdown()
+        _A = self.boxAboutContent.toMarkdown()
         _A += "## Plugins"
 
         for i in self.Plugins:
@@ -1071,8 +1084,15 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             except KeyError:
                 _URL = ""
             _LICENSE = f"\n\n{info['license']}"
+            info.pop("license")
+            # NOTE 1: Remove license variables from plugin's info because they
+            # are long and pollute the log file and are only needed for being
+            # saved to About Tab content (Which is already done above)
+            # NOTE 2: Remove the license here so it doesn't have to be removed
+            # later thus avoiding a KeyError when loading plugins in
+            # doChangeOp() & 3 other functions more than once
             _A += f"\n### {info['config']['display name']}{_URL}{_LICENSE}"
-            self.textBrowser.setMarkdown(_A)
+            self.boxAboutContent.setMarkdown(_A)
             if not info["name"] in Loaded:
                 Logger.info("Saving `%s` as Loaded", info["name"])
                 Loaded.append(info["name"])
@@ -1086,7 +1106,7 @@ class MainWindow(QMainWindow, main_ui.Ui_MainWindow):
             Logger.info("Saved loaded plugins to config file")
             Logger.debug("Loaded plugins: %s", Loaded)
         Logger.info("Loaded all plugins")
-        del _A, _URL, _LICENSE
+        del _A, _URL, _LICENSE, info
 
 
 if __name__ == "__main__":
