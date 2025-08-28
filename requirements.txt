@@ -6,5 +6,5 @@ passlib==1.7.4
 pluginlib==0.10.0
 clipman==3.3.3
 PySide6==6.9.1
-ruamel.yaml==0.18.14
+ruamel.yaml==0.18.15
 setuptools==80.9.0
