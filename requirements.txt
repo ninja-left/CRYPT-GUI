@@ -1,6 +1,6 @@
 argon2-cffi==25.1.0
 argon2-cffi-bindings==25.1.0
-bcrypt==4.3.0
+bcrypt==5.0.0
 cffi==2.0.0
 passlib==1.7.4
 pluginlib==0.10.0
