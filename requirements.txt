@@ -3,7 +3,7 @@ argon2-cffi-bindings==25.1.0
 bcrypt==5.0.0
 cffi==2.0.0
 passlib==1.7.4
-pluginlib==0.10.0
+pluginlib==0.11.0
 clipman==3.3.3
 PySide6==6.11.0
 ruamel.yaml==0.19.1
